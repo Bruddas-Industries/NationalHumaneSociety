@@ -1,0 +1,24 @@
+# Audit document — sensitive; keep out of public repo by default
+National_Humane_Society_Website_Audit.docx
+
+# Python build script artifacts
+__pycache__/
+*.pyc
+*.pyo
+
+# Editor / OS junk
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# Vercel local
+.vercel/
+
+# Claude Code per-project workspace
+.claude/
+
+# Local environment
+.env
+.env.local
