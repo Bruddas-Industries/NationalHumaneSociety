@@ -76,7 +76,7 @@ def render_header():
     return f"""<header class="site-header">
   <div class="container header-inner">
     <a href="index.html" class="brand" aria-label="National Humane Society — Home">
-      <img src="assets/img/logo.png" alt="National Humane Society" width="186" height="55" style="display:block; height:48px; width:auto">
+      <img src="assets/img/logo.png" alt="National Humane Society" class="brand-logo" width="186" height="55">
     </a>
     <nav class="nav-primary" aria-label="Primary">
 {render_nav()}
@@ -170,6 +170,7 @@ def render_footer():
 def page(title, slug, body, description=None):
     """Returns the file (slug, html-string) for a single page."""
     desc = description or f"{title} — National Humane Society"
+    body_class = "is-home" if slug == "index.html" else "is-interior"
     html = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -185,7 +186,7 @@ def page(title, slug, body, description=None):
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Gayathri:wght@400;700&family=Paytone+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-<body>
+<body class="{body_class}">
 {render_header()}
 <main>
 {body}
