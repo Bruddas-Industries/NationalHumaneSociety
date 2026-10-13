@@ -24,20 +24,20 @@
       <a class="nav-link" href="about.html">Our Mission ▾</a>
       <div class="nav-dropdown">
         <a href="about.html">About</a>
-        <a href="programs.html">Programs</a>
-        <a href="impact.html">Impact & Outcomes</a>
-        <a href="shelter-partners.html">Shelter Partners</a>
-        <a href="financial-transparency.html">Financial Transparency</a>
+        <a href="animal-programs.html">Animal Programs</a>
+        <a href="donations-helping-animals.html">Donations Helping Animals</a>
+        <a href="impact.html">Impact &amp; Outcomes <span class="nav-tag">Proposed</span></a>
+        <a href="financial-transparency.html">Financial Transparency <span class="nav-tag">Proposed</span></a>
       </div>
     </div>
     <div class="nav-item">
       <a class="nav-link" href="sweepstakes.html">Sweepstakes ▾</a>
       <div class="nav-dropdown">
-        <a href="sweepstakes.html">All Active Sweepstakes</a>
+        <a href="sweepstakes.html">Sweepstakes</a>
         <a href="raffle-plus.html">Raffle Plus</a>
-        <a href="how-it-works.html">How It Works</a>
+        <a href="how-it-works.html">How It Works <span class="nav-tag">New</span></a>
         <a href="faq.html">FAQ</a>
-        <a href="rules.html">Rules</a>
+        <a href="sweepstakes-rules.html">Rules</a>
         <a href="previous-winners.html">Previous Winners</a>
       </div>
     </div>
@@ -45,20 +45,21 @@
       <a class="nav-link" href="donate.html">Get Involved ▾</a>
       <div class="nav-dropdown">
         <a href="donate.html">Donate</a>
-        <a href="monthly-giving.html">Monthly Giving</a>
-        <a href="wills-estates.html">Wills & Estates</a>
-        <a href="volunteer.html">Volunteer</a>
-        <a href="corporate-partners.html">Corporate Partners</a>
+        <a href="monthly-giving.html">Monthly Giving <span class="nav-tag">Proposed</span></a>
+        <a href="wills-estates.html">Wills &amp; Estates</a>
+        <a href="volunteer.html">Volunteer <span class="nav-tag">Proposed</span></a>
+        <a href="corporate-partners.html">Corporate Partners <span class="nav-tag">Proposed</span></a>
       </div>
     </div>
     <div class="nav-item">
       <a class="nav-link" href="blog.html">Resources ▾</a>
       <div class="nav-dropdown">
-        <a href="blog.html">Blog</a>
-        <a href="videos.html">Videos</a>
-        <a href="pet-care-cats.html">Pet Care: Cats</a>
-        <a href="pet-care-dogs.html">Pet Care: Dogs</a>
-        <a href="pet-care-hurricane.html">Hurricane Prep</a>
+        <a href="blog.html">Educational Messages</a>
+        <a href="videos-and-more.html">Videos &amp; More</a>
+        <a href="pet-tips.html">Pet Tips</a>
+        <a href="cats-and-dogs.html">Cats &amp; Dogs</a>
+        <a href="hurricanes-and-your-pets.html">Hurricanes &amp; Your Pets</a>
+        <a href="delaware-residents.html">Delaware Residents</a>
       </div>
     </div>
     <div class="nav-item"><a class="nav-link" href="contact.html">Contact</a></div>
@@ -75,49 +76,59 @@
 </header>
 <main>
 
+
 <section class="page-hero">
   <div class="container">
     <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; Donate</div>
-    <h1>Donate</h1>
-    <p class="lead">Direct, tax-deductible support for the four mission pillars. Choose monthly or one-time, choose an amount, that's it.</p>
+    <h1>Donate Now</h1>
+    <p class="lead">Every dollar can make a difference for an animal in need.</p>
   </div>
 </section>
 
 <section class="section">
   <div class="container grid grid-2" style="align-items:start">
     <div>
-      <h2>Why monthly giving matters most.</h2>
-      <p>Predictable monthly support lets us commit to multi-year shelter partnerships, hire program staff, and respond to disasters within hours instead of weeks.</p>
-      <ul class="list-check">
-        <li>$10/month = [XX] meals for shelter animals annually</li>
-        <li>$25/month = one spay/neuter procedure every month</li>
-        <li>$50/month = a vet checkup for [X] animals every month</li>
-        <li>$100/month = a small operating grant to one partner shelter</li>
-      </ul>
-      <p style="color:var(--color-text-muted); font-size:.9rem">All figures are placeholders pending real cost-per-outcome data.</p>
+      <img class="rounded-img" src="assets/img/donate-hero.jpeg" alt="" loading="lazy">
+      <p style="margin-top:var(--space-5)">For over 25 years, the National Humane Society has worked tirelessly to put an end to animal abuse and neglect. We are one of the national leaders in the areas of rescue, adoption and welfare, and your tax-deductible donation will help fight cruelty and make a life-changing difference for animals across America.</p>
+      <p>Thank you for making the National Humane Society and the animals we serve a part of your life.</p>
     </div>
-    <div class="donate-widget">
-      <h3>Make a donation</h3>
-      <p style="color:var(--color-text-muted); font-size:.95rem">Preview only — connects to GiveWP / Stripe in production.</p>
+    <form class="donate-widget" data-donate onsubmit="event.preventDefault(); alert('Preview only — donations are not submitted.');">
+      <h3>Select gift amount</h3>
       <div class="donate-toggle">
-        <button class="is-active">Monthly</button>
-        <button>One-time</button>
+        <button type="button" class="is-active" data-mode="monthly">Monthly</button>
+        <button type="button" data-mode="one-time">One-time</button>
       </div>
       <div class="amount-grid">
-        <button class="amount-btn">$10</button>
-        <button class="amount-btn is-active">$25</button>
-        <button class="amount-btn">$50</button>
-        <button class="amount-btn">$100</button>
-        <button class="amount-btn">$250</button>
-        <button class="amount-btn">Other</button>
+        <button type="button" class="amount-btn" data-amount="10">$10</button>
+        <button type="button" class="amount-btn is-active" data-amount="25">$25</button>
+        <button type="button" class="amount-btn" data-amount="50">$50</button>
+        <button type="button" class="amount-btn" data-amount="100">$100</button>
+        <button type="button" class="amount-btn" data-amount="500" data-monthly="500" data-one-time="250">$500</button>
+        <button type="button" class="amount-btn" data-amount="other">Other</button>
       </div>
-      <div class="form-row" style="margin-bottom:var(--space-4)">
-        <label>Email for receipt</label>
-        <input type="email" placeholder="you@example.com">
+      <div class="form-grid">
+        <div class="form-row"><label>Other amount</label><input type="text" inputmode="decimal" placeholder="$ Other Amount"></div>
+        <div class="form-row"><label>Full name</label><input type="text" autocomplete="name" required></div>
+        <div class="grid grid-2">
+          <div class="form-row"><label>Phone number</label><input type="tel" autocomplete="tel" required></div>
+          <div class="form-row"><label>Email address</label><input type="email" autocomplete="email" required></div>
+        </div>
+        <div class="form-row"><label>Street address</label><input type="text" autocomplete="street-address" required></div>
+        <div class="grid grid-3">
+          <div class="form-row"><label>City</label><input type="text" autocomplete="address-level2" required></div>
+          <div class="form-row"><label>State</label><input type="text" autocomplete="address-level1" required></div>
+          <div class="form-row"><label>Zip code</label><input type="text" inputmode="numeric" autocomplete="postal-code" required></div>
+        </div>
+        <div class="form-row"><label>Your payment information</label>
+        <div class="payment-placeholder">
+          <strong>Secure card payment</strong>
+          <p>Preview only. In production the card number, expiry and security code are typed into a field hosted by the payment processor, so card details never pass through or get stored on this website.</p>
+        </div>
+        </div>
+        <button type="submit" class="btn btn-primary donate-cta" style="width:100%; justify-content:center">Donate $25 monthly →</button>
+        <p class="form-footnote">Tax-deductible · 501(c)(3) · Tax ID 58-2399783. Please remember to spay or neuter your pets. For any questions, please call us at <a href="tel:302-369-6532">302-369-6532</a>.</p>
       </div>
-      <button class="btn btn-primary" style="width:100%; justify-content:center">Donate $25 monthly →</button>
-      <p style="font-size:.8rem; color:var(--color-text-muted); margin-top:var(--space-3); text-align:center">100% tax-deductible · Cancel anytime · EIN XX-XXXXXXX</p>
-    </div>
+    </form>
   </div>
 </section>
 
@@ -125,12 +136,9 @@
   <div class="container">
     <h2 class="text-center" style="margin-bottom:var(--space-6)">Other ways to give.</h2>
     <div class="grid grid-3">
-      <div class="card"><h3>Wills &amp; estates</h3><p>Leave a planned gift in your will or trust.</p><a href="wills-estates.html">Learn more →</a></div>
-      <div class="card"><h3>Stock &amp; crypto</h3><p>Donate appreciated securities or cryptocurrency.</p><a href="contact.html">Get instructions →</a></div>
-      <div class="card"><h3>Donor-advised funds</h3><p>Recommend a grant from your DAF.</p><a href="contact.html">DAF instructions →</a></div>
-      <div class="card"><h3>Workplace giving</h3><p>Payroll deduction and employer matches.</p><a href="corporate-partners.html">Workplace giving →</a></div>
-      <div class="card"><h3>Tribute gifts</h3><p>Honor or memorialize a loved one.</p><a href="contact.html">Make a tribute →</a></div>
-      <div class="card"><h3>Vehicle donation</h3><p>Donate a car, boat, or RV.</p><a href="contact.html">Vehicle donation →</a></div>
+      <div class="card"><h3>By mail</h3><p>Send a personal check or money order made payable to the National Humane Society to 406 Suburban DR #364, Newark, DE 19711.</p></div>
+      <div class="card"><h3>Wills &amp; estates</h3><p>Assigning the National Humane Society in your will or trust is a helpful way for our organization to continue serving animals in need.</p><a href="wills-estates.html">Learn more →</a></div>
+      <div class="card"><h3>Sweepstakes</h3><p>What is better than helping animals in need while winning some incredible prizes?</p><a href="sweepstakes.html">Enter Now →</a></div>
     </div>
   </div>
 </section>
@@ -142,36 +150,43 @@
       <div class="badge"><strong>Charity Navigator</strong>Rating placeholder</div>
       <div class="badge"><strong>Candid / GuideStar</strong>Seal placeholder</div>
       <div class="badge"><strong>BBB Wise Giving</strong>Accreditation placeholder</div>
-      <div class="badge"><strong>EIN</strong>XX-XXXXXXX</div>
+      <div class="badge"><strong>Tax ID</strong>58-2399783</div>
     </div>
     <div class="footer-grid">
       <div>
         <div class="footer-brand">National Humane Society</div>
-        <p style="font-size:.9rem; color:rgba(255,255,255,.7)">A 501(c)(3) animal welfare organization advocating for, rescuing, and protecting animals across the United States.</p>
+        <p style="font-size:.9rem; color:rgba(255,255,255,.7)">A 501(c)(3) non-profit, tax-exempt charity dedicated to improving the lives of rescue animals across America.</p>
         <p style="font-size:.85rem; margin-top:1rem">
-          <strong style="color:#fff">Contact</strong><br>
-          Customer Service: 877-285-0710<br>
-          <a href="contact.html">Send a message</a>
+          Order Line: <a href="tel:844-807-4052">844-807-4052</a><br>
+          Customer Service: <a href="tel:877-285-0710">877-285-0710</a><br>
+          <a href="mailto:info@nationalhumanesociety.org">info@nationalhumanesociety.org</a>
         </p>
+        <p style="font-size:.85rem">406 Suburban DR #364<br>Newark, DE 19711</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/nationalhumane/" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://www.linkedin.com/company/national-humane" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://www.facebook.com/nationalhumane" target="_blank" rel="noopener">Facebook</a>
+          <a href="https://twitter.com/NationalHumane" target="_blank" rel="noopener">X</a>
+        </div>
       </div>
       <div>
         <h4>Our Mission</h4>
         <ul>
           <li><a href="about.html">About</a></li>
-          <li><a href="programs.html">Programs</a></li>
-          <li><a href="impact.html">Impact &amp; Outcomes</a></li>
-          <li><a href="shelter-partners.html">Shelter Partners</a></li>
-          <li><a href="financial-transparency.html">Financial Transparency</a></li>
+          <li><a href="animal-programs.html">Animal Programs</a></li>
+          <li><a href="donations-helping-animals.html">Donations Helping Animals</a></li>
+          <li><a href="impact.html">Impact &amp; Outcomes <span class="nav-tag">Proposed</span></a></li>
+          <li><a href="financial-transparency.html">Financial Transparency <span class="nav-tag">Proposed</span></a></li>
         </ul>
       </div>
       <div>
         <h4>Sweepstakes</h4>
         <ul>
-          <li><a href="sweepstakes.html">Active Sweepstakes</a></li>
+          <li><a href="sweepstakes.html">Sweepstakes</a></li>
           <li><a href="raffle-plus.html">Raffle Plus</a></li>
-          <li><a href="how-it-works.html">How It Works</a></li>
+          <li><a href="how-it-works.html">How It Works <span class="nav-tag">New</span></a></li>
           <li><a href="faq.html">FAQ</a></li>
-          <li><a href="rules.html">Rules</a></li>
+          <li><a href="sweepstakes-rules.html">Rules</a></li>
           <li><a href="previous-winners.html">Previous Winners</a></li>
         </ul>
       </div>
@@ -179,31 +194,27 @@
         <h4>Get Involved</h4>
         <ul>
           <li><a href="donate.html">Donate</a></li>
-          <li><a href="monthly-giving.html">Monthly Giving</a></li>
+          <li><a href="monthly-giving.html">Monthly Giving <span class="nav-tag">Proposed</span></a></li>
           <li><a href="wills-estates.html">Wills &amp; Estates</a></li>
-          <li><a href="volunteer.html">Volunteer</a></li>
-          <li><a href="corporate-partners.html">Corporate Partners</a></li>
+          <li><a href="volunteer.html">Volunteer <span class="nav-tag">Proposed</span></a></li>
+          <li><a href="corporate-partners.html">Corporate Partners <span class="nav-tag">Proposed</span></a></li>
         </ul>
       </div>
       <div>
         <h4>Resources</h4>
         <ul>
-          <li><a href="blog.html">Blog</a></li>
-          <li><a href="videos.html">Videos</a></li>
-          <li><a href="pet-care-cats.html">Pet Care: Cats</a></li>
-          <li><a href="pet-care-dogs.html">Pet Care: Dogs</a></li>
-          <li><a href="pet-care-hurricane.html">Hurricane Prep</a></li>
+          <li><a href="blog.html">Educational Messages</a></li>
+          <li><a href="videos-and-more.html">Videos &amp; More</a></li>
+          <li><a href="pet-tips.html">Pet Tips</a></li>
+          <li><a href="cats-and-dogs.html">Cats &amp; Dogs</a></li>
+          <li><a href="hurricanes-and-your-pets.html">Hurricanes &amp; Your Pets</a></li>
+          <li><a href="delaware-residents.html">Delaware Residents</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
       <div>© 2026 National Humane Society. All rights reserved.</div>
-      <div>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Donor Privacy</a>
-        <a href="#">State Registrations</a>
-        <a href="#">IRS Form 990</a>
-      </div>
+      <div>501(c)(3) tax-exempt charity · Tax ID 58-2399783 · <a href="contact.html">Contact</a></div>
     </div>
   </div>
 </footer>

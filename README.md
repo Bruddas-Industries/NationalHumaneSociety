@@ -7,7 +7,8 @@ Two-phase rebuild of [nationalhumanesociety.org](https://nationalhumanesociety.o
 ```
 .
 ├── preview/                ← static HTML prototype (this is what Vercel deploys)
-│   ├── build.py            ← source of truth — regenerates the 25 HTML pages
+│   ├── build.py            ← layout + nav — regenerates the 34 HTML pages
+│   ├── content.py          ← facts and copy carried over from the live site
 │   ├── *.html              ← generated; do not hand-edit
 │   ├── README.md           ← preview-specific docs
 │   └── assets/
