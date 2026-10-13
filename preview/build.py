@@ -1,65 +1,89 @@
 """
 National Humane Society — preview site generator.
 
-Single source of truth for header/footer/nav. Each page's content lives in
-the PAGES list below. Run `python build.py` to (re)generate every .html
-file in this directory.
+Single source of truth for header/footer/nav and page layout. The facts and
+long-form copy carried over from the live site live in content.py. Run
+`python build.py` to (re)generate every .html file in this directory.
 
-When we port to WordPress, the LAYOUT here becomes the block theme's
-header.html and footer.html templates, and each PAGE entry becomes either
-a page template or a page filled with block patterns.
+Each page has a status:
+  "live"     — has a counterpart on the current site; copy comes from it.
+  "new"      — not on the current site, but written only from facts that are.
+  "proposed" — not on the current site; placeholder content for discussion.
+"new" and "proposed" pages get a banner so nobody mistakes them for live copy.
+
+When we port to a production stack, the LAYOUT here becomes the header and
+footer templates, and each PAGE entry becomes a page template.
 """
 
+import re
+import sys
 from pathlib import Path
+
+import content as C
 
 OUT_DIR = Path(__file__).parent
 
 # ---------------------------------------------------------------------------
 # Navigation structure (proposed sitemap, audit Section 1.2)
+# (label, href, status) — status marks pages that are not on the live site.
 # ---------------------------------------------------------------------------
 NAV = [
     ("Our Mission", "about.html", [
-        ("About", "about.html"),
-        ("Programs", "programs.html"),
-        ("Impact & Outcomes", "impact.html"),
-        ("Shelter Partners", "shelter-partners.html"),
-        ("Financial Transparency", "financial-transparency.html"),
+        ("About", "about.html", "live"),
+        ("Animal Programs", "animal-programs.html", "live"),
+        ("Donations Helping Animals", "donations-helping-animals.html", "live"),
+        ("Impact &amp; Outcomes", "impact.html", "proposed"),
+        ("Financial Transparency", "financial-transparency.html", "proposed"),
     ]),
     ("Sweepstakes", "sweepstakes.html", [
-        ("All Active Sweepstakes", "sweepstakes.html"),
-        ("Raffle Plus", "raffle-plus.html"),
-        ("How It Works", "how-it-works.html"),
-        ("FAQ", "faq.html"),
-        ("Rules", "rules.html"),
-        ("Previous Winners", "previous-winners.html"),
+        ("Sweepstakes", "sweepstakes.html", "live"),
+        ("Raffle Plus", "raffle-plus.html", "live"),
+        ("How It Works", "how-it-works.html", "new"),
+        ("FAQ", "faq.html", "live"),
+        ("Rules", "sweepstakes-rules.html", "live"),
+        ("Previous Winners", "previous-winners.html", "live"),
     ]),
     ("Get Involved", "donate.html", [
-        ("Donate", "donate.html"),
-        ("Monthly Giving", "monthly-giving.html"),
-        ("Wills & Estates", "wills-estates.html"),
-        ("Volunteer", "volunteer.html"),
-        ("Corporate Partners", "corporate-partners.html"),
+        ("Donate", "donate.html", "live"),
+        ("Monthly Giving", "monthly-giving.html", "proposed"),
+        ("Wills &amp; Estates", "wills-estates.html", "live"),
+        ("Volunteer", "volunteer.html", "proposed"),
+        ("Corporate Partners", "corporate-partners.html", "proposed"),
     ]),
     ("Resources", "blog.html", [
-        ("Blog", "blog.html"),
-        ("Videos", "videos.html"),
-        ("Pet Care: Cats", "pet-care-cats.html"),
-        ("Pet Care: Dogs", "pet-care-dogs.html"),
-        ("Hurricane Prep", "pet-care-hurricane.html"),
+        ("Educational Messages", "blog.html", "live"),
+        ("Videos &amp; More", "videos-and-more.html", "live"),
+        ("Pet Tips", "pet-tips.html", "live"),
+        ("Cats &amp; Dogs", "cats-and-dogs.html", "live"),
+        ("Hurricanes &amp; Your Pets", "hurricanes-and-your-pets.html", "live"),
+        ("Delaware Residents", "delaware-residents.html", "live"),
     ]),
     ("Contact", "contact.html", []),
 ]
 
+STATUS_TAG = {"new": "New", "proposed": "Proposed"}
+
+
+def tel(number):
+    return "tel:" + number.replace(" ", "-")
+
+
 # ---------------------------------------------------------------------------
 # Layout
 # ---------------------------------------------------------------------------
+def nav_tag(status):
+    if status in STATUS_TAG:
+        return f' <span class="nav-tag">{STATUS_TAG[status]}</span>'
+    return ""
+
+
 def render_nav():
     items = []
     for label, href, children in NAV:
         if children:
             kids = "\n".join(
-                f'        <a href="{c_href}">{c_label}</a>'
-                for c_label, c_href in children
+                f'        <a href="{c_href}">{c_label}{nav_tag(c_status)}</a>'
+                for c_label, c_href, c_status in children
             )
             items.append(f"""    <div class="nav-item">
       <a class="nav-link" href="{href}">{label} ▾</a>
@@ -94,84 +118,75 @@ def render_header():
 
 
 def render_footer():
-    return """<footer class="site-footer">
+    columns = []
+    for label, _href, children in NAV:
+        if not children:
+            continue
+        links = "\n".join(
+            f'          <li><a href="{c_href}">{c_label}{nav_tag(c_status)}</a></li>'
+            for c_label, c_href, c_status in children
+        )
+        columns.append(f"""      <div>
+        <h4>{label}</h4>
+        <ul>
+{links}
+        </ul>
+      </div>""")
+    social = "\n".join(
+        f'          <a href="{url}" target="_blank" rel="noopener">{name}</a>'
+        for name, url in C.SOCIAL
+    )
+    address = "<br>".join(C.ADDRESS_LINES[1:])
+    return f"""<footer class="site-footer">
   <div class="container">
     <div class="footer-trust">
       <div class="badge"><strong>Charity Navigator</strong>Rating placeholder</div>
       <div class="badge"><strong>Candid / GuideStar</strong>Seal placeholder</div>
       <div class="badge"><strong>BBB Wise Giving</strong>Accreditation placeholder</div>
-      <div class="badge"><strong>EIN</strong>XX-XXXXXXX</div>
+      <div class="badge"><strong>Tax ID</strong>{C.EIN}</div>
     </div>
     <div class="footer-grid">
       <div>
         <div class="footer-brand">National Humane Society</div>
-        <p style="font-size:.9rem; color:rgba(255,255,255,.7)">A 501(c)(3) animal welfare organization advocating for, rescuing, and protecting animals across the United States.</p>
+        <p style="font-size:.9rem; color:rgba(255,255,255,.7)">A 501(c)(3) non-profit, tax-exempt charity dedicated to improving the lives of rescue animals across America.</p>
         <p style="font-size:.85rem; margin-top:1rem">
-          <strong style="color:#fff">Contact</strong><br>
-          Customer Service: 877-285-0710<br>
-          <a href="contact.html">Send a message</a>
+          Order Line: <a href="{tel(C.ORDER_LINE)}">{C.ORDER_LINE}</a><br>
+          Customer Service: <a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a><br>
+          <a href="mailto:{C.EMAIL}">{C.EMAIL}</a>
         </p>
+        <p style="font-size:.85rem">{address}</p>
+        <div class="footer-social">
+{social}
+        </div>
       </div>
-      <div>
-        <h4>Our Mission</h4>
-        <ul>
-          <li><a href="about.html">About</a></li>
-          <li><a href="programs.html">Programs</a></li>
-          <li><a href="impact.html">Impact &amp; Outcomes</a></li>
-          <li><a href="shelter-partners.html">Shelter Partners</a></li>
-          <li><a href="financial-transparency.html">Financial Transparency</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Sweepstakes</h4>
-        <ul>
-          <li><a href="sweepstakes.html">Active Sweepstakes</a></li>
-          <li><a href="raffle-plus.html">Raffle Plus</a></li>
-          <li><a href="how-it-works.html">How It Works</a></li>
-          <li><a href="faq.html">FAQ</a></li>
-          <li><a href="rules.html">Rules</a></li>
-          <li><a href="previous-winners.html">Previous Winners</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Get Involved</h4>
-        <ul>
-          <li><a href="donate.html">Donate</a></li>
-          <li><a href="monthly-giving.html">Monthly Giving</a></li>
-          <li><a href="wills-estates.html">Wills &amp; Estates</a></li>
-          <li><a href="volunteer.html">Volunteer</a></li>
-          <li><a href="corporate-partners.html">Corporate Partners</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Resources</h4>
-        <ul>
-          <li><a href="blog.html">Blog</a></li>
-          <li><a href="videos.html">Videos</a></li>
-          <li><a href="pet-care-cats.html">Pet Care: Cats</a></li>
-          <li><a href="pet-care-dogs.html">Pet Care: Dogs</a></li>
-          <li><a href="pet-care-hurricane.html">Hurricane Prep</a></li>
-        </ul>
-      </div>
+{chr(10).join(columns)}
     </div>
     <div class="footer-bottom">
       <div>© 2026 National Humane Society. All rights reserved.</div>
-      <div>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Donor Privacy</a>
-        <a href="#">State Registrations</a>
-        <a href="#">IRS Form 990</a>
-      </div>
+      <div>501(c)(3) tax-exempt charity · Tax ID {C.EIN} · <a href="contact.html">Contact</a></div>
     </div>
   </div>
 </footer>"""
 
 
-def page(title, slug, body, description=None):
-    """Returns the file (slug, html-string) for a single page."""
+def status_banner(status):
+    if status == "proposed":
+        return """<div class="status-banner is-proposed"><div class="container"><strong>Proposed addition.</strong> This page is not on the current site. Its content is placeholder for discussion and has not been confirmed by NHS.</div></div>"""
+    if status == "new":
+        return """<div class="status-banner is-new"><div class="container"><strong>New page.</strong> Not on the current site, but written only from facts in the current Rules and FAQ.</div></div>"""
+    return ""
+
+
+def review_note(html):
+    """Preview-only callout for things the client should confirm or decide."""
+    return f'<aside class="review-note"><strong>For client review</strong>{html}</aside>'
+
+
+def page(title, slug, body, status="live", description=None):
+    """Returns the full html string for a single page."""
     desc = description or f"{title} — National Humane Society"
     body_class = "is-home" if slug == "index.html" else "is-interior"
-    html = f"""<!doctype html>
+    return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -189,6 +204,7 @@ def page(title, slug, body, description=None):
 <body class="{body_class}">
 {render_header()}
 <main>
+{status_banner(status)}
 {body}
 </main>
 {render_footer()}
@@ -200,30 +216,300 @@ def page(title, slug, body, description=None):
 </body>
 </html>
 """
-    return slug, html
 
 
 # ---------------------------------------------------------------------------
 # Reusable content blocks
 # ---------------------------------------------------------------------------
-def page_hero(title, lead, breadcrumb_label):
+def page_hero(title, lead, breadcrumb_label, parent=None):
+    crumb = '<a href="index.html">Home</a> &nbsp;/&nbsp; '
+    if parent:
+        crumb += f'<a href="{parent[1]}">{parent[0]}</a> &nbsp;/&nbsp; '
+    lead_html = f'\n    <p class="lead">{lead}</p>' if lead else ""
     return f"""
 <section class="page-hero">
   <div class="container">
-    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; {breadcrumb_label}</div>
-    <h1>{title}</h1>
-    <p class="lead">{lead}</p>
+    <div class="breadcrumb">{crumb}{breadcrumb_label}</div>
+    <h1>{title}</h1>{lead_html}
   </div>
 </section>
 """
 
 
-PROCEEDS_PANEL = """
-<aside class="proceeds-panel">
-  <h4>Where your entry goes</h4>
-  <p style="margin:0">A clearly disclosed percentage of net proceeds from every sweepstakes entry funds our four mission programs and named shelter-partner grants. <a href="financial-transparency.html">See the breakdown</a>.</p>
-</aside>
+def paragraphs(items):
+    return "\n".join(f"      <p>{p}</p>" for p in items)
+
+
+def bullet_list(items, cls="list-check"):
+    lis = "\n".join(f"        <li>{i}</li>" for i in items)
+    return f'      <ul class="{cls}">\n{lis}\n      </ul>'
+
+
+def ticket_tiers(kind):
+    """kind: 'sweepstakes' or 'raffle-plus' — picks the price column."""
+    cards = []
+    for bought, free, sweeps_price, plus_price, popular in C.TICKET_TIERS:
+        price = sweeps_price if kind == "sweepstakes" else plus_price
+        noun = "Ticket" if bought == 1 else "Tickets"
+        badge = '<span class="tier-badge">Most Popular</span>' if popular else ""
+        cls = "tier-card is-popular" if popular else "tier-card"
+        cards.append(f"""      <div class="{cls}">
+        {badge}
+        <h3>Buy {bought} {noun}</h3>
+        <p class="tier-free">Get {free} Free!</p>
+        <p class="tier-price">${price}</p>
+      </div>""")
+    return '    <div class="tier-grid">\n' + "\n".join(cards) + "\n    </div>"
+
+
+PAYMENT_BLOCK = """        <div class="payment-placeholder">
+          <strong>Secure card payment</strong>
+          <p>Preview only. In production the card number, expiry and security code are typed into a field hosted by the payment processor, so card details never pass through or get stored on this website.</p>
+        </div>"""
+
+PERSON_FIELDS = """        <div class="form-row"><label>Full name</label><input type="text" autocomplete="name" required></div>
+        <div class="grid grid-2">
+          <div class="form-row"><label>Phone number</label><input type="tel" autocomplete="tel" required></div>
+          <div class="form-row"><label>Email address</label><input type="email" autocomplete="email" required></div>
+        </div>
+        <div class="form-row"><label>Street address</label><input type="text" autocomplete="street-address" required></div>
+        <div class="grid grid-3">
+          <div class="form-row"><label>City</label><input type="text" autocomplete="address-level2" required></div>
+          <div class="form-row"><label>State</label><input type="text" autocomplete="address-level1" required></div>
+          <div class="form-row"><label>Zip code</label><input type="text" inputmode="numeric" autocomplete="postal-code" required></div>
+        </div>"""
+
+
+def ticket_choices(kind):
+    """Ticket bundles as selectable cards (radio inputs) for the entry form."""
+    cards = []
+    for bought, free, sweeps_price, plus_price, popular in C.TICKET_TIERS:
+        price = sweeps_price if kind == "sweepstakes" else plus_price
+        noun = "Ticket" if bought == 1 else "Tickets"
+        badge = '<span class="choice-badge">Most Popular</span>' if popular else ""
+        cls = "choice-card ticket-choice is-popular" if popular else "choice-card ticket-choice"
+        summary = f"{bought} {noun.lower()} + {free} free"
+        cards.append(f"""            <label class="{cls}">
+              <input type="radio" name="tickets" value="{bought}" data-price="{price}" data-label="{summary}" required>
+              {badge}
+              <span class="ticket-count">{bought} {noun}</span>
+              <span class="ticket-free">+ {free} free</span>
+              <span class="ticket-price">${price}</span>
+            </label>""")
+    return "\n".join(cards)
+
+
+def prize_choice(label, image, input_type, kind="car"):
+    if image:
+        thumb = f"<span class=\"choice-thumb\" style=\"background-image:url('assets/img/{image}')\"></span>"
+    else:
+        amount = label.split(" ")[0].replace(".00", "")
+        thumb = f'<span class="choice-thumb is-cash">{amount}</span>'
+    required = " required" if input_type == "radio" else ""
+    return f"""            <label class="choice-card prize-choice">
+              <input type="{input_type}" name="prize" value="{label}" data-kind="{kind}"{required}>
+              {thumb}
+              <span class="choice-label">{label}</span>
+            </label>"""
+
+
+def entry_form(kind):
+    """The live 'Secure Form' for Sweepstakes or Raffle Plus, minus raw card fields."""
+    if kind == "sweepstakes":
+        title = "Sweepstakes Secure Form"
+        heading = "Enter the Sweepstakes."
+        prize_legend = "Choose your prize"
+        prize_help = "Select one car or $50,000.00."
+        prizes = "\n".join(prize_choice(label, image, "radio")
+                           for label, image in C.SWEEPSTAKES_PRIZE_OPTIONS)
+    else:
+        title = "Raffle Plus Secure Form"
+        heading = "Enter Raffle Plus."
+        prize_legend = "Choose your prizes"
+        prize_help = 'Pick any two cars, $100,000.00, or one car and $50,000.00. <span class="prize-count" data-prize-count></span>'
+        prizes = "\n".join(prize_choice(label, image, "checkbox", option_kind)
+                           for label, image, option_kind in C.RAFFLE_PLUS_PRIZE_OPTIONS)
+    sources = "".join(f"<option>{s}</option>" for s in C.AD_SOURCES)
+    return f"""
+<section class="section entry-section" id="enter">
+  <div class="container">
+    <div class="entry-head">
+      <p class="eyebrow">{title}</p>
+      <h2>{heading}</h2>
+    </div>
+    <form class="entry-form" data-entry onsubmit="event.preventDefault(); alert('Preview only — entries are not submitted.');">
+      <div class="entry-steps">
+        <fieldset class="entry-step">
+          <legend><span class="step-num">1</span> Select number of tickets</legend>
+          <div class="choice-grid choice-tickets">
+{ticket_choices(kind)}
+          </div>
+        </fieldset>
+
+        <fieldset class="entry-step">
+          <legend><span class="step-num">2</span> {prize_legend}</legend>
+          <p class="step-help">{prize_help}</p>
+          <div class="choice-grid choice-prizes">
+{prizes}
+          </div>
+        </fieldset>
+
+        <fieldset class="entry-step">
+          <legend><span class="step-num">3</span> Your information</legend>
+          <div class="form-grid form-wide">
+{PERSON_FIELDS}
+            <div class="form-row"><label>Where did you see our ad? (select one)</label>
+              <select><option value="">Select one...</option>{sources}</select>
+            </div>
+            <div class="form-row"><label>Comment</label><textarea rows="3"></textarea></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="entry-step">
+          <legend><span class="step-num">4</span> Your payment information</legend>
+{PAYMENT_BLOCK}
+          <label class="check-item" style="margin-top:var(--space-4)"><input type="checkbox"> I want to automatically be entered into future raffles with this payment information.</label>
+        </fieldset>
+      </div>
+
+      <aside class="entry-summary">
+        <h3>Your entry</h3>
+        <dl>
+          <dt>Tickets</dt><dd data-sum="tickets">Not selected yet</dd>
+          <dt>Prize</dt><dd data-sum="prize">Not selected yet</dd>
+          <dt>Next drawing</dt><dd>{C.DRAWING_DATE}</dd>
+        </dl>
+        <div class="entry-total"><span>Total</span><strong data-sum="total">—</strong></div>
+        <button type="submit" class="btn btn-primary btn-lg">Enter Now</button>
+        <ul class="entry-assurances">
+          <li>Ticket number(s) emailed within 48 hours</li>
+          <li>No need to be present to win</li>
+        </ul>
+        <p class="form-footnote">Please remember to spay or neuter your pets. For any questions, please call us at <a href="{tel(C.QUESTIONS_LINE)}">{C.QUESTIONS_LINE}</a>.</p>
+      </aside>
+    </form>
+  </div>
+</section>
 """
+
+
+def prize_cards(include_cash=True):
+    cards = []
+    for slug, label, headline, sub, _tagline, image, _cars in C.PRIZES:
+        detail = sub if sub and sub != label else headline
+        cards.append(f"""      <a class="prize-card" href="{slug}">
+        <div class="prize-image" style="background-image:url('assets/img/{image}')"></div>
+        <div class="prize-body">
+          <h3>{label}</h3>
+          <p>{detail}</p>
+        </div>
+      </a>""")
+    if include_cash:
+        cards.append("""      <a class="prize-card prize-card-cash" href="sweepstakes.html">
+        <div class="prize-image" data-label="$50,000.00"></div>
+        <div class="prize-body">
+          <h3>$50,000.00 Cash</h3>
+          <p>Take the cash instead of a car.</p>
+        </div>
+      </a>""")
+    return '    <div class="grid grid-3">\n' + "\n".join(cards) + "\n    </div>"
+
+
+SWEEPS_CTA = """    <div class="cta-pair">
+      <div class="cta-card">
+        <p class="eyebrow">Raffle Plus</p>
+        <h3>Win Two Cars or $100,000.00</h3>
+        <a class="btn btn-primary" href="raffle-plus.html">Enter Now</a>
+      </div>
+      <div class="cta-card">
+        <p class="eyebrow">Sweepstakes</p>
+        <h3>Win One Car or $50,000.00</h3>
+        <a class="btn btn-primary" href="sweepstakes.html">Enter Now</a>
+      </div>
+    </div>"""
+
+
+def winners_grid(photos_only=False, limit=None):
+    cards = []
+    for name, state, image in C.WINNERS:
+        if photos_only and not image:
+            continue
+        if image:
+            pic = f'<div class="winner-photo" style="background-image:url(\'assets/img/{image}\')" role="img" aria-label="{name}, {state}"></div>'
+        else:
+            pic = '<div class="winner-photo is-empty" aria-hidden="true"></div>'
+        cards.append(f'      <div class="winner-card">{pic}<cite>{name}, {state}</cite></div>')
+        if limit and len(cards) >= limit:
+            break
+    return '    <div class="winner-grid">\n' + "\n".join(cards) + "\n    </div>"
+
+
+def winners_strip():
+    return f"""
+<section class="section section-soft">
+  <div class="container">
+    <div class="section-head">
+      <h2>Previous Winners</h2>
+      <a class="btn btn-secondary" href="previous-winners.html">See all winners →</a>
+    </div>
+{winners_grid(photos_only=True, limit=8)}
+  </div>
+</section>
+"""
+
+
+def donate_amount_buttons(default=25):
+    """Monthly and one-time share every preset except the largest."""
+    shared = [a for a in C.DONATE_MONTHLY if a in C.DONATE_ONE_TIME]
+    top_monthly = [a for a in C.DONATE_MONTHLY if a not in shared][0]
+    top_one_time = [a for a in C.DONATE_ONE_TIME if a not in shared][0]
+    buttons = []
+    for amount in shared:
+        active = " is-active" if amount == default else ""
+        buttons.append(f'        <button type="button" class="amount-btn{active}" data-amount="{amount}">${amount}</button>')
+    buttons.append(f'        <button type="button" class="amount-btn" data-amount="{top_monthly}" data-monthly="{top_monthly}" data-one-time="{top_one_time}">${top_monthly}</button>')
+    buttons.append('        <button type="button" class="amount-btn" data-amount="other">Other</button>')
+    return "\n".join(buttons)
+
+
+DONATE_TOGGLE = """      <div class="donate-toggle">
+        <button type="button" class="is-active" data-mode="monthly">Monthly</button>
+        <button type="button" data-mode="one-time">One-time</button>
+      </div>"""
+
+
+def blog_cards(posts):
+    images = ["animal-vet-exam-2.jpg", "animal-first-aid-1.jpg", "animal-lost-dog.jpg",
+              "animal-winterpup.jpg", "animal-vet-exam.jpg", "animal-heartworm.jpg",
+              "animal-first-aid-2.jpg", "animal-cat.jpg"]
+    cards = []
+    for i, (title, slug) in enumerate(posts):
+        if slug == C.BLOG_SAMPLE_SLUG:
+            href, target = "blog-post.html", ""
+        else:
+            href, target = f"{C.LIVE_SITE}/post/{slug}", ' target="_blank" rel="noopener"'
+        cards.append(f"""      <article class="post-card">
+        <div class="post-image" style="background-image:url('assets/img/{images[i % len(images)]}')"></div>
+        <div class="post-body">
+          <div class="post-tag">Educational Message</div>
+          <h3><a href="{href}"{target}>{title}</a></h3>
+        </div>
+      </article>""")
+    return '    <div class="grid grid-3">\n' + "\n".join(cards) + "\n    </div>"
+
+
+def story_excerpt(index, words=38):
+    title, image, signature, paras = C.STORIES[index]
+    text = " ".join(paras[0].split()[:words]) + "…"
+    pic = f"style=\"background-image:url('assets/img/{image}')\"" if image else ""
+    return f"""      <div class="story-card">
+        <div class="story-image" {pic}></div>
+        <div class="story-body">
+          <blockquote>“{text}”</blockquote>
+          <cite>{signature}</cite>
+        </div>
+      </div>"""
+
 
 NEWSLETTER_BLOCK = """
 <section class="section">
@@ -241,13 +527,36 @@ NEWSLETTER_BLOCK = """
 </section>
 """
 
+MISSION_PILLARS = [
+    ("Rescuing and Protecting Animals in Need", "Providing lifesaving care, rehabilitation, and support to vulnerable animals, while working to ensure their long-term well-being and quality of life."),
+    ("Advocating for Lasting Change", "Confronting cruelty at its root through research, policy reform, and systemic advocacy, especially where animals face the greatest and most entrenched harm."),
+    ("Educating and Empowering Communities", "Helping people understand the issues animals face and encouraging responsible choices, including spaying and neutering, to prevent needless suffering and save lives."),
+    ("Promoting Compassion and Respect", "Leading with respect and compassion as we work alongside our partners, supporters, and communities to build a more humane future for the animals."),
+]
+
+
+def pillars(grid="grid-4"):
+    cards = "\n".join(f"""      <div class="pillar">
+        <div class="pillar-num">{i:02d}</div>
+        <h3>{title}</h3>
+        <p>{text}</p>
+      </div>""" for i, (title, text) in enumerate(MISSION_PILLARS, 1))
+    return f'    <div class="grid {grid}">\n{cards}\n    </div>'
+
+
+MAIL_ADDRESS = "<br>".join(C.ADDRESS_LINES)
 
 # ---------------------------------------------------------------------------
 # Pages
 # ---------------------------------------------------------------------------
 
 # --- HOMEPAGE ---------------------------------------------------------------
-HOME_BODY = """
+COVID_ITEMS = "\n".join(f"""    <div class="faq-item">
+      <h3>{q}</h3>
+      <p>{a}</p>
+    </div>""" for q, a in C.COVID_QA)
+
+HOME_BODY = f"""
 <section class="hero-video">
   <video autoplay muted loop playsinline preload="metadata"
          poster="assets/video/humane-mission-poster.jpg">
@@ -255,16 +564,17 @@ HOME_BODY = """
     <source src="assets/video/humane-mission.mp4" type="video/mp4">
   </video>
   <div class="container hero-content">
-    <p class="eyebrow">A 501(c)(3) animal welfare organization</p>
+    <p class="eyebrow">A 501(c)(3) non-profit, tax-exempt charity</p>
     <h1>Working to end suffering for all animals.</h1>
-    <p class="lead">We rescue, advocate, educate, and promote compassion for animals across the United States — funded by donors and our nationally-known sweepstakes program.</p>
+    <p class="lead">Every year, an estimated 4 to 6 million animals are euthanized. Our goals: spay/neutering, veterinary care for those in need and funding local shelters.</p>
     <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:var(--space-5)">
-      <a class="btn btn-primary btn-lg" href="donate.html">Donate Now</a>
+      <a class="btn btn-primary btn-lg" href="donate.html">Donate Today</a>
       <a class="btn btn-ghost btn-lg" href="about.html">Our Mission</a>
     </div>
   </div>
 </section>
 
+<!-- Stat band — audit proposal; numbers are placeholders until NHS supplies them -->
 <section class="hero-stat-band">
   <div class="container">
     <div class="hero-stat-strip">
@@ -276,146 +586,153 @@ HOME_BODY = """
   </div>
 </section>
 
-<!-- Trust strip — audit Section 3.4 -->
+<!-- Trust strip — audit Section 3.4; ratings are placeholders, the tax ID is real -->
 <section class="trust-strip">
   <div class="container trust-grid">
     <div class="trust-badge"><strong>Charity Navigator</strong>Rating placeholder</div>
     <div class="trust-badge"><strong>Candid Platinum</strong>Seal placeholder</div>
     <div class="trust-badge"><strong>BBB Wise Giving</strong>Accreditation placeholder</div>
-    <div class="trust-badge"><strong>EIN XX-XXXXXXX</strong>IRS-verified 501(c)(3)</div>
+    <div class="trust-badge"><strong>Tax ID {C.EIN}</strong>501(c)(3) tax-exempt charity</div>
   </div>
 </section>
 
 <!-- Mission pillars (verbatim from current /about page) -->
 <section class="section">
   <div class="container">
-    <div class="text-center" style="max-width:680px; margin:0 auto var(--space-7)">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-7)">
       <p class="eyebrow">Our Mission</p>
-      <h2>Four pillars guide every dollar we receive.</h2>
+      <h2>Every animal deserves love and safety.</h2>
+      <p class="lead" style="margin:0 auto">The National Humane Society is dedicated to protecting animals from suffering and improving their lives through compassionate action, education, advocacy and policy change.</p>
     </div>
-    <div class="grid grid-4">
-      <div class="pillar">
-        <div class="pillar-num">01</div>
-        <h3>Rescuing &amp; Protecting</h3>
-        <p>Providing lifesaving care, rehabilitation, and support to vulnerable animals, while working to ensure their long-term well-being and quality of life.</p>
-      </div>
-      <div class="pillar">
-        <div class="pillar-num">02</div>
-        <h3>Advocating for Change</h3>
-        <p>Confronting cruelty at its root through research, policy reform, and systemic advocacy, especially where animals face the greatest and most entrenched harm.</p>
-      </div>
-      <div class="pillar">
-        <div class="pillar-num">03</div>
-        <h3>Educating Communities</h3>
-        <p>Helping people understand the issues animals face and encouraging responsible choices, including spaying and neutering, to prevent needless suffering.</p>
-      </div>
-      <div class="pillar">
-        <div class="pillar-num">04</div>
-        <h3>Promoting Compassion</h3>
-        <p>Leading with respect and compassion as we work alongside our partners, supporters, and communities to build a more humane future for the animals.</p>
-      </div>
+{pillars()}
+  </div>
+</section>
+
+<!-- Sweepstakes — single section, links to the two entry pages -->
+<section class="section section-soft">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Sweepstakes · Drawing {C.DRAWING_DATE}</p>
+      <h2>Win two cars or $100,000 — or one car or $50,000.</h2>
+      <p class="lead" style="margin:0 auto">Choose prizes ranging from Porsche, Corvettes, Teslas, and more! Every entry supports our mission. It's a win-win!</p>
+    </div>
+{SWEEPS_CTA}
+    <div style="margin-top:var(--space-6)">
+{prize_cards()}
     </div>
   </div>
 </section>
 
 <!-- Inline donate widget — audit Section 3.1 -->
-<section class="section section-soft">
+<section class="section">
   <div class="container grid grid-2" style="align-items:center">
     <div>
-      <p class="eyebrow">Make an immediate impact</p>
-      <h2>$25 funds one spay/neuter procedure.</h2>
-      <p>Direct, recurring support is the single most effective way to fund the four mission pillars. Choose an amount, choose monthly or one-time — that's it.</p>
-      <ul class="list-check">
-        <li>100% tax-deductible</li>
-        <li>Cancel monthly giving anytime</li>
-        <li>Receipts emailed automatically</li>
-      </ul>
+      <p class="eyebrow">Donate</p>
+      <h2>Every dollar can make a difference for an animal in need.</h2>
+      <p>For over 25 years, the National Humane Society has worked tirelessly to put an end to animal abuse and neglect. We are one of the national leaders in the areas of rescue, adoption and welfare, and your tax-deductible donation will help fight cruelty and make a life-changing difference for animals across America.</p>
       <a class="btn btn-secondary" href="donate.html">Other ways to give →</a>
     </div>
-    <div class="donate-widget">
-      <h3>Your donation, your impact</h3>
-      <p style="color:var(--color-text-muted); font-size:.95rem">Preview only — connects to GiveWP / Stripe in production.</p>
-      <div class="donate-toggle">
-        <button class="is-active">Monthly</button>
-        <button>One-time</button>
-      </div>
+    <div class="donate-widget" data-donate>
+      <h3>Select gift amount</h3>
+{DONATE_TOGGLE}
       <div class="amount-grid">
-        <button class="amount-btn">$10<small>1 meal/day</small></button>
-        <button class="amount-btn is-active">$25<small>1 spay/neuter</small></button>
-        <button class="amount-btn">$50<small>vet checkup</small></button>
-        <button class="amount-btn">$100<small>shelter grant</small></button>
-        <button class="amount-btn">$250<small>rescue transport</small></button>
-        <button class="amount-btn">Other</button>
+{donate_amount_buttons()}
       </div>
-      <button class="btn btn-primary" style="width:100%; justify-content:center">Donate $25 monthly →</button>
+      <a class="btn btn-primary donate-cta" href="donate.html" style="width:100%; justify-content:center">Donate $25 monthly →</a>
     </div>
   </div>
 </section>
 
-<!-- Sweepstakes — single section, links to hub -->
-<section class="section">
+<!-- Learn How To Help (verbatim cards from the current homepage) -->
+<section class="section section-soft">
   <div class="container">
-    <div style="display:flex; justify-content:space-between; align-items:end; flex-wrap:wrap; gap:16px; margin-bottom:var(--space-6)">
-      <div>
-        <p class="eyebrow">Fundraising sweepstakes</p>
-        <h2>Enter to win. Help fund the mission.</h2>
-        <p class="lead" style="margin:0">A portion of every entry funds our shelter-partner grants and rescue programs. <a href="how-it-works.html">How it works →</a></p>
-      </div>
-      <a class="btn btn-secondary" href="sweepstakes.html">View all active sweepstakes →</a>
+    <div class="text-center" style="max-width:680px; margin:0 auto var(--space-6)">
+      <h2>Learn How To Help</h2>
     </div>
     <div class="grid grid-3">
-      <div class="prize-card">
-        <div class="prize-image" style="background-image:url('assets/img/prize-porsche-911.webp')"></div>
-        <div class="prize-body">
-          <div class="prize-meta"><span>Drawing · Sept 2026</span><span class="prize-status">Active</span></div>
-          <h3>New Porsche 911 Carrera</h3>
-          <p style="color:var(--color-text-muted); margin-bottom:16px">Or take $[XXX,XXX] cash. Entries from $[X].</p>
-          <a class="btn btn-primary btn-sm" href="sweepstakes-detail.html">Enter Now</a>
-        </div>
+      <div class="card">
+        <div class="card-icon">★</div>
+        <h3>Sweepstakes</h3>
+        <p>What is better than helping animals in need while winning some incredible prizes?</p>
+        <a href="sweepstakes.html">Enter Now →</a>
       </div>
-      <div class="prize-card">
-        <div class="prize-image" style="background-image:url('assets/img/prize-tesla-s.webp')"></div>
-        <div class="prize-body">
-          <div class="prize-meta"><span>Drawing · Oct 2026</span><span class="prize-status">Active</span></div>
-          <h3>Tesla Model S Plaid</h3>
-          <p style="color:var(--color-text-muted); margin-bottom:16px">Or take $[XXX,XXX] cash. Entries from $[X].</p>
-          <a class="btn btn-primary btn-sm" href="sweepstakes-detail.html">Enter Now</a>
-        </div>
+      <div class="card">
+        <div class="card-icon">🐾</div>
+        <h3>Our Programs</h3>
+        <p>These animals need our help. Learn about the ways our organization helps our furry friends in need.</p>
+        <a href="animal-programs.html">Learn More →</a>
       </div>
-      <div class="prize-card">
-        <div class="prize-image" style="background-image:url('assets/img/prize-corvette-classic.jpg')"></div>
-        <div class="prize-body">
-          <div class="prize-meta"><span>Drawing · Nov 2026</span><span class="prize-status">Active</span></div>
-          <h3>Classic Corvette Stingray</h3>
-          <p style="color:var(--color-text-muted); margin-bottom:16px">Or take $[XX,XXX] cash. Entries from $[X].</p>
-          <a class="btn btn-primary btn-sm" href="sweepstakes-detail.html">Enter Now</a>
-        </div>
+      <div class="card">
+        <div class="card-icon">♥</div>
+        <h3>Donate</h3>
+        <p>Your donations go a long way to help ensure these animals find a forever home, happy and healthy.</p>
+        <a href="donate.html">Donate Now →</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Impact -->
+<!-- About Us + Make A Difference (verbatim from the current homepage) -->
+<section class="section section-navy">
+  <div class="container grid grid-2">
+    <div>
+      <p class="eyebrow">About Us</p>
+      <p>The National Humane Society (The NHS) is a 501(c)(3) Non-Profit Tax Exempt Charity organization dedicated to improving the lives of rescue animals across America. We stand with shelters and humane societies around the country in the mission to find abandoned animals homes and to help rectify the over-population crisis of dogs and cats in the US.</p>
+      <p>Through our efforts each year, and through the generous donations of our supporters, the National Humane Society aids and assists in funding individual shelters to give volunteers and the animals they serve a fighting chance of making a change. We actively support and engage with communities to improve perceptions of adopting animals, and to protect the animals in question. Our belief is that through education and conversation, we can be the change needed for animals around the country.</p>
+    </div>
+    <div>
+      <p class="eyebrow">Make A Difference</p>
+      <p>Your tax deductible contributions help us combat the animal abuse and animal overpopulation in the United States. The National Humane Society is the difference between living and dying. Your money is genuinely changing the lives of millions of cats and dogs in the United States.</p>
+      <p>Through no fault of their own more than 7 million dogs and cats end up in shelters and breed rescues every year. Only one half of them will find a home. Donations to the National Humane Society go to shelters and breed rescues nationwide.</p>
+      <a class="btn btn-yellow" href="donations-helping-animals.html">See where donations go →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stories (excerpts from the current /donations-helping-animals page) -->
+<section class="section">
+  <div class="container">
+    <div class="text-center" style="max-width:680px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Donations helping animals</p>
+      <h2>Some of the animals your generous donations have helped.</h2>
+    </div>
+    <div class="grid grid-3">
+{story_excerpt(0)}
+{story_excerpt(2)}
+{story_excerpt(3)}
+    </div>
+    <div class="text-center" style="margin-top:var(--space-6)">
+      <a class="btn btn-secondary" href="donations-helping-animals.html">Read their stories →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Latest educational messages -->
+<section class="section section-soft">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Resources</p>
+        <h2>Educational Messages</h2>
+      </div>
+      <a class="btn btn-secondary" href="blog.html">All articles →</a>
+    </div>
+{blog_cards(C.BLOG_POSTS[:3])}
+  </div>
+</section>
+
+<!-- Impact — audit proposal; the three figures are placeholders -->
 <section class="section section-navy">
   <div class="container">
     <div class="text-center" style="max-width:680px; margin:0 auto var(--space-7)">
       <p class="eyebrow">The problem</p>
-      <h2>4 to 6 million animals are euthanized in U.S. shelters every year.</h2>
-      <p class="lead" style="margin:0 auto">Of the [7 million] dogs and cats that enter shelters annually, only about half find homes. We're working to change that.</p>
+      <h2>4 to 6 million animals are euthanized every year.</h2>
+      <p class="lead" style="margin:0 auto">Through no fault of their own more than 7 million dogs and cats end up in shelters and breed rescues every year. Only one half of them will find a home.</p>
     </div>
     <div class="grid grid-3">
-      <div class="stat-block coral">
-        <span class="num">[1,234]</span>
-        <span class="label">Animals placed in homes (2025)</span>
-      </div>
-      <div class="stat-block">
-        <span class="num">[$1.2M]</span>
-        <span class="label">Granted to shelter partners</span>
-      </div>
-      <div class="stat-block coral">
-        <span class="num">[123]</span>
-        <span class="label">Active shelter partners</span>
-      </div>
+      <div class="stat-block coral"><span class="num">[1,234]</span><span class="label">Animals placed in homes (2025)</span></div>
+      <div class="stat-block"><span class="num">[$1.2M]</span><span class="label">Granted to shelter partners</span></div>
+      <div class="stat-block coral"><span class="num">[123]</span><span class="label">Active shelter partners</span></div>
     </div>
     <div class="text-center" style="margin-top:var(--space-6)">
       <a class="btn btn-yellow" href="impact.html">See full impact report →</a>
@@ -423,250 +740,772 @@ HOME_BODY = """
   </div>
 </section>
 
-<!-- Stories -->
+<!-- COVID-19 & Your Pets (verbatim from the current homepage) -->
 <section class="section">
-  <div class="container">
-    <div class="text-center" style="max-width:680px; margin:0 auto var(--space-6)">
-      <p class="eyebrow">Real animals · Real outcomes</p>
-      <h2>Stories from our shelter partners.</h2>
-    </div>
-    <div class="grid grid-3">
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/animal-winterpup.jpg')"></div>
-        <div class="story-body">
-          <blockquote>“[Placeholder — shelter director quote about how a grant funded the medical care that let them save XX dogs from a hoarding case.]”</blockquote>
-          <cite>[Director Name] · [Shelter Name], [State]</cite>
-        </div>
-      </div>
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/animal-cat.jpg')"></div>
-        <div class="story-body">
-          <blockquote>“[Placeholder — adopter quote about meeting their rescue dog through a funded shelter program.]”</blockquote>
-          <cite>[Adopter Name] · Adopted [Pet Name], 2025</cite>
-        </div>
-      </div>
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/animal-vet-exam.jpg')"></div>
-        <div class="story-body">
-          <blockquote>“[Placeholder — donor quote about why they give monthly and what it's meant to them.]”</blockquote>
-          <cite>[Donor Name] · Monthly donor since [year]</cite>
-        </div>
-      </div>
-    </div>
+  <div class="container-narrow">
+    <h2>COVID-19 &amp; Your Pets</h2>
+{COVID_ITEMS}
   </div>
 </section>
-
-<!-- Get involved -->
-<section class="section section-soft">
-  <div class="container">
-    <div class="text-center" style="max-width:680px; margin:0 auto var(--space-6)">
-      <p class="eyebrow">Get involved</p>
-      <h2>Five ways to help, beyond a donation.</h2>
-    </div>
-    <div class="grid grid-3">
-      <div class="card">
-        <div class="card-icon">$</div>
-        <h3>Monthly giving</h3>
-        <p>Predictable funding lets us commit to multi-year shelter partnerships.</p>
-        <a href="monthly-giving.html">Become a monthly donor →</a>
-      </div>
-      <div class="card">
-        <div class="card-icon">♥</div>
-        <h3>Volunteer</h3>
-        <p>From shelter shifts to remote skills-based volunteering.</p>
-        <a href="volunteer.html">Find a volunteer role →</a>
-      </div>
-      <div class="card">
-        <div class="card-icon">📜</div>
-        <h3>Wills &amp; estates</h3>
-        <p>Leave a legacy that protects animals for generations.</p>
-        <a href="wills-estates.html">Planned giving →</a>
-      </div>
-      <div class="card">
-        <div class="card-icon">🏢</div>
-        <h3>Corporate partners</h3>
-        <p>Workplace giving, sponsorships, and matching gifts.</p>
-        <a href="corporate-partners.html">Partner with us →</a>
-      </div>
-      <div class="card">
-        <div class="card-icon">★</div>
-        <h3>Sweepstakes entries</h3>
-        <p>A portion of every entry directly funds the mission.</p>
-        <a href="sweepstakes.html">View active sweepstakes →</a>
-      </div>
-      <div class="card">
-        <div class="card-icon">📨</div>
-        <h3>Spread the word</h3>
-        <p>Share an animal story or a sweepstakes entry with someone you love.</p>
-        <a href="contact.html">Get a media kit →</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Latest from blog -->
-<section class="section">
-  <div class="container">
-    <div style="display:flex; justify-content:space-between; align-items:end; flex-wrap:wrap; gap:16px; margin-bottom:var(--space-6)">
-      <div>
-        <p class="eyebrow">Resources</p>
-        <h2>From the blog.</h2>
-      </div>
-      <a class="btn btn-secondary" href="blog.html">All articles →</a>
-    </div>
-    <div class="grid grid-3">
-      <article class="post-card">
-        <div class="post-image" style="background-image:url('assets/img/animal-vet-exam-2.jpg')"></div>
-        <div class="post-body">
-          <div class="post-tag">Donor education</div>
-          <h3><a href="blog-post.html">How your $10 monthly donation really helps shelter animals</a></h3>
-          <p style="color:var(--color-text-muted)">A breakdown of where every dollar goes — and the math behind why monthly giving compounds.</p>
-        </div>
-      </article>
-      <article class="post-card">
-        <div class="post-image" style="background-image:url('assets/img/animal-first-aid-1.jpg')"></div>
-        <div class="post-body">
-          <div class="post-tag">Volunteer guide</div>
-          <h3><a href="blog-post.html">How to volunteer at a local animal shelter</a></h3>
-          <p style="color:var(--color-text-muted)">Six ways to start — even if you've never set foot in a shelter before.</p>
-        </div>
-      </article>
-      <article class="post-card">
-        <div class="post-image" style="background-image:url('assets/img/animal-lost-dog.jpg')"></div>
-        <div class="post-body">
-          <div class="post-tag">Pet care</div>
-          <h3><a href="blog-post.html">Hurricane prep checklist for pet owners</a></h3>
-          <p style="color:var(--color-text-muted)">Evacuation kits, microchipping, and the 72-hour plan every household needs.</p>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
 """ + NEWSLETTER_BLOCK
-
 
 # --- ABOUT ------------------------------------------------------------------
 ABOUT_BODY = page_hero(
-    "Our Mission",
-    "We are an animal welfare organization working to end suffering for all animals — through rescue, advocacy, education, and a commitment to compassion.",
-    "Our Mission",
-) + """
+    "Mission Statement",
+    "The National Humane Society is dedicated to protecting animals from suffering and improving their lives through compassionate action, education, advocacy and policy change. We believe every animal deserves love and safety, and we work every day to make that belief a reality.",
+    "About",
+) + f"""
 <section class="section">
-  <div class="container-narrow">
-    <p class="lead">For decades, the National Humane Society has stood with shelters, humane societies, and rescue groups across the United States. We're funded by individual donors and a national sweepstakes program — and every dollar of net proceeds is committed to our four mission pillars.</p>
+  <div class="container">
+    <p class="eyebrow text-center">Our Mission</p>
+    <h2 class="text-center" style="margin-bottom:var(--space-7)">We carry out our mission by:</h2>
+{pillars("grid-2")}
   </div>
 </section>
 
 <section class="section section-soft">
-  <div class="container">
-    <p class="eyebrow text-center">The four pillars</p>
-    <h2 class="text-center" style="margin-bottom:var(--space-7)">Every program traces back to one of these four commitments.</h2>
-    <div class="grid grid-2">
-      <div class="pillar">
-        <div class="pillar-num">01</div>
-        <h3>Rescuing and Protecting Animals in Need</h3>
-        <p>Providing lifesaving care, rehabilitation, and support to vulnerable animals, while working to ensure their long-term well-being and quality of life.</p>
-      </div>
-      <div class="pillar">
-        <div class="pillar-num">02</div>
-        <h3>Advocating for Lasting Change</h3>
-        <p>Confronting cruelty at its root through research, policy reform, and systemic advocacy, especially where animals face the greatest and most entrenched harm.</p>
-      </div>
-      <div class="pillar">
-        <div class="pillar-num">03</div>
-        <h3>Educating and Empowering Communities</h3>
-        <p>Helping people understand the issues animals face and encouraging responsible choices, including spaying and neutering, to prevent needless suffering and save lives.</p>
-      </div>
-      <div class="pillar">
-        <div class="pillar-num">04</div>
-        <h3>Promoting Compassion and Respect</h3>
-        <p>Leading with respect and compassion as we work alongside our partners, supporters, and communities to build a more humane future for the animals.</p>
-      </div>
-    </div>
+  <div class="container-narrow">
+    <p class="lead">Together, we give animals a voice and work daily toward a world where animals are no longer abused or forgotten. Each year, spay and neuter programs help save millions of animals, yet far too many still lose their lives simply because there are not enough homes. Lasting change is only possible with the help of compassionate people who are willing to speak up and take action.</p>
   </div>
 </section>
 
 <section class="section">
-  <div class="container">
-    <p class="eyebrow text-center">Leadership</p>
-    <h2 class="text-center" style="margin-bottom:var(--space-7)">Board of directors &amp; executive team.</h2>
-    <div class="grid grid-4">
-      <div class="card text-center">
-        <div style="width:120px; height:120px; margin:0 auto var(--space-4); border-radius:50%; background:var(--color-navy-50)"></div>
-        <h3>[Name Placeholder]</h3>
-        <p style="color:var(--color-text-muted); font-size:.9rem">Executive Director</p>
-      </div>
-      <div class="card text-center">
-        <div style="width:120px; height:120px; margin:0 auto var(--space-4); border-radius:50%; background:var(--color-navy-50)"></div>
-        <h3>[Name Placeholder]</h3>
-        <p style="color:var(--color-text-muted); font-size:.9rem">Board Chair</p>
-      </div>
-      <div class="card text-center">
-        <div style="width:120px; height:120px; margin:0 auto var(--space-4); border-radius:50%; background:var(--color-navy-50)"></div>
-        <h3>[Name Placeholder]</h3>
-        <p style="color:var(--color-text-muted); font-size:.9rem">Director of Programs</p>
-      </div>
-      <div class="card text-center">
-        <div style="width:120px; height:120px; margin:0 auto var(--space-4); border-radius:50%; background:var(--color-navy-50)"></div>
-        <h3>[Name Placeholder]</h3>
-        <p style="color:var(--color-text-muted); font-size:.9rem">Director of Development</p>
-      </div>
+  <div class="container grid grid-2">
+    <div>
+      <h2>Contribute by mail.</h2>
+      <p>To contribute by mail, please send a personal check or money order made payable to the National Humane Society to:</p>
+      <p><strong>{MAIL_ADDRESS}</strong></p>
     </div>
-    <p class="text-center" style="margin-top:var(--space-6)"><a href="contact.html">Full board roster &amp; bios →</a></p>
-  </div>
-</section>
-
-<section class="section section-navy">
-  <div class="container-narrow text-center">
-    <p class="eyebrow">A 501(c)(3) nonprofit</p>
-    <h2>Verifiable, transparent, accountable.</h2>
-    <p class="lead" style="margin:0 auto var(--space-5)">EIN XX-XXXXXXX · Registered for charitable solicitation in [XX] states · Form 990 publicly filed annually.</p>
-    <a class="btn btn-yellow" href="financial-transparency.html">View financial transparency →</a>
+    <aside class="proceeds-panel">
+      <h4>A 501(c)(3) tax-exempt charity</h4>
+      <p>Our tax ID number is {C.EIN}.</p>
+      <p style="margin:0"><a href="donate.html">Donate online →</a></p>
+    </aside>
   </div>
 </section>
 """
 
-# --- PROGRAMS ---------------------------------------------------------------
+# --- ANIMAL PROGRAMS --------------------------------------------------------
+def link_list(items):
+    lis = "\n".join(
+        f'        <li><a href="{url}" target="_blank" rel="noopener">{name}</a></li>'
+        for name, url in items
+    )
+    return f'      <ul class="dir-list">\n{lis}\n      </ul>'
+
+
+def state_directory():
+    blocks = []
+    for state, orgs in C.VET_STATES:
+        lis = []
+        for name, url, note in orgs:
+            note_html = f'<br><span class="dir-note">{note}</span>' if note else ""
+            lis.append(f'          <li><a href="{url}" target="_blank" rel="noopener">{name}</a>{note_html}</li>')
+        blocks.append(f"""      <div class="dir-state">
+        <h4>{state}</h4>
+        <ul class="dir-list">
+{chr(10).join(lis)}
+        </ul>
+      </div>""")
+    return "\n".join(blocks)
+
+
 PROGRAMS_BODY = page_hero(
-    "Programs",
-    "How we translate the four mission pillars into specific programs — funded by your donations and sweepstakes entries.",
-    "Programs",
-) + """
+    "Animal Programs",
+    "Spay/neuter and veterinary care are the two programs at the center of our work.",
+    "Animal Programs",
+) + f"""
 <section class="section">
-  <div class="container grid grid-2" style="gap:var(--space-7)">
+  <div class="container grid grid-2">
     <div class="card">
       <div class="card-icon">🐾</div>
-      <h3>Shelter Partner Grant Program</h3>
-      <p>Direct grants to vetted shelter partners for medical care, spay/neuter, transport, and emergency response. [Placeholder description of grant criteria, application cycle, and 2025 totals.]</p>
-      <a href="shelter-partners.html">See partner directory →</a>
+      <h3>Spay/Neuter</h3>
+      <h4>Additional Spay/Neuter Info</h4>
+      <p><a href="https://www.animalleague.org/get-involved/spay-usa/" target="_blank" rel="noopener">List of animal shelters and rescue organizations by state →</a></p>
     </div>
     <div class="card">
       <div class="card-icon">🏥</div>
-      <h3>Spay &amp; Neuter Initiative</h3>
-      <p>Funds low-cost and free spay/neuter procedures through clinic partnerships in underserved areas. [Placeholder — XX procedures funded in 2025.]</p>
-      <a href="impact.html">Program impact →</a>
-    </div>
-    <div class="card">
-      <div class="card-icon">🚐</div>
-      <h3>Emergency &amp; Disaster Response</h3>
-      <p>Rapid funding and supplies for shelters and rescue groups responding to hurricanes, wildfires, hoarding cases, and large-scale neglect. [Placeholder — XX deployments in 2025.]</p>
-      <a href="pet-care-hurricane.html">Disaster prep resources →</a>
-    </div>
-    <div class="card">
-      <div class="card-icon">🎓</div>
-      <h3>Education &amp; Advocacy</h3>
-      <p>Public education campaigns, policy advocacy at state and federal levels, and resources for communities working to advance animal welfare laws.</p>
-      <a href="blog.html">Educational articles →</a>
+      <h3>Veterinary Care</h3>
+      <h4>Veterinary Care Help</h4>
+      <p>Here is a list of organizations that provide financial assistance to pet owners who are having trouble affording veterinary care. Keep in mind that each organization is independent, and therefore, have their own set of rules and guidelines as to how they distribute assistance. This means you will have to look into each one individually to determine if you qualify for assistance.</p>
     </div>
   </div>
 </section>
-""" + NEWSLETTER_BLOCK
 
-# --- IMPACT -----------------------------------------------------------------
+<section class="section section-soft">
+  <div class="container">
+    <h2>Veterinary care assistance.</h2>
+    <div class="grid grid-3" style="margin-bottom:var(--space-6)">
+      <div>
+        <h4>National organizations</h4>
+{link_list(C.VET_GENERAL)}
+      </div>
+      <div>
+        <h4>Breed Specific Assistance Programs</h4>
+{link_list(C.VET_BREED)}
+      </div>
+      <div>
+        <h4>Working Dog</h4>
+{link_list(C.VET_WORKING_DOG)}
+      </div>
+    </div>
+    <h3>State-Specific Programs</h3>
+    <div class="dir-states">
+{state_directory()}
+    </div>
+    <p style="margin-top:var(--space-5)"><a href="https://www.cdc.gov/healthypets/" target="_blank" rel="noopener">For more information visit the CDC Healthy Pets page →</a></p>
+  </div>
+</section>
+"""
+
+# --- DONATIONS HELPING ANIMALS ----------------------------------------------
+def story_long(story):
+    title, image, signature, paras = story
+    pic = f'<img class="story-photo" src="assets/img/{image}" alt="{title}" loading="lazy">' if image else ""
+    return f"""    <article class="story-long">
+      {pic}
+      <h3>{title}</h3>
+{paragraphs(paras)}
+      <p class="story-sign">{signature}</p>
+    </article>"""
+
+
+LOGO_ROW = "\n".join(
+    f'      <img src="assets/img/{img}" alt="{name}" loading="lazy">' for img, name in C.PARTNER_LOGOS
+)
+
+DONATIONS_BODY = page_hero(
+    "Donations Helping Animals",
+    "These are the shelters and animal groups that we have recently given money to.",
+    "Donations Helping Animals",
+) + f"""
+<section class="section">
+  <div class="container">
+    <div class="logo-row">
+{LOGO_ROW}
+    </div>
+    <p class="lead text-center" style="margin:var(--space-6) auto 0">Without your help this would not be possible. These groups shelter, feed, provide veterinarian care and rescue animals from storms.</p>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container-narrow">
+    <div class="section-head">
+      <h2>Below are some of the recent animals your generous donations have helped.</h2>
+      <a class="btn btn-primary" href="donate.html">Donate Today</a>
+    </div>
+    {review_note("<p>Cupcake's letter is published on the current site alongside a photo of the family's credit statement. The photo is left out here, and the letter itself is a request for help rather than an outcome — worth deciding whether it stays.</p>")}
+{chr(10).join(story_long(s) for s in C.STORIES)}
+  </div>
+</section>
+"""
+
+# --- SWEEPSTAKES + RAFFLE PLUS (entry pages) --------------------------------
+CAR_LINEUP = """    <ul class="lineup">
+      <li><strong>Porsche</strong> 911 Carrera Cabriolet, Macan S, Taycan, 1965 356C</li>
+      <li><strong>Corvette</strong> Stingray, Classic Corvette</li>
+      <li><strong>Tesla</strong> Model S, 3, Y</li>
+      <li><strong>EVs</strong> Rivian R1T, Corvette E-Ray</li>
+    </ul>"""
+
+LINEUP_NOTE = review_note("<p>The headline lineup above (Tesla Model S, 3, Y; Rivian R1T) does not match the prize list in the entry form (Tesla Y, Rivian, Lucid, Cadillac Escalade). Both are carried over as published — which list is current?</p>")
+
+
+def sweeps_hero(crumb, eyebrow, headline, lead, image, ticket_fact):
+    """Navy hero for the two entry pages, with the facts people ask about first."""
+    return f"""
+<section class="sweeps-hero">
+  <div class="container sweeps-hero-grid">
+    <div>
+      <div class="breadcrumb">{crumb}</div>
+      <p class="eyebrow">{eyebrow}</p>
+      <h1>{headline}</h1>
+      <p class="lead">{lead}</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="#enter">Enter Now</a>
+        <a class="btn btn-ghost btn-lg" href="#prizes">See the prizes</a>
+      </div>
+    </div>
+    <div class="sweeps-hero-image" style="background-image:url('assets/img/{image}')" role="img" aria-label="One of the prize cars"></div>
+  </div>
+  <div class="container">
+    <div class="fact-strip">
+      <div><span class="fact-label">Next drawing</span><span class="fact-value">{C.DRAWING_DATE}</span></div>
+      <div><span class="fact-label">Tickets</span><span class="fact-value">{ticket_fact}</span></div>
+      <div><span class="fact-label">To win</span><span class="fact-value">No need to be present</span></div>
+      <div><span class="fact-label">Ticket numbers</span><span class="fact-value">Emailed within 48 hours</span></div>
+    </div>
+  </div>
+</section>
+"""
+
+
+def upsell(eyebrow, text, label, href):
+    return f"""
+<section class="upsell-band">
+  <div class="container upsell">
+    <div>
+      <p class="eyebrow">{eyebrow}</p>
+      <p class="upsell-text">{text}</p>
+    </div>
+    <a class="btn btn-yellow" href="{href}">{label}</a>
+  </div>
+</section>
+"""
+
+
+SWEEPSTAKES_BODY = sweeps_hero(
+    '<a href="index.html">Home</a> &nbsp;/&nbsp; Sweepstakes',
+    "Sweepstakes",
+    'Win a new car or <span class="hl">$50,000.00!</span>',
+    "Choose prizes ranging from Porsche, Corvettes, Teslas, and more! Every entry supports our mission. It's a win-win!",
+    "prize-porsche-911.webp",
+    "$25.00 each",
+) + f"""
+<section class="section" id="prizes">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">The prizes</p>
+        <h2>One winner. Your choice of car — or $50,000.00.</h2>
+      </div>
+    </div>
+{CAR_LINEUP}
+    {LINEUP_NOTE}
+{prize_cards()}
+  </div>
+</section>
+""" + upsell(
+    "Raffle Plus",
+    "Want two cars? A Raffle Plus ticket wins any two cars, $100,000.00, or one car and $50,000.00.",
+    "See Raffle Plus →",
+    "raffle-plus.html",
+) + entry_form("sweepstakes") + winners_strip()
+
+RAFFLE_BODY = sweeps_hero(
+    '<a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; Raffle Plus',
+    "Raffle Plus",
+    'Win two new cars or <span class="hl">$100,000.00!</span>',
+    "Pick any two cars, $100,000.00, or one car and $50,000.00. Every entry supports our mission.",
+    "prize-corvette-new.jpg",
+    f"From ${C.TICKET_TIERS[0][3]}",
+) + f"""
+<section class="section" id="prizes">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">The prizes</p>
+        <h2>One winner. Any two cars — or $100,000.00.</h2>
+      </div>
+    </div>
+{CAR_LINEUP}
+{prize_cards(include_cash=False)}
+  </div>
+</section>
+""" + upsell(
+    "Sweepstakes",
+    "Happy with one car? Sweepstakes tickets are $25.00 and win one car or $50,000.00.",
+    "See Sweepstakes →",
+    "sweepstakes.html",
+) + entry_form("raffle-plus") + winners_strip()
+
+
+# --- PRIZE PAGES (one template, eight pages) --------------------------------
+def prize_body(prize):
+    _slug, label, headline, sub, tagline, _image, cars = prize
+    blocks = []
+    for name, year, image, specs in cars:
+        rows = "\n".join(f"          <dt>{k}</dt><dd>{v}</dd>" for k, v in specs)
+        year_html = f'<p class="eyebrow">{year}</p>' if year else ""
+        blocks.append(f"""    <div class="car-block">
+      <img src="assets/img/{image}" alt="{name}" loading="lazy">
+      <div>
+        {year_html}
+        <h3>{name} Specs</h3>
+        <dl class="spec-list">
+{rows}
+        </dl>
+      </div>
+    </div>""")
+    eyebrow = f"{tagline} · Car Sweepstakes" if tagline else "Car Sweepstakes"
+    sub_html = f"{sub} — or $50,000.00!" if sub else "Or $50,000.00!"
+    return f"""
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; {label}</div>
+    <p class="eyebrow">{eyebrow}</p>
+    <h1>{headline}</h1>
+    <p class="lead">{sub_html}</p>
+    <p><strong>Drawing date {C.DRAWING_DATE}.</strong> Need not be present to win!</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+{chr(10).join(blocks)}
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+{ticket_tiers("sweepstakes")}
+    <div style="margin-top:var(--space-6)">
+{SWEEPS_CTA}
+    </div>
+  </div>
+</section>
+"""
+
+
+# --- HOW IT WORKS (new page, from the current Rules and FAQ) ---------------
+HOW_IT_WORKS_BODY = page_hero(
+    "How the Sweepstakes Works",
+    "One drawing, one winner, and the winner chooses the prize. Here is how it works, start to finish.",
+    "How It Works",
+    parent=("Sweepstakes", "sweepstakes.html"),
+) + f"""
+<section class="section">
+  <div class="container-narrow prose">
+    <h2>1. Choose your ticket.</h2>
+    <p><a href="sweepstakes.html">Sweepstakes</a> tickets are $25.00. The winner has a choice of either any one car, or $50,000.00 cash.</p>
+    <p>With a <a href="raffle-plus.html">Raffle Plus</a> ticket the winner has their choice of any two cars, or one car and the cash prize.</p>
+
+    <h2>2. Order online, by phone or by mail.</h2>
+    <p>Tickets can be paid for by credit card, money order or check. Place an order online, call our order line at <a href="{tel(C.ORDER_LINE)}">{C.ORDER_LINE}</a>, or send a check to {", ".join(C.ADDRESS_LINES[1:])}.</p>
+    <p>You can also buy a ticket as a gift: simply use the other person's name and contact information when completing your purchase.</p>
+
+    <h2>3. Get your ticket numbers.</h2>
+    <p>Your ticket numbers will be emailed or mailed to you within 48 hours of your purchase.</p>
+
+    <h2>4. The drawing.</h2>
+    <p>The winning ticket will be drawn on {C.DRAWING_DATE}. You do not need to be present to win. The winner will receive a phone call directly from us immediately following the drawing; if we cannot reach the winner by phone, we will email them.</p>
+
+    <h2>5. Claiming the prize.</h2>
+    <p>The winner must claim the prize within 30 days. Payment of all applicable federal, state and local taxes, fees and surcharges, tags and registration fees are the responsibility of the winner, who must provide proof of insurance to take delivery. If the cash prize is selected it will be paid in 3 installments, 60 days apart.</p>
+
+    <h2>No purchase is necessary.</h2>
+    <p>Please send a self-addressed stamped envelope to NHS, {", ".join(C.ADDRESS_LINES[1:])}.</p>
+
+    <p><a class="btn btn-secondary" href="sweepstakes-rules.html">Read the full Sweepstakes Rules →</a></p>
+  </div>
+</section>
+"""
+
+# --- FAQ --------------------------------------------------------------------
+FAQ_ITEMS = "\n".join(f"""    <div class="faq-item">
+      <h3>{q}</h3>
+      {a}
+    </div>""" for q, a in C.FAQ)
+
+FAQ_BODY = page_hero(
+    "Frequently Asked Questions",
+    "",
+    "FAQ",
+    parent=("Sweepstakes", "sweepstakes.html"),
+) + f"""
+<section class="section">
+  <div class="container-narrow">
+    {review_note("<ul><li>The current FAQ still says the drawing is on June 27, 2025 at 10 A.M. and gives 40 E Main St, Newark as the address for checks. This preview uses {C.DRAWING_DATE} and 406 Suburban DR #364, which appear everywhere else on the site.</li><li>The FAQ says entrants must be 18 or older; the Rules do not state a minimum age.</li><li>“Only 1000 participants will be allowed to purchase tickets” — still accurate?</li></ul>")}
+{FAQ_ITEMS}
+  </div>
+</section>
+""" + winners_strip()
+
+# --- RULES ------------------------------------------------------------------
+RULES_ITEMS = "\n".join(f"      <li>{r}</li>" for r in C.RULES)
+
+RULES_BODY = page_hero(
+    "Sweepstakes Rules",
+    "Rules and Regulations of the National Humane Society Sweepstakes.",
+    "Rules",
+    parent=("Sweepstakes", "sweepstakes.html"),
+) + f"""
+<section class="section">
+  <div class="container-narrow">
+    <ol class="rules-list">
+{RULES_ITEMS}
+    </ol>
+  </div>
+</section>
+""" + winners_strip()
+
+# --- PREVIOUS WINNERS -------------------------------------------------------
+WINNERS_BODY = page_hero(
+    "Previous Winners",
+    "",
+    "Previous Winners",
+    parent=("Sweepstakes", "sweepstakes.html"),
+) + f"""
+<section class="section">
+  <div class="container">
+{winners_grid()}
+    <div style="margin-top:var(--space-7)">
+{SWEEPS_CTA}
+    </div>
+  </div>
+</section>
+"""
+
+# --- DONATE -----------------------------------------------------------------
+DONATE_BODY = page_hero(
+    "Donate Now",
+    "Every dollar can make a difference for an animal in need.",
+    "Donate",
+) + f"""
+<section class="section">
+  <div class="container grid grid-2" style="align-items:start">
+    <div>
+      <img class="rounded-img" src="assets/img/donate-hero.jpeg" alt="" loading="lazy">
+      <p style="margin-top:var(--space-5)">For over 25 years, the National Humane Society has worked tirelessly to put an end to animal abuse and neglect. We are one of the national leaders in the areas of rescue, adoption and welfare, and your tax-deductible donation will help fight cruelty and make a life-changing difference for animals across America.</p>
+      <p>Thank you for making the National Humane Society and the animals we serve a part of your life.</p>
+    </div>
+    <form class="donate-widget" data-donate onsubmit="event.preventDefault(); alert('Preview only — donations are not submitted.');">
+      <h3>Select gift amount</h3>
+{DONATE_TOGGLE}
+      <div class="amount-grid">
+{donate_amount_buttons()}
+      </div>
+      <div class="form-grid">
+        <div class="form-row"><label>Other amount</label><input type="text" inputmode="decimal" placeholder="$ Other Amount"></div>
+{PERSON_FIELDS}
+        <div class="form-row"><label>Your payment information</label>
+{PAYMENT_BLOCK}
+        </div>
+        <button type="submit" class="btn btn-primary donate-cta" style="width:100%; justify-content:center">Donate $25 monthly →</button>
+        <p class="form-footnote">Tax-deductible · 501(c)(3) · Tax ID {C.EIN}. Please remember to spay or neuter your pets. For any questions, please call us at <a href="{tel(C.QUESTIONS_LINE)}">{C.QUESTIONS_LINE}</a>.</p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <h2 class="text-center" style="margin-bottom:var(--space-6)">Other ways to give.</h2>
+    <div class="grid grid-3">
+      <div class="card"><h3>By mail</h3><p>Send a personal check or money order made payable to the National Humane Society to {", ".join(C.ADDRESS_LINES[1:])}.</p></div>
+      <div class="card"><h3>Wills &amp; estates</h3><p>Assigning the National Humane Society in your will or trust is a helpful way for our organization to continue serving animals in need.</p><a href="wills-estates.html">Learn more →</a></div>
+      <div class="card"><h3>Sweepstakes</h3><p>What is better than helping animals in need while winning some incredible prizes?</p><a href="sweepstakes.html">Enter Now →</a></div>
+    </div>
+  </div>
+</section>
+"""
+
+# --- WILLS & ESTATES --------------------------------------------------------
+BEQUEST = """<blockquote class="bequest">"I give and bequeath to The National Humane Society, a non-profit organization, addressed presently located at ________, in the sum of ________, or ________ of my estate, which will be used for the accomplishment of its general purposes."</blockquote>"""
+
+WILLS_BODY = page_hero(
+    "Wills &amp; Estates",
+    f"We are a 501(c)(3) tax-exempt charity. Our tax ID number is: {C.EIN}",
+    "Wills &amp; Estates",
+) + f"""
+<section class="section">
+  <div class="container-narrow prose">
+    {review_note("<p>Carried over from the current page with three small clean-ups: the sample bequest language has blanks where the address and amounts go (shown here as underscores); a paragraph about spaying that had been pasted into the Life Insurance section is left out; and the second of two identical “Charitable gifts by assigning a beneficiary” headings is retitled.</p>")}
+    <h2>Distributing Wills</h2>
+    <p>Assigning the National Humane Society in your will or trust is a helpful way for our organization to continue serving animals in need. Several programs and services we offer and sponsor have been supported by individuals including the National Humane Society in their wills.</p>
+    <h4>Different ways to give back with your will or trust</h4>
+{bullet_list([
+    "By setting a specific dollar amount or asset in your will to the National Humane Society",
+    "Set a percentage of your estate assigned to the National Humane Society",
+    "Designate the remaining of your estate that remains after all bequests to family and/or loved ones",
+])}
+    <h4>Below is an example of how to include such language in your will or trust:</h4>
+    {BEQUEST}
+
+    <h2>Trusts</h2>
+    <h4>Trusts can also be gifted to the National Humane Society to include:</h4>
+{bullet_list(["Cash gifts", "Personal property", "Real Estate", "Securities"])}
+
+    <h2>Your Will and/or Trusts can be bequeathed in two different forms</h2>
+{bullet_list([
+    "For unrestricted general purposes. The National Humane Society will use these resources without specific direction.",
+    "A specific request (the gift is used to sponsor a specific program)",
+])}
+
+    <h2>Assets from Retirement</h2>
+    <h4>Charitable gifts by assigning a beneficiary</h4>
+    <p>The National Humane Society can be named as a beneficiary or contingent beneficiary from your retirement account. If the account is left to a charity, there are no income taxes subject to the organization. For questions and assistance, contact your retirement plan’s administrator.</p>
+    <h4>Charitable gifts through a trust</h4>
+    <p>A trust can be named for your retirement plan during the event of excess or unused assets. Further, the trust can issue income to other beneficiaries or heirs for a period of time. After the time has passed, the trust’s assets will fund the assigned charity.</p>
+
+    <h2>Life Insurance Policies</h2>
+    <p>A life insurance policy is often forgotten as a way to give back to charity like the National Humane Society. As this policy is similar to beneficiaries in a will, there are many ways to issue a charitable gift.</p>
+{bullet_list([
+    "Adding a beneficiary or beneficiaries is quite simple. Contact your life insurance provider so they can help add in the charity, such as the National Humane Society, to the policy.",
+    "Create a new policy with the National Humane Society named as the primary beneficiary. Here, you will make premium payments to your insurance company or pay on behalf of the National Humane Society. This type of gift does qualify as an income tax deduction.",
+    "Give your paid-up policy and assign the National Humane Society as the new owner. Once the transfer is complete, the National Humane Society can receive the full amount immediately or receive the benefit at a later time. The original policy holder will receive an income tax deduction depending on the value of the policy.",
+])}
+
+    <h2>Disclaimer</h2>
+    <p>The information posted on this page is to provide a general understanding and help guide the reader. For serious inquiries, please consult with your attorney, tax advisor, or business manager. This information is not to be viewed as financial, legal, tax or advice.</p>
+  </div>
+</section>
+"""
+
+# --- EDUCATIONAL MESSAGES (blog index) --------------------------------------
+BLOG_BODY = page_hero(
+    "Educational Messages",
+    "Articles on adoption, pet care, shelters and animal welfare.",
+    "Educational Messages",
+) + f"""
+<section class="section">
+  <div class="container">
+    {review_note("<p>The twelve most recent titles from the current site are shown. Only <em>How Your $10 Monthly Donation Really Helps Shelter Animals</em> opens inside the preview, as the article template; the others open the current site. All of the roughly 100 posts move across when the site is built.</p>")}
+{blog_cards(C.BLOG_POSTS)}
+    <p class="text-center" style="margin-top:var(--space-6)"><a class="btn btn-secondary" href="{C.LIVE_SITE}/blog" target="_blank" rel="noopener">View every article on the current site →</a></p>
+  </div>
+</section>
+"""
+
+# --- BLOG POST (article template, using a real post) -----------------------
+BLOG_POST_BODY = f"""
+<section class="page-hero">
+  <div class="container-narrow">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="blog.html">Educational Messages</a></div>
+    <h1>How Your $10 Monthly Donation Really Helps Shelter Animals</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-narrow prose">
+    {review_note("<p>This article is copied from the current site as far as the first section, to show the article layout. Further down, the published post promises annual impact reports, personalized updates for monthly donors and the option to designate a gift to a specific fund — none of which the current site offers. Worth confirming before it is carried over.</p>")}
+    <p>In 2025, an estimated 5.8 million dogs and cats entered U.S. shelters and rescues—a 2% decrease from the previous year, according to Shelter Animals Count's 2025 Annual Data Report. While that's encouraging progress, the numbers remain staggering: about 4.2 million animals were adopted (a modest 0.7% increase), but roughly 597,000 were euthanized, and 757,000 experienced non-live outcomes overall (a slight 1% decline). The national save rate holds steady at around 82%, with two out of three shelters achieving no-kill status (90%+ live release rate). These figures represent real animals facing uncertainty due to overcrowding, medical emergencies, economic surrenders, and limited shelter resources.</p>
+    <p>At the National Humane Society, we exist to change that trajectory. We raise donations to directly support animals in crisis—providing food, medical care, transport, and foster resources—while also assisting partner shelters nationwide with funding for supplies, low-cost clinics, emergency responses, and capacity-building programs. In an era of rising veterinary costs and ongoing intake pressures, consistent support makes the biggest difference.</p>
+    <p>That's why a small, recurring gift—like $10 per month—packs such powerful impact. Less than the cost of a streaming subscription or a couple of coffees, this amount delivers reliable funding that shelters can count on month after month. Below, we break it down transparently: where the money goes, real stories of animals helped, why monthly giving outperforms one-time donations in tough times, and how you can get involved.</p>
+
+    <h2>Where Exactly Does Your $10 Monthly Donation Go? A Detailed Breakdown</h2>
+    <p>Shelters face a wide range of expenses, from daily basics to life-saving interventions. The National Humane Society stretches every dollar through bulk purchasing, volunteer coordination, and partnerships with local rescues. Here's how a modest $10 monthly gift contributes in practical terms (based on national averages and our program data):</p>
+    <p><strong>Nutrition and Daily Care.</strong> A medium-sized dog requires about 2–3 cups of quality dry food per day, costing roughly $10–$20 per week (depending on brand and portion). Your $10 covers a full week's worth of nutritious food for one medium dog or several cats/kittens. This prevents malnutrition, supports immune health during stressful shelter stays, and keeps animals adoptable longer.</p>
+    <p><strong>Preventive Veterinary Care.</strong> Core vaccines, deworming, flea/tick prevention, and initial exams are essential to stop outbreaks and prepare animals for adoption. These basics cost $50–$150 per animal. Your recurring gift contributes toward preventive packages, reducing the risk of illness spreading in crowded facilities and lowering long-term medical burdens.</p>
+
+    <p><a href="{C.LIVE_SITE}/post/{C.BLOG_SAMPLE_SLUG}" target="_blank" rel="noopener">Continue reading on the current site →</a></p>
+
+    <div class="proceeds-panel" style="margin-top:var(--space-7)">
+      <h4>Ready to make a reliable difference?</h4>
+      <p style="margin:0 0 var(--space-3)">Your $10 monthly gift is a commitment to consistent hope for animals and shelters nationwide.</p>
+      <a class="btn btn-primary btn-sm" href="donate.html">Donate today →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <h2 class="text-center" style="margin-bottom:var(--space-6)">More educational messages.</h2>
+{blog_cards(C.BLOG_POSTS[9:12])}
+  </div>
+</section>
+"""
+
+# --- VIDEOS & MORE ----------------------------------------------------------
+VIDEO_EMBEDS = "\n".join(
+    f'      <div class="video-embed"><iframe src="https://player.vimeo.com/video/{vid}" title="National Humane Society video" loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div>'
+    for vid in C.VIDEO_IDS
+)
+
+VIDEOS_BODY = page_hero(
+    "Videos and More",
+    "",
+    "Videos &amp; More",
+) + f"""
+<section class="section">
+  <div class="container">
+    {review_note("<p>The current page shows these eight videos without titles, surrounded by leftover template filler text (“Heading 1… Lorem ipsum”). The filler is dropped here; titles for each video would help.</p>")}
+    <div class="video-grid">
+{VIDEO_EMBEDS}
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container-narrow text-center">
+    <p class="eyebrow">Our Instagram</p>
+    <h2>Follow @nationalhumane.</h2>
+    <p class="lead" style="margin:0 auto var(--space-5)">Rescue stories, sweepstakes news and animal welfare updates.</p>
+    <a class="btn btn-primary" href="{C.INSTAGRAM_FEATURED}" target="_blank" rel="noopener">View our featured post →</a>
+    <a class="btn btn-secondary" href="{C.SOCIAL[0][1]}" target="_blank" rel="noopener">Follow on Instagram</a>
+  </div>
+</section>
+"""
+
+# --- ANIMAL INFO: PET TIPS --------------------------------------------------
+PET_TIPS_BODY = page_hero(
+    "Pet Tips",
+    "How to Support Shelter Pets with Time, Space, and Money",
+    "Pet Tips",
+) + f"""
+<section class="section">
+  <div class="container-narrow prose">
+    {review_note("<p>On the current site this tab is headed “Help keep your pet safe during the colder months by following these simple guidelines”, but the article beneath it is about supporting shelter pets and contains several links to unrelated third-party sites. The opening and the list of ideas are shown here; the links are left out. Should this article stay, or should the cold-weather tips come back?</p>")}
+    <p>Busy parents juggling work and family, apartment renters with pet limits, and animal lovers on tight budgets often carry the same quiet worry: caring about shelter and rescue pets feels meaningful, but the “right” way to help can feel out of reach. That tension is real, community support for animals is built by many people doing what they can, not a few people doing everything. Volunteering for animal shelters, pet fostering programs, and animal welfare advocacy aren’t reserved for experts or people with perfect circumstances. With a clear sense of what fits a real life, small commitments can ripple into lifesaving impact.</p>
+
+    <h2>Understanding the Three Ways to Help Shelter Pets</h2>
+    <p>Helping shelter and rescue pets usually falls into three lanes: giving time, giving space, or giving money. Time means hands-on volunteering roles that keep daily care running. Space means fostering, even short term, so an animal can rest outside the kennel. Money means donations, supplies, or sponsor style gifts that fill the gaps.</p>
+
+    <h2>High-Impact Ways to Help This Month</h2>
+    <p>If you’ve ever wished you could do something for shelter pets but didn’t know what would matter most, this is your menu. Pick one or two actions for this month, then build a rhythm you can actually sustain.</p>
+    <ol>
+      <li>Try fostering with a clear, short plan</li>
+      <li>Volunteer where the shelter is actually bottlenecked</li>
+      <li>Make one strategic, boring donation that keeps doors open</li>
+      <li>Run a “wish-list only” pet supply drive in a tight time box</li>
+      <li>Be the admin support rescues rarely have</li>
+      <li>Show up for one rescue event and bring a plan, not just enthusiasm</li>
+    </ol>
+    <p><a href="{C.LIVE_SITE}/animal-info" target="_blank" rel="noopener">Read the full article on the current site →</a></p>
+  </div>
+</section>
+"""
+
+# --- ANIMAL INFO: CATS & DOGS -----------------------------------------------
+def article_cards():
+    cards = []
+    for title, href in C.CATS_DOGS_ARTICLES:
+        link = f'<a href="{href}">Read more →</a>' if href else '<span class="dir-note">No article on the current site</span>'
+        cards.append(f'      <div class="card"><h3>{title}</h3>{link}</div>')
+    return "\n".join(cards)
+
+
+CATS_DOGS_BODY = page_hero(
+    "Information on Dogs &amp; Cats",
+    "Please read these very informative articles on topics ranging from the problems with the overpopulation of dogs and cats to useful techniques for caring for your dogs and cats.",
+    "Cats &amp; Dogs",
+) + f"""
+<section class="section">
+  <div class="container">
+    {review_note("<p>The current site lists these five titles, but only the last one links to an article. The other four have no content behind them — are the articles available, or should the titles be removed?</p>")}
+    <div class="grid grid-3">
+{article_cards()}
+    </div>
+  </div>
+</section>
+"""
+
+# --- ANIMAL INFO: FOODS TO AVOID --------------------------------------------
+FOODS_ITEMS = "\n".join(f"""    <div class="faq-item">
+      <h3>{name}</h3>
+      <p>{text}</p>
+    </div>""" for name, text in C.FOODS_TO_AVOID)
+
+FOODS_BODY = page_hero(
+    "ASPCA List of People Foods to Avoid Feeding Your Pets",
+    "If you suspect your pet has eaten any of the following foods, please note the amount ingested and contact your veterinarian or the ASPCA Animal Poison Control Center at (888) 426-4435.",
+    "Foods to Avoid",
+    parent=("Cats &amp; Dogs", "cats-and-dogs.html"),
+) + f"""
+<section class="section">
+  <div class="container-narrow">
+{FOODS_ITEMS}
+  </div>
+</section>
+"""
+
+# --- ANIMAL INFO: HURRICANES ------------------------------------------------
+KIT_BLOCKS = "\n".join(f"""      <div>
+        <h4>{name}</h4>
+{bullet_list(items)}
+      </div>""" for name, items in C.HURRICANE_KIT)
+
+MUST_HAVES = "\n".join(
+    f"    <h4>{name}</h4>\n{bullet_list(items)}" for name, items in C.HURRICANE_MUST_HAVES
+)
+
+HURRICANE_BODY = page_hero(
+    "Hurricanes &amp; Your Pets",
+    "Every member of your family should know what he or she needs to take when you evacuate. You also should prepare supplies for your pets.",
+    "Hurricanes &amp; Your Pets",
+) + f"""
+<section class="section">
+  <div class="container-narrow prose">
+    {review_note("<p>This guidance was written for Louisiana — it names the LA/SPCA, the Louisiana Department of Agriculture &amp; Forestry and a free-tag offer “for a limited time”. Carried over unchanged; worth generalizing for a national audience.</p>")}
+    <p>Stock up on nonperishables well ahead of time, add perishable items at the last minute, and have everything ready to go at a moment's notice. Keep everything accessible, stored in sturdy containers (duffel bags, covered trash containers, etc.) that can be carried easily.</p>
+    <p>Place the following items in a waterproof container so you're ready to go if you need to evacuate.</p>
+    <div class="grid grid-2">
+{KIT_BLOCKS}
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container grid grid-2">
+    <div>
+      <h2>Major Don'ts</h2>
+{bullet_list(C.HURRICANE_DONTS)}
+    </div>
+    <div>
+      <h2>Major Dos</h2>
+{bullet_list(C.HURRICANE_DOS)}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-narrow prose">
+    <h2>Must Haves</h2>
+{MUST_HAVES}
+    <p>Planning and preparation will help you weather the disaster, but your home may be a very different place afterward, whether you have taken shelter at home or elsewhere, be patient with your pets after a disaster. Try to get them back into their normal routines as soon as possible, and be ready for behavioral problems that may result from the stress of the situation. If behavioral problems persist, or if your pet seems to be having any health problems, talk to your veterinarian.</p>
+  </div>
+</section>
+"""
+
+# --- ANIMAL INFO: DELAWARE RESIDENTS ----------------------------------------
+DELAWARE_BODY = page_hero(
+    "Delaware Residents",
+    "",
+    "Delaware Residents",
+) + """
+<section class="section">
+  <div class="container-narrow prose">
+    <p class="lead">NHS is a nonprofit organization incorporated in Delaware that provides funding to animal shelters nationally, not just in Delaware.</p>
+    <p>NHS solicits and sells raffles to a national market and provides funding to local non-profits to help animal over population in any of the 50 states. Delaware supporters will be used for the benefit of Delaware non profits whose mission is related to animal care, shelters or programs to fight animal over population. In the past NHS has given to Delaware Humane Society and Faithful Friends.</p>
+  </div>
+</section>
+"""
+
+# --- CONTACT ----------------------------------------------------------------
+CONTACT_BODY = page_hero(
+    "Contact",
+    "Should you need any information concerning our car raffles, the spaying and neutering of cats and dogs or if you have any other questions or comments please contact us.",
+    "Contact",
+) + f"""
+<section class="section">
+  <div class="container grid grid-2">
+    <div>
+      <h2>Get in Touch</h2>
+      <h3>Order Line</h3>
+      <p><a href="{tel(C.ORDER_LINE)}">{C.ORDER_LINE}</a></p>
+      <h3 style="margin-top:var(--space-5)">Customer Service</h3>
+      <p><a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a></p>
+      <h3 style="margin-top:var(--space-5)">Email</h3>
+      <p><a href="mailto:{C.EMAIL}">{C.EMAIL}</a></p>
+      <h3 style="margin-top:var(--space-5)">By mail</h3>
+      <p>N.H.S.<br>{"<br>".join(C.ADDRESS_LINES[1:])}</p>
+      <h3 style="margin-top:var(--space-5)">@NationalHumane</h3>
+      <p>Follow us on X for the latest updates, rescue stories, and animal welfare news.</p>
+      <a class="btn btn-secondary btn-sm" href="{C.SOCIAL[3][1]}" target="_blank" rel="noopener">Follow on X</a>
+    </div>
+    <div>
+      <h2>Send a message.</h2>
+      {review_note("<p>The current contact page lists phone, email and mailing address only. This form is a proposed addition.</p>")}
+      <form class="form-grid" onsubmit="event.preventDefault(); alert('Preview only — contact form');">
+        <div class="form-row"><label>Full name</label><input type="text" required></div>
+        <div class="form-row"><label>Email address</label><input type="email" required></div>
+        <div class="form-row"><label>Message</label><textarea rows="6" required></textarea></div>
+        <button class="btn btn-primary" type="submit">Send →</button>
+      </form>
+    </div>
+  </div>
+</section>
+"""
+
+# ---------------------------------------------------------------------------
+# Proposed pages — audit recommendations, not on the current site.
+# Bracketed values are placeholders that need real numbers from NHS.
+# ---------------------------------------------------------------------------
+
+# --- IMPACT (proposed) ------------------------------------------------------
 IMPACT_BODY = page_hero(
     "Impact &amp; Outcomes",
-    "Annual numbers, multi-year trends, and the specific outcomes your support makes possible. All figures audited annually.",
+    "Annual numbers, multi-year trends, and the specific outcomes your support makes possible.",
     "Impact",
 ) + """
 <section class="section">
@@ -685,7 +1524,7 @@ IMPACT_BODY = page_hero(
 <section class="section section-soft">
   <div class="container">
     <h2>Multi-year trend.</h2>
-    <p class="lead">Animals placed in homes through funded shelter-partner programs.</p>
+    <p class="lead">Animals placed in homes through funded shelter programs.</p>
     <table class="table-clean">
       <thead><tr><th>Year</th><th>Animals placed</th><th>Shelter partners</th><th>Grants disbursed</th></tr></thead>
       <tbody>
@@ -696,596 +1535,80 @@ IMPACT_BODY = page_hero(
         <tr><td>2025</td><td>[1,234]</td><td>[123]</td><td>$[1.2 M]</td></tr>
       </tbody>
     </table>
-    <p style="margin-top:var(--space-5)"><a class="btn btn-secondary" href="financial-transparency.html">View audited financials →</a></p>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <h2 class="text-center" style="margin-bottom:var(--space-6)">Outcome stories from 2025.</h2>
-    <div class="grid grid-3">
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/animal-first-aid-2.jpg')"></div>
-        <div class="story-body">
-          <blockquote>“[Placeholder narrative — a hoarding case in [State] where a grant funded medical care for [XX] dogs.]”</blockquote>
-          <cite>[Shelter Name]</cite>
-        </div>
-      </div>
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/animal-lost-dog.jpg')"></div>
-        <div class="story-body">
-          <blockquote>“[Placeholder narrative — hurricane response funding evacuation transport for [XXX] animals.]”</blockquote>
-          <cite>[Shelter Name]</cite>
-        </div>
-      </div>
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/animal-heartworm.jpg')"></div>
-        <div class="story-body">
-          <blockquote>“[Placeholder narrative — community spay/neuter clinic preventing [X,XXX] unwanted litters.]”</blockquote>
-          <cite>[Clinic Name]</cite>
-        </div>
-      </div>
-    </div>
+    <p style="margin-top:var(--space-5)"><a class="btn btn-secondary" href="donations-helping-animals.html">See the groups we have funded →</a></p>
   </div>
 </section>
 """
 
-# --- SHELTER PARTNERS -------------------------------------------------------
-SHELTER_BODY = page_hero(
-    "Shelter Partners",
-    "Every grant goes to a vetted, named shelter partner. The directory below lists every organization we funded in 2025 — searchable by state.",
-    "Shelter Partners",
-) + """
-<section class="section">
-  <div class="container">
-    <div class="grid grid-2" style="margin-bottom:var(--space-6)">
-      <div class="form-row">
-        <label>Search by name or city</label>
-        <input type="text" placeholder="e.g., Austin Pets Alive">
-      </div>
-      <div class="form-row">
-        <label>Filter by state</label>
-        <select>
-          <option>All states</option>
-          <option>Alabama</option><option>Alaska</option><option>...</option>
-        </select>
-      </div>
-    </div>
-    <table class="table-clean">
-      <thead><tr><th>Shelter / Rescue</th><th>City, State</th><th>Focus</th><th>2025 grant</th></tr></thead>
-      <tbody>
-        <tr><td>[Placeholder Shelter Name]</td><td>[City], [ST]</td><td>Spay/neuter</td><td>$[XX,XXX]</td></tr>
-        <tr><td>[Placeholder Rescue Name]</td><td>[City], [ST]</td><td>Medical care</td><td>$[XX,XXX]</td></tr>
-        <tr><td>[Placeholder Shelter Name]</td><td>[City], [ST]</td><td>Hurricane response</td><td>$[XX,XXX]</td></tr>
-        <tr><td>[Placeholder Shelter Name]</td><td>[City], [ST]</td><td>Adoption events</td><td>$[XX,XXX]</td></tr>
-        <tr><td>[Placeholder Rescue Name]</td><td>[City], [ST]</td><td>Foster network</td><td>$[XX,XXX]</td></tr>
-      </tbody>
-    </table>
-    <p class="text-center" style="margin-top:var(--space-5); color:var(--color-text-muted)">[Replace with full directory of 2025 shelter partners — currently the live site names zero. This page is the highest-impact addition the audit identified.]</p>
-  </div>
-</section>
-
-<section class="section section-soft">
-  <div class="container-narrow text-center">
-    <p class="eyebrow">For shelters</p>
-    <h2>Apply for a grant.</h2>
-    <p class="lead">Shelter partners are vetted annually. Grant applications open quarterly.</p>
-    <a class="btn btn-primary" href="contact.html">Start an application →</a>
-  </div>
-</section>
-"""
-
-# --- FINANCIAL TRANSPARENCY -------------------------------------------------
+# --- FINANCIAL TRANSPARENCY (proposed) --------------------------------------
 FINANCIAL_BODY = page_hero(
     "Financial Transparency",
-    "We publish our audited financials, IRS Form 990, and a clear breakdown of how every dollar is spent.",
+    "Audited financials, IRS Form 990, and a clear breakdown of how every dollar is spent.",
     "Financial Transparency",
-) + """
+) + f"""
 <section class="section">
   <div class="container-narrow">
-    <h2>Where every dollar goes (2025).</h2>
-    <p class="lead">Independently audited. Form 990 publicly filed.</p>
+    <h2>Where every dollar goes.</h2>
     <div class="expense-bar">
-      <span style="background:var(--color-navy); flex: 78">78% Programs</span>
-      <span style="background:var(--color-coral); flex: 14">14% Fundraising</span>
-      <span style="background:var(--color-text-muted); flex: 8">8% Admin</span>
+      <span style="background:var(--color-navy); flex: 78">[78]% Programs</span>
+      <span style="background:var(--color-coral); flex: 14">[14]% Fundraising</span>
+      <span style="background:var(--color-text-muted); flex: 8">[8]% Admin</span>
     </div>
     <p style="color:var(--color-text-muted); font-size:.9rem">Percentages are placeholders. Replace with figures from the most recent audited financial statement.</p>
 
     <h3 style="margin-top:var(--space-7)">Documents</h3>
     <ul class="list-check">
-      <li><a href="#">2025 Annual Report (PDF) — placeholder link</a></li>
-      <li><a href="#">2024 Audited Financial Statements (PDF) — placeholder link</a></li>
-      <li><a href="#">IRS Form 990 (most recent) — placeholder link</a></li>
-      <li><a href="#">501(c)(3) Determination Letter — placeholder link</a></li>
-      <li><a href="#">State charitable solicitation registrations — placeholder link</a></li>
+      <li>Annual Report (PDF) — to be supplied</li>
+      <li>Audited Financial Statements (PDF) — to be supplied</li>
+      <li>IRS Form 990 (most recent) — to be supplied</li>
+      <li>501(c)(3) Determination Letter — to be supplied</li>
+      <li>State charitable solicitation registrations — to be supplied</li>
     </ul>
 
-    <h3 style="margin-top:var(--space-7)">Third-party ratings</h3>
+    <h3 style="margin-top:var(--space-7)">Verify our status</h3>
+    <p>We are a 501(c)(3) tax-exempt charity. Our tax ID number is {C.EIN}.</p>
     <div class="grid grid-3" style="margin-top:var(--space-5)">
-      <div class="card text-center">
-        <strong>Charity Navigator</strong>
-        <p style="margin-top:8px; color:var(--color-text-muted)">Rating placeholder</p>
-        <a href="#">View profile →</a>
-      </div>
-      <div class="card text-center">
-        <strong>Candid (GuideStar)</strong>
-        <p style="margin-top:8px; color:var(--color-text-muted)">Seal placeholder</p>
-        <a href="#">View profile →</a>
-      </div>
-      <div class="card text-center">
-        <strong>BBB Wise Giving</strong>
-        <p style="margin-top:8px; color:var(--color-text-muted)">Accreditation placeholder</p>
-        <a href="#">View profile →</a>
-      </div>
+      <div class="card text-center"><strong>Charity Navigator</strong><p style="margin-top:8px; color:var(--color-text-muted)">Rating placeholder</p></div>
+      <div class="card text-center"><strong>Candid (GuideStar)</strong><p style="margin-top:8px; color:var(--color-text-muted)">Seal placeholder</p></div>
+      <div class="card text-center"><strong>BBB Wise Giving</strong><p style="margin-top:8px; color:var(--color-text-muted)">Accreditation placeholder</p></div>
     </div>
   </div>
 </section>
 """
 
-# --- SWEEPSTAKES HUB --------------------------------------------------------
-SWEEPSTAKES_BODY = page_hero(
-    "Sweepstakes",
-    "A portion of every entry funds our shelter-partner grants and rescue programs. Browse active sweepstakes below.",
-    "Sweepstakes",
-) + """
-<section class="section">
-  <div class="container">
-    """ + PROCEEDS_PANEL + """
-    <div class="grid grid-3" style="margin-top:var(--space-6)">
-      <div class="prize-card">
-        <div class="prize-image" style="background-image:url('assets/img/prize-porsche-911.webp')"></div>
-        <div class="prize-body">
-          <div class="prize-meta"><span>Drawing · Sept 2026</span><span class="prize-status">Active</span></div>
-          <h3>New Porsche 911 Carrera</h3>
-          <p style="color:var(--color-text-muted); margin-bottom:16px">Or take $[XXX,XXX] cash. Entries from $[X].</p>
-          <a class="btn btn-primary btn-sm" href="sweepstakes-detail.html">Enter Now</a>
-        </div>
-      </div>
-      <div class="prize-card">
-        <div class="prize-image" style="background-image:url('assets/img/prize-porsche-1965.jpg')"></div>
-        <div class="prize-body">
-          <div class="prize-meta"><span>Drawing · Sept 2026</span><span class="prize-status">Active</span></div>
-          <h3>1965 Porsche 356</h3>
-          <p style="color:var(--color-text-muted); margin-bottom:16px">Or take $[XXX,XXX] cash. Entries from $[X].</p>
-          <a class="btn btn-primary btn-sm" href="sweepstakes-detail.html">Enter Now</a>
-        </div>
-      </div>
-      <div class="prize-card">
-        <div class="prize-image" style="background-image:url('assets/img/prize-tesla-s.webp')"></div>
-        <div class="prize-body">
-          <div class="prize-meta"><span>Drawing · Oct 2026</span><span class="prize-status">Active</span></div>
-          <h3>Tesla Model S Plaid</h3>
-          <p style="color:var(--color-text-muted); margin-bottom:16px">Or take $[XXX,XXX] cash. Entries from $[X].</p>
-          <a class="btn btn-primary btn-sm" href="sweepstakes-detail.html">Enter Now</a>
-        </div>
-      </div>
-      <div class="prize-card">
-        <div class="prize-image" style="background-image:url('assets/img/prize-corvette-new.jpg')"></div>
-        <div class="prize-body">
-          <div class="prize-meta"><span>Drawing · Oct 2026</span><span class="prize-status">Active</span></div>
-          <h3>New Corvette Stingray</h3>
-          <p style="color:var(--color-text-muted); margin-bottom:16px">Or take $[XX,XXX] cash. Entries from $[X].</p>
-          <a class="btn btn-primary btn-sm" href="sweepstakes-detail.html">Enter Now</a>
-        </div>
-      </div>
-      <div class="prize-card">
-        <div class="prize-image" style="background-image:url('assets/img/prize-corvette-classic.jpg')"></div>
-        <div class="prize-body">
-          <div class="prize-meta"><span>Drawing · Nov 2026</span><span class="prize-status">Active</span></div>
-          <h3>Classic Corvette Stingray</h3>
-          <p style="color:var(--color-text-muted); margin-bottom:16px">Or take $[XX,XXX] cash. Entries from $[X].</p>
-          <a class="btn btn-primary btn-sm" href="sweepstakes-detail.html">Enter Now</a>
-        </div>
-      </div>
-      <div class="prize-card">
-        <div class="prize-image" style="background-image:url('assets/img/prize-rivian.jpg')"></div>
-        <div class="prize-body">
-          <div class="prize-meta"><span>Drawing · Nov 2026</span><span class="prize-status">Active</span></div>
-          <h3>EV Truck Bundle (Rivian + Lightning)</h3>
-          <p style="color:var(--color-text-muted); margin-bottom:16px">Or take $[XXX,XXX] cash. Entries from $[X].</p>
-          <a class="btn btn-primary btn-sm" href="sweepstakes-detail.html">Enter Now</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section section-soft">
-  <div class="container-narrow text-center">
-    <p class="eyebrow">Open ended</p>
-    <h2>Raffle Plus — entries any time, drawings every month.</h2>
-    <p class="lead">$[XX] in monthly cash prizes. Subscribe and you're entered every month automatically.</p>
-    <a class="btn btn-primary" href="raffle-plus.html">Learn about Raffle Plus →</a>
-  </div>
-</section>
-"""
-
-# --- SWEEPSTAKES DETAIL (template) ------------------------------------------
-SWEEPSTAKES_DETAIL_BODY = """
-<section class="page-hero">
-  <div class="container">
-    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; New Porsche 911</div>
-    <div class="grid grid-2" style="align-items:center">
-      <div>
-        <p class="eyebrow">Active sweepstakes · Drawing September 30, 2026</p>
-        <h1>New Porsche 911 Carrera</h1>
-        <p class="lead">Or take $[XXX,XXX] cash. Entries start at $[X]. Every entry funds shelter-partner grants.</p>
-      </div>
-      <div class="prize-image" style="aspect-ratio:16/10; border-radius:var(--radius-lg); background-image:url('assets/img/prize-porsche-911.webp'); background-size:cover; background-position:center"></div>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container grid grid-2">
-    <div>
-      <h2>Enter the sweepstakes.</h2>
-      <p>Preview only — production form posts to Gravity Forms with state/age validation, integrated with the payment processor and email tools.</p>
-      <form class="form-grid" onsubmit="event.preventDefault(); alert('Preview only — entry form');">
-        <div class="grid grid-2">
-          <div class="form-row"><label>First name</label><input type="text" required></div>
-          <div class="form-row"><label>Last name</label><input type="text" required></div>
-        </div>
-        <div class="form-row"><label>Email</label><input type="email" required></div>
-        <div class="form-row"><label>State</label>
-          <select required><option value="">Select state</option><option>California</option><option>Texas</option><option>New York</option></select>
-        </div>
-        <div class="form-row"><label>Number of entries</label>
-          <select><option>1 entry · $[X]</option><option>10 entries · $[XX]</option><option>50 entries · $[XX]</option></select>
-        </div>
-        <div class="form-row" style="font-size:.85rem; color:var(--color-text-muted)">
-          <label style="display:flex; gap:8px; text-transform:none; letter-spacing:0; font-family:var(--font-body); font-weight:400; font-size:.9rem">
-            <input type="checkbox" required>
-            I am 18+, a U.S. resident, and have read the <a href="rules.html">Official Rules</a>.
-          </label>
-        </div>
-        <button type="submit" class="btn btn-primary btn-lg">Submit Entry →</button>
-      </form>
-    </div>
-    <div>
-      """ + PROCEEDS_PANEL + """
-      <div style="margin-top:var(--space-5)">
-        <h3>Prize details</h3>
-        <ul class="list-check">
-          <li>2026 Porsche 911 Carrera — base trim</li>
-          <li>Cash alternative: $[XXX,XXX]</li>
-          <li>Drawing: September 30, 2026</li>
-          <li>Winner notified by phone &amp; email within 7 days</li>
-          <li>Free Alternative Method of Entry available — see <a href="rules.html">Rules</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section section-soft">
-  <div class="container-narrow">
-    <h2 class="text-center">Common questions.</h2>
-    <div class="faq-item">
-      <h3>Do I have to donate to enter?</h3>
-      <p>No. A free Alternative Method of Entry is available by mail and is detailed in the <a href="rules.html">Official Rules</a>.</p>
-    </div>
-    <div class="faq-item">
-      <h3>What percentage of my entry funds animal welfare?</h3>
-      <p>[XX]% of net proceeds (after prize cost, fulfillment, and required fees) is granted to shelter partners and mission programs.</p>
-    </div>
-    <div class="faq-item">
-      <h3>Is my entry tax-deductible?</h3>
-      <p>Sweepstakes entries are not tax-deductible because the entry includes a chance to win a prize. <a href="donate.html">Tax-deductible donations</a> are made through our donate flow.</p>
-    </div>
-  </div>
-</section>
-"""
-
-# --- RAFFLE PLUS ------------------------------------------------------------
-RAFFLE_BODY = page_hero(
-    "Raffle Plus",
-    "A subscription-style sweepstakes — one signup keeps you entered in monthly drawings for cash prizes.",
-    "Raffle Plus",
-) + """
-<section class="section">
-  <div class="container grid grid-2" style="align-items:center">
-    <div>
-      <h2>How Raffle Plus works.</h2>
-      <ol style="font-size:1.05rem; line-height:1.8">
-        <li>Subscribe at $[XX]/month — one form, one time.</li>
-        <li>You're automatically entered in every monthly drawing.</li>
-        <li>Cash prizes drawn every month — $[XX,XXX] in total.</li>
-        <li>A portion of every monthly subscription funds the mission.</li>
-        <li>Cancel anytime.</li>
-      </ol>
-      <a class="btn btn-primary btn-lg" href="#">Subscribe — $[XX]/month</a>
-    </div>
-    """ + PROCEEDS_PANEL + """
-  </div>
-</section>
-"""
-
-# --- HOW IT WORKS -----------------------------------------------------------
-HOW_IT_WORKS_BODY = page_hero(
-    "How Sweepstakes Work",
-    "Sweepstakes-as-fundraising is a legitimate, regulated nonprofit model. Here's exactly how ours operates.",
-    "How It Works",
-) + """
-<section class="section">
-  <div class="container-narrow">
-    <h2>1. You enter.</h2>
-    <p>Choose a prize, choose your entry tier (more entries = more chances to win). Or use the free Alternative Method of Entry by mail. Either way, you have an equal chance per entry.</p>
-
-    <h2>2. We fund the mission.</h2>
-    <p>Net proceeds — after the cost of the prize, payment processing, legal, and bonding fees — are granted to our shelter partners and used to fund the four mission pillars. The exact percentage is published on each prize page and in our <a href="financial-transparency.html">audited financials</a>.</p>
-
-    <h2>3. We draw a winner.</h2>
-    <p>Drawings are conducted by a licensed third-party administrator on the date listed on each prize page. Winners are contacted by phone and email within 7 days.</p>
-
-    <h2>4. The winner takes the prize — or cash.</h2>
-    <p>Every prize has a published cash alternative. Winners are responsible for taxes; we provide IRS Form W-2G when required.</p>
-
-    <a class="btn btn-secondary" href="rules.html">Read the Official Rules →</a>
-  </div>
-</section>
-"""
-
-# --- FAQ --------------------------------------------------------------------
-FAQ_BODY = page_hero(
-    "Frequently Asked Questions",
-    "Everything you might want to know about donations, sweepstakes entries, and how the National Humane Society operates.",
-    "FAQ",
-) + """
-<section class="section">
-  <div class="container-narrow">
-    <h2>Donations</h2>
-    <div class="faq-item">
-      <h3>Is my donation tax-deductible?</h3>
-      <p>Yes. We are a registered 501(c)(3) (EIN XX-XXXXXXX). You'll receive a receipt by email immediately and a year-end summary in January.</p>
-    </div>
-    <div class="faq-item">
-      <h3>Where does my donation go?</h3>
-      <p>Approximately [78]% of every dollar funds programs (shelter partner grants, spay/neuter, disaster response, education). See the <a href="financial-transparency.html">full breakdown</a>.</p>
-    </div>
-    <div class="faq-item">
-      <h3>Can I cancel monthly giving?</h3>
-      <p>Anytime, in one click, from your donor account. Or email us — we respond within one business day.</p>
-    </div>
-
-    <h2 style="margin-top:var(--space-7)">Sweepstakes</h2>
-    <div class="faq-item">
-      <h3>Do I have to donate to enter?</h3>
-      <p>No. A free Alternative Method of Entry by mail is available and is described in the <a href="rules.html">Official Rules</a>.</p>
-    </div>
-    <div class="faq-item">
-      <h3>Are sweepstakes entries tax-deductible?</h3>
-      <p>No. Because an entry includes a chance to win a prize, the IRS does not consider it a tax-deductible donation. To make a deductible gift, use the <a href="donate.html">Donate page</a>.</p>
-    </div>
-    <div class="faq-item">
-      <h3>What states are excluded?</h3>
-      <p>Eligibility varies by sweepstakes. Each prize page lists its specific eligibility requirements; full details are in the <a href="rules.html">Official Rules</a>.</p>
-    </div>
-
-    <h2 style="margin-top:var(--space-7)">Organization</h2>
-    <div class="faq-item">
-      <h3>Are you the same as the Humane Society of the United States?</h3>
-      <p>No. The National Humane Society is a separate, independent 501(c)(3) organization. [Add disambiguation language as needed.]</p>
-    </div>
-    <div class="faq-item">
-      <h3>How can I verify your nonprofit status?</h3>
-      <p>Search our EIN (XX-XXXXXXX) on the <a href="#">IRS Tax Exempt Organization Search</a> or view our profiles on Charity Navigator and Candid (GuideStar).</p>
-    </div>
-  </div>
-</section>
-"""
-
-# --- RULES ------------------------------------------------------------------
-RULES_BODY = page_hero(
-    "Official Sweepstakes Rules",
-    "The full legal terms governing every active sweepstakes. Each prize-specific rule set is available on the corresponding prize page.",
-    "Rules",
-) + """
-<section class="section">
-  <div class="container-narrow" style="font-size:.95rem; line-height:1.7">
-    <h2>1. Eligibility</h2>
-    <p>[Placeholder — eligibility language: open to legal U.S. residents 18+, void where prohibited, employees and immediate family excluded, etc.]</p>
-    <h2>2. How to Enter</h2>
-    <p>[Placeholder — paid entry method and free Alternative Method of Entry by mail.]</p>
-    <h2>3. Prize Description</h2>
-    <p>[Placeholder — prize specs, ARV, cash alternative.]</p>
-    <h2>4. Drawing &amp; Winner Notification</h2>
-    <p>[Placeholder — drawing date, method, notification window, claim period.]</p>
-    <h2>5. Taxes</h2>
-    <p>[Placeholder — winner is responsible for taxes; W-2G issued when required.]</p>
-    <h2>6. Publicity Release</h2>
-    <p>[Placeholder.]</p>
-    <h2>7. Limitation of Liability</h2>
-    <p>[Placeholder.]</p>
-    <h2>8. Sponsor</h2>
-    <p>National Humane Society, [Address], EIN XX-XXXXXXX.</p>
-  </div>
-</section>
-"""
-
-# --- PREVIOUS WINNERS -------------------------------------------------------
-WINNERS_BODY = page_hero(
-    "Previous Winners",
-    "Real winners, real prizes. Every drawing is conducted by a licensed third-party administrator.",
-    "Previous Winners",
-) + """
-<section class="section">
-  <div class="container">
-    <div class="grid grid-3">
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/winner-gonzo.jpg')"></div>
-        <div class="story-body">
-          <blockquote>“[Placeholder winner quote — real photo from the live site.]”</blockquote>
-          <cite>Gonzo · 2022 Sweepstakes Winner</cite>
-        </div>
-      </div>
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/winner-nhs-pic.jpg')"></div>
-        <div class="story-body">
-          <blockquote>“[Placeholder winner quote — real photo from the live site.]”</blockquote>
-          <cite>NHS Sweepstakes Winner · 2023</cite>
-        </div>
-      </div>
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/winner-tolson.jpg')"></div>
-        <div class="story-body">
-          <blockquote>“[Placeholder winner quote — real photo from the live site.]”</blockquote>
-          <cite>T. Olson · Past Winner</cite>
-        </div>
-      </div>
-    </div>
-    <div class="grid grid-3" style="margin-top:var(--space-5)">
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/winner-stanley.jpg')"></div>
-        <div class="story-body"><cite>T. Stanley · Past Winner</cite></div>
-      </div>
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/winner-fleming.jpg')"></div>
-        <div class="story-body"><cite>M. Fleming · Past Winner</cite></div>
-      </div>
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/winner-malone.jpg')"></div>
-        <div class="story-body"><cite>Malone · Past Winner</cite></div>
-      </div>
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/winner-berger.jpg')"></div>
-        <div class="story-body"><cite>E. Berger · Past Winner</cite></div>
-      </div>
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/winner-harting.jpg')"></div>
-        <div class="story-body"><cite>Harting · Past Winner</cite></div>
-      </div>
-      <div class="story-card">
-        <div class="story-image" style="background-image:url('assets/img/winner-anne.jpg')"></div>
-        <div class="story-body"><cite>Anne · Past Winner</cite></div>
-      </div>
-    </div>
-    <p class="text-center" style="margin-top:var(--space-6)"><a class="btn btn-secondary" href="#">View all past winners (1999–2025) →</a></p>
-  </div>
-</section>
-"""
-
-# --- DONATE -----------------------------------------------------------------
-DONATE_BODY = page_hero(
-    "Donate",
-    "Direct, tax-deductible support for the four mission pillars. Choose monthly or one-time, choose an amount, that's it.",
-    "Donate",
-) + """
-<section class="section">
-  <div class="container grid grid-2" style="align-items:start">
-    <div>
-      <h2>Why monthly giving matters most.</h2>
-      <p>Predictable monthly support lets us commit to multi-year shelter partnerships, hire program staff, and respond to disasters within hours instead of weeks.</p>
-      <ul class="list-check">
-        <li>$10/month = [XX] meals for shelter animals annually</li>
-        <li>$25/month = one spay/neuter procedure every month</li>
-        <li>$50/month = a vet checkup for [X] animals every month</li>
-        <li>$100/month = a small operating grant to one partner shelter</li>
-      </ul>
-      <p style="color:var(--color-text-muted); font-size:.9rem">All figures are placeholders pending real cost-per-outcome data.</p>
-    </div>
-    <div class="donate-widget">
-      <h3>Make a donation</h3>
-      <p style="color:var(--color-text-muted); font-size:.95rem">Preview only — connects to GiveWP / Stripe in production.</p>
-      <div class="donate-toggle">
-        <button class="is-active">Monthly</button>
-        <button>One-time</button>
-      </div>
-      <div class="amount-grid">
-        <button class="amount-btn">$10</button>
-        <button class="amount-btn is-active">$25</button>
-        <button class="amount-btn">$50</button>
-        <button class="amount-btn">$100</button>
-        <button class="amount-btn">$250</button>
-        <button class="amount-btn">Other</button>
-      </div>
-      <div class="form-row" style="margin-bottom:var(--space-4)">
-        <label>Email for receipt</label>
-        <input type="email" placeholder="you@example.com">
-      </div>
-      <button class="btn btn-primary" style="width:100%; justify-content:center">Donate $25 monthly →</button>
-      <p style="font-size:.8rem; color:var(--color-text-muted); margin-top:var(--space-3); text-align:center">100% tax-deductible · Cancel anytime · EIN XX-XXXXXXX</p>
-    </div>
-  </div>
-</section>
-
-<section class="section section-soft">
-  <div class="container">
-    <h2 class="text-center" style="margin-bottom:var(--space-6)">Other ways to give.</h2>
-    <div class="grid grid-3">
-      <div class="card"><h3>Wills &amp; estates</h3><p>Leave a planned gift in your will or trust.</p><a href="wills-estates.html">Learn more →</a></div>
-      <div class="card"><h3>Stock &amp; crypto</h3><p>Donate appreciated securities or cryptocurrency.</p><a href="contact.html">Get instructions →</a></div>
-      <div class="card"><h3>Donor-advised funds</h3><p>Recommend a grant from your DAF.</p><a href="contact.html">DAF instructions →</a></div>
-      <div class="card"><h3>Workplace giving</h3><p>Payroll deduction and employer matches.</p><a href="corporate-partners.html">Workplace giving →</a></div>
-      <div class="card"><h3>Tribute gifts</h3><p>Honor or memorialize a loved one.</p><a href="contact.html">Make a tribute →</a></div>
-      <div class="card"><h3>Vehicle donation</h3><p>Donate a car, boat, or RV.</p><a href="contact.html">Vehicle donation →</a></div>
-    </div>
-  </div>
-</section>
-"""
-
-# --- MONTHLY GIVING ---------------------------------------------------------
+# --- MONTHLY GIVING (proposed) ----------------------------------------------
 MONTHLY_BODY = page_hero(
     "Monthly Giving",
-    "Predictable support, compounded impact. Becoming a monthly donor is the single most effective way to advance the mission.",
+    "Predictable support, compounded impact.",
     "Monthly Giving",
-) + """
+) + f"""
 <section class="section">
   <div class="container grid grid-2" style="align-items:center">
     <div>
-      <h2>The math behind monthly giving.</h2>
-      <p>One $25 monthly gift outperforms a one-time $300 gift. Why? Predictable revenue lets us commit to grants we'd otherwise have to delay, and the administrative cost per dollar is lower.</p>
+      <h2>Why give monthly.</h2>
+      <p>The current site already takes monthly donations on the Donate page. A dedicated page would explain why recurring gifts matter and what donors can expect.</p>
       <ul class="list-check">
-        <li>Less than 5% of monthly gifts are spent on processing</li>
-        <li>Cancel anytime — no phone calls, no friction</li>
-        <li>Update your amount or pause from your donor portal</li>
-        <li>Year-end tax summary delivered automatically</li>
+        <li>[Cost-per-outcome examples — to be supplied by NHS]</li>
+        <li>[How to change or cancel a monthly gift]</li>
+        <li>[Year-end tax summary — confirm whether offered]</li>
       </ul>
     </div>
-    <div class="donate-widget">
+    <div class="donate-widget" data-donate>
       <h3>Become a monthly donor</h3>
-      <div class="donate-toggle"><button class="is-active">Monthly</button><button>One-time</button></div>
+{DONATE_TOGGLE}
       <div class="amount-grid">
-        <button class="amount-btn">$10</button>
-        <button class="amount-btn is-active">$25</button>
-        <button class="amount-btn">$50</button>
+{donate_amount_buttons()}
       </div>
-      <button class="btn btn-primary" style="width:100%; justify-content:center">Donate $25 monthly →</button>
+      <a class="btn btn-primary donate-cta" href="donate.html" style="width:100%; justify-content:center">Donate $25 monthly →</a>
     </div>
   </div>
 </section>
 """
 
-# --- WILLS & ESTATES --------------------------------------------------------
-WILLS_BODY = page_hero(
-    "Wills &amp; Estates",
-    "A gift in your will or trust costs nothing today and can transform animal welfare for generations.",
-    "Wills &amp; Estates",
-) + """
-<section class="section">
-  <div class="container-narrow">
-    <h2>Sample bequest language.</h2>
-    <pre style="background:var(--color-mist); padding:var(--space-5); border-radius:var(--radius); overflow-x:auto; font-family:ui-monospace,monospace; font-size:.9rem">"I give and bequeath to the National Humane Society, a 501(c)(3) charitable
-organization (EIN XX-XXXXXXX), located at [Address], the sum of $[amount]
-[or X% of my estate] to be used for its general charitable purposes."</pre>
-    <h2 style="margin-top:var(--space-7)">Other planned gifts</h2>
-    <ul class="list-check">
-      <li>Beneficiary designations (IRA, 401(k), life insurance)</li>
-      <li>Charitable remainder trusts</li>
-      <li>Charitable gift annuities</li>
-      <li>Donor-advised fund successor designations</li>
-    </ul>
-    <p style="margin-top:var(--space-5)">Considering a planned gift? Our team can answer questions confidentially and at no cost.</p>
-    <a class="btn btn-primary" href="contact.html">Speak with planned giving →</a>
-  </div>
-</section>
-"""
-
-# --- VOLUNTEER --------------------------------------------------------------
+# --- VOLUNTEER (proposed) ---------------------------------------------------
 VOLUNTEER_BODY = page_hero(
     "Volunteer",
-    "From shelter shifts to skills-based remote roles — there's a way to help that fits your time and ability.",
+    "Ways to help that fit your time and ability.",
     "Volunteer",
 ) + """
 <section class="section">
@@ -1293,21 +1616,18 @@ VOLUNTEER_BODY = page_hero(
     <div class="grid grid-3">
       <div class="card">
         <div class="card-icon">🐕</div>
-        <h3>At a partner shelter</h3>
-        <p>Walk dogs, socialize cats, help with adoption events. Schedules vary by shelter — find one near you.</p>
-        <a href="shelter-partners.html">Find a shelter →</a>
+        <h3>At a local shelter</h3>
+        <p>[Placeholder — walk dogs, socialize cats, help with adoption events.]</p>
       </div>
       <div class="card">
         <div class="card-icon">💻</div>
         <h3>Remote &amp; skills-based</h3>
-        <p>Photography, social media, grant writing, web development. Help us amplify the work of partner shelters.</p>
-        <a href="contact.html">Apply →</a>
+        <p>[Placeholder — photography, social media, writing.]</p>
       </div>
       <div class="card">
-        <div class="card-icon">🚐</div>
-        <h3>Disaster response</h3>
-        <p>Trained responders deploy to hurricanes, wildfires, and large-scale rescue operations. Background check + training required.</p>
-        <a href="contact.html">Get on the roster →</a>
+        <div class="card-icon">📨</div>
+        <h3>Spread the word</h3>
+        <p>[Placeholder — share a rescue story or a sweepstakes entry.]</p>
       </div>
     </div>
   </div>
@@ -1317,15 +1637,9 @@ VOLUNTEER_BODY = page_hero(
   <div class="container-narrow">
     <h2>Volunteer interest form</h2>
     <form class="form-grid" onsubmit="event.preventDefault(); alert('Preview only — volunteer signup');">
-      <div class="grid grid-2">
-        <div class="form-row"><label>First name</label><input type="text" required></div>
-        <div class="form-row"><label>Last name</label><input type="text" required></div>
-      </div>
-      <div class="form-row"><label>Email</label><input type="email" required></div>
+      <div class="form-row"><label>Full name</label><input type="text" required></div>
+      <div class="form-row"><label>Email address</label><input type="email" required></div>
       <div class="form-row"><label>City &amp; state</label><input type="text" required></div>
-      <div class="form-row"><label>What kind of volunteering interests you?</label>
-        <select><option>At a local shelter</option><option>Remote / skills-based</option><option>Disaster response</option><option>Not sure yet</option></select>
-      </div>
       <div class="form-row"><label>Anything else we should know?</label><textarea rows="4"></textarea></div>
       <button class="btn btn-primary" type="submit">Submit interest →</button>
     </form>
@@ -1333,304 +1647,101 @@ VOLUNTEER_BODY = page_hero(
 </section>
 """
 
-# --- CORPORATE PARTNERS -----------------------------------------------------
+# --- CORPORATE PARTNERS (proposed) ------------------------------------------
 CORP_BODY = page_hero(
     "Corporate Partners",
-    "Workplace giving, sponsorships, and matching gifts. Help your team rally around a cause that matters.",
+    "Workplace giving, sponsorships, and matching gifts.",
     "Corporate Partners",
 ) + """
 <section class="section">
   <div class="container">
     <div class="grid grid-3">
-      <div class="card"><h3>Workplace giving</h3><p>Payroll deduction with optional employer match.</p></div>
-      <div class="card"><h3>Sponsorships</h3><p>Sponsor a sweepstakes, an annual report, or a regional grant cycle.</p></div>
-      <div class="card"><h3>Matching gifts</h3><p>We register with all major matching-gift platforms.</p></div>
-      <div class="card"><h3>Volunteer days</h3><p>Coordinate a team day at a partner shelter.</p></div>
-      <div class="card"><h3>Cause marketing</h3><p>Donate-with-purchase campaigns and round-up programs.</p></div>
-      <div class="card"><h3>In-kind donations</h3><p>Pet supplies, vehicles, professional services.</p></div>
+      <div class="card"><h3>Prize partners</h3><p>Cars for the sweepstakes are provided by Winner Automobile Group of Delaware and Porsche of Delaware.</p></div>
+      <div class="card"><h3>Workplace giving</h3><p>[Placeholder — payroll deduction and employer match.]</p></div>
+      <div class="card"><h3>Sponsorships</h3><p>[Placeholder — sponsor a sweepstakes or a program.]</p></div>
     </div>
     <div class="text-center" style="margin-top:var(--space-6)">
-      <a class="btn btn-primary" href="contact.html">Talk to our partnerships team →</a>
-    </div>
-  </div>
-</section>
-"""
-
-# --- BLOG INDEX -------------------------------------------------------------
-BLOG_BODY = page_hero(
-    "Blog",
-    "Donor education, volunteer guides, pet care, and shelter stories.",
-    "Blog",
-) + """
-<section class="section">
-  <div class="container">
-    <div class="grid grid-3">
-""" + "\n".join(f"""      <article class="post-card">
-        <div class="post-image" style="background-image:url('assets/img/{img}')"></div>
-        <div class="post-body">
-          <div class="post-tag">{tag}</div>
-          <h3><a href="blog-post.html">{title}</a></h3>
-          <p style="color:var(--color-text-muted)">{excerpt}</p>
-        </div>
-      </article>""" for tag, title, excerpt, img in [
-    ("Donor education", "How your $10 monthly donation really helps shelter animals", "A breakdown of where every dollar goes — and the math behind why monthly giving compounds.", "animal-vet-exam-2.jpg"),
-    ("Volunteer guide", "How to volunteer at a local animal shelter", "Six ways to start — even if you've never set foot in a shelter before.", "animal-first-aid-1.jpg"),
-    ("Pet care", "Hurricane prep checklist for pet owners", "Evacuation kits, microchipping, and the 72-hour plan every household needs.", "animal-lost-dog.jpg"),
-    ("Adoption", "Adopting from a shelter vs. a rescue: what's the difference?", "Both are great. Here's how to decide which is right for your household.", "animal-winterpup.jpg"),
-    ("Pet care", "Spay &amp; neuter: the math that saves millions of lives", "Why a single spay/neuter procedure prevents thousands of unwanted births.", "animal-vet-exam.jpg"),
-    ("Advocacy", "Five animal welfare laws that changed everything", "From the Animal Welfare Act to the PUPS Act — a brief history.", "animal-heartworm.jpg"),
-    ("Pet care", "What to do if you find a stray animal", "Step-by-step: safety, identification, and finding the right shelter.", "animal-first-aid-2.jpg"),
-    ("Stories", "From hoarding case to home: [Pet Name]'s rescue", "How a partner shelter rehabilitated [XX] dogs from a single intake.", "winner-gonzo.jpg"),
-    ("Donor education", "Is my donation tax-deductible? A clear answer.", "What qualifies, what doesn't, and how to document it for the IRS.", "animal-cat.jpg"),
-]) + """
-    </div>
-  </div>
-</section>
-"""
-
-# --- BLOG POST --------------------------------------------------------------
-BLOG_POST_BODY = """
-<section class="page-hero">
-  <div class="container-narrow">
-    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="blog.html">Blog</a> &nbsp;/&nbsp; Donor education</div>
-    <p class="eyebrow">Donor education · 6 min read · Published [date]</p>
-    <h1>How your $10 monthly donation really helps shelter animals</h1>
-    <p class="lead">A breakdown of where every dollar goes — and the math behind why monthly giving compounds.</p>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container-narrow" style="font-size:1.05rem; line-height:1.8">
-    <p><em>This article is a preview placeholder. The real article would carry the same byline, author bio, and structured content — published through the blog post type in WordPress.</em></p>
-    <h2>The cost-per-outcome math</h2>
-    <p>[Placeholder body — explanation of cost-per-spay, cost-per-meal, cost-per-vet-checkup, and how a $10/month gift compounds across a year.]</p>
-    <h2>Why monthly beats one-time</h2>
-    <p>[Placeholder body.]</p>
-    <h2>Where exactly does the money go?</h2>
-    <p>[Placeholder body — link to the financial transparency page.]</p>
-    <h2>The compound effect</h2>
-    <p>[Placeholder body.]</p>
-
-    <div class="proceeds-panel" style="margin-top:var(--space-7)">
-      <h4>Ready to start a monthly gift?</h4>
-      <p style="margin:0 0 var(--space-3)">Most monthly donors start at $10 or $25. You can change or cancel anytime.</p>
-      <a class="btn btn-primary btn-sm" href="donate.html">Donate monthly →</a>
-    </div>
-  </div>
-</section>
-
-<section class="section section-soft">
-  <div class="container">
-    <h2 class="text-center" style="margin-bottom:var(--space-6)">More like this.</h2>
-    <div class="grid grid-3">
-      <article class="post-card"><div class="post-image" style="background-image:url('assets/img/animal-cat.jpg')"></div><div class="post-body"><div class="post-tag">Donor education</div><h3><a href="blog-post.html">Is my donation tax-deductible? A clear answer.</a></h3></div></article>
-      <article class="post-card"><div class="post-image" style="background-image:url('assets/img/winner-gonzo.jpg')"></div><div class="post-body"><div class="post-tag">Stories</div><h3><a href="blog-post.html">From hoarding case to home: [Pet Name]'s rescue</a></h3></div></article>
-      <article class="post-card"><div class="post-image" style="background-image:url('assets/img/animal-vet-exam.jpg')"></div><div class="post-body"><div class="post-tag">Pet care</div><h3><a href="blog-post.html">Spay &amp; neuter: the math that saves millions</a></h3></div></article>
-    </div>
-  </div>
-</section>
-"""
-
-# --- VIDEOS -----------------------------------------------------------------
-VIDEOS_BODY = page_hero(
-    "Videos",
-    "Rescue stories, donor education, and behind-the-scenes from partner shelters.",
-    "Videos",
-) + """
-<section class="section">
-  <div class="container">
-    <div class="grid grid-3">
-""" + "\n".join(f"""      <article class="post-card">
-        <div class="post-image" style="background-image:url('assets/img/{img}'); position:relative;">
-          <span style="position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-size:2.5rem; text-shadow:0 2px 8px rgba(0,0,0,.4)">▶</span>
-        </div>
-        <div class="post-body">
-          <div class="post-tag">{tag}</div>
-          <h3>{title}</h3>
-          <p style="color:var(--color-text-muted); font-size:.9rem">{duration}</p>
-        </div>
-      </article>""" for tag, title, duration, img in [
-    ("Rescue story", "Inside a hoarding-case rescue", "4:32", "animal-first-aid-2.jpg"),
-    ("Donor", "Where your dollars go: a tour", "6:15", "animal-vet-exam.jpg"),
-    ("Partner", "Meet [Shelter Name]", "3:48", "animal-winterpup.jpg"),
-    ("Education", "Spay/neuter explained", "5:02", "animal-vet-exam-2.jpg"),
-    ("Disaster", "Hurricane response in [State]", "7:22", "animal-lost-dog.jpg"),
-    ("Adoption", "[Pet Name]'s adoption day", "2:55", "winner-gonzo.jpg"),
-]) + """
-    </div>
-  </div>
-</section>
-"""
-
-# --- PET CARE: CATS ---------------------------------------------------------
-PETCARE_CATS_BODY = page_hero(
-    "Pet Care: Cats",
-    "Resources for cat owners — adoption, health, behavior, and emergency prep.",
-    "Pet Care: Cats",
-) + """
-<section class="section">
-  <div class="container grid grid-3">
-    <div class="card"><h3>Adopting a cat</h3><p>What to ask the shelter, how to prepare your home, and the first 30 days.</p><a href="#">Read more →</a></div>
-    <div class="card"><h3>Indoor vs. outdoor</h3><p>Lifespan, safety, and a middle path: catios and supervised outdoor time.</p><a href="#">Read more →</a></div>
-    <div class="card"><h3>Routine veterinary care</h3><p>Vaccinations, dental, and what 'wellness' visits should cover.</p><a href="#">Read more →</a></div>
-    <div class="card"><h3>Spay &amp; neuter</h3><p>Why it matters, when to do it, and where to find low-cost clinics.</p><a href="#">Read more →</a></div>
-    <div class="card"><h3>Behavior 101</h3><p>Litter box troubles, scratching, and introducing a new cat to your home.</p><a href="#">Read more →</a></div>
-    <div class="card"><h3>Senior cat care</h3><p>What changes after age 10, and how to make life easier.</p><a href="#">Read more →</a></div>
-  </div>
-</section>
-"""
-
-# --- PET CARE: DOGS ---------------------------------------------------------
-PETCARE_DOGS_BODY = page_hero(
-    "Pet Care: Dogs",
-    "Resources for dog owners — adoption, training, health, and emergency prep.",
-    "Pet Care: Dogs",
-) + """
-<section class="section">
-  <div class="container grid grid-3">
-    <div class="card"><h3>Adopting a dog</h3><p>Choosing the right match, the first 30 days, and crate training basics.</p><a href="#">Read more →</a></div>
-    <div class="card"><h3>Training fundamentals</h3><p>Sit, stay, recall, and why positive reinforcement wins.</p><a href="#">Read more →</a></div>
-    <div class="card"><h3>Routine veterinary care</h3><p>Vaccinations, heartworm prevention, and dental.</p><a href="#">Read more →</a></div>
-    <div class="card"><h3>Spay &amp; neuter</h3><p>Why it matters, when to do it, and where to find low-cost clinics.</p><a href="#">Read more →</a></div>
-    <div class="card"><h3>Common behavior issues</h3><p>Pulling on leash, separation anxiety, reactivity.</p><a href="#">Read more →</a></div>
-    <div class="card"><h3>Senior dog care</h3><p>Joint health, mobility, and what to expect in the senior years.</p><a href="#">Read more →</a></div>
-  </div>
-</section>
-"""
-
-# --- PET CARE: HURRICANE ----------------------------------------------------
-PETCARE_HURRICANE_BODY = page_hero(
-    "Hurricane &amp; Disaster Prep for Pet Owners",
-    "A 72-hour plan that makes sure your pets are evacuated, identified, and accounted for.",
-    "Hurricane Prep",
-) + """
-<section class="section">
-  <div class="container-narrow">
-    <h2>The 72-hour pet emergency kit.</h2>
-    <ul class="list-check">
-      <li>Three days of food and water per pet (rotate every 6 months)</li>
-      <li>Medications (two-week supply, in a waterproof container)</li>
-      <li>Carrier or crate for every animal</li>
-      <li>Leashes, harnesses, and ID tags</li>
-      <li>Vaccination and microchip records (paper copies + photos on your phone)</li>
-      <li>Recent photo of you with each pet (proof of ownership at shelters)</li>
-      <li>Litter and disposable trays for cats</li>
-      <li>Comfort item: a familiar blanket or toy</li>
-    </ul>
-
-    <h2>Before a storm</h2>
-    <ul class="list-check">
-      <li>Confirm your microchip is registered to a current phone number</li>
-      <li>Identify pet-friendly evacuation destinations within 200 miles</li>
-      <li>Know your local pet-friendly emergency shelters</li>
-      <li>Practice loading every animal into a carrier</li>
-    </ul>
-
-    <h2>If you must evacuate without your pet</h2>
-    <ul class="list-check">
-      <li>Never leave a pet tied or caged outdoors</li>
-      <li>Leave 5–7 days of water in spill-proof bowls</li>
-      <li>Place a sticker on your front window noting how many pets are inside</li>
-      <li>Notify a neighbor or your local animal control</li>
-    </ul>
-  </div>
-</section>
-"""
-
-# --- CONTACT ----------------------------------------------------------------
-CONTACT_BODY = page_hero(
-    "Contact",
-    "Reach our team — donor support, press inquiries, shelter partnerships, planned giving, or general questions.",
-    "Contact",
-) + """
-<section class="section">
-  <div class="container grid grid-2">
-    <div>
-      <h2>Send a message.</h2>
-      <form class="form-grid" onsubmit="event.preventDefault(); alert('Preview only — contact form');">
-        <div class="grid grid-2">
-          <div class="form-row"><label>First name</label><input type="text" required></div>
-          <div class="form-row"><label>Last name</label><input type="text" required></div>
-        </div>
-        <div class="form-row"><label>Email</label><input type="email" required></div>
-        <div class="form-row"><label>I'm contacting about</label>
-          <select>
-            <option>Donor support</option>
-            <option>Sweepstakes / entry support</option>
-            <option>Shelter partnership inquiry</option>
-            <option>Planned giving</option>
-            <option>Press / media</option>
-            <option>Volunteer</option>
-            <option>Something else</option>
-          </select>
-        </div>
-        <div class="form-row"><label>Message</label><textarea rows="6" required></textarea></div>
-        <button class="btn btn-primary" type="submit">Send →</button>
-      </form>
-    </div>
-    <div>
-      <h3>By phone</h3>
-      <p>Customer service: <strong>877-285-0710</strong><br>Mon–Fri, 9am–6pm ET</p>
-
-      <h3 style="margin-top:var(--space-5)">By mail</h3>
-      <p>National Humane Society<br>[Street Address]<br>[City, State ZIP]</p>
-
-      <h3 style="margin-top:var(--space-5)">Press</h3>
-      <p><a href="mailto:press@nationalhumanesociety.org">press@nationalhumanesociety.org</a></p>
-
-      <h3 style="margin-top:var(--space-5)">Shelter partners</h3>
-      <p><a href="mailto:partners@nationalhumanesociety.org">partners@nationalhumanesociety.org</a></p>
-
-      <h3 style="margin-top:var(--space-5)">Planned giving</h3>
-      <p><a href="mailto:plannedgiving@nationalhumanesociety.org">plannedgiving@nationalhumanesociety.org</a></p>
+      <a class="btn btn-primary" href="contact.html">Talk to us →</a>
     </div>
   </div>
 </section>
 """
 
 # ---------------------------------------------------------------------------
-# Page registry
+# Page registry: (title, slug, body, status)
 # ---------------------------------------------------------------------------
 PAGES = [
-    ("Home", "index.html", HOME_BODY),
-    ("Our Mission", "about.html", ABOUT_BODY),
-    ("Programs", "programs.html", PROGRAMS_BODY),
-    ("Impact & Outcomes", "impact.html", IMPACT_BODY),
-    ("Shelter Partners", "shelter-partners.html", SHELTER_BODY),
-    ("Financial Transparency", "financial-transparency.html", FINANCIAL_BODY),
-    ("Sweepstakes", "sweepstakes.html", SWEEPSTAKES_BODY),
-    ("New Porsche 911 Sweepstakes", "sweepstakes-detail.html", SWEEPSTAKES_DETAIL_BODY),
-    ("Raffle Plus", "raffle-plus.html", RAFFLE_BODY),
-    ("How Sweepstakes Work", "how-it-works.html", HOW_IT_WORKS_BODY),
-    ("FAQ", "faq.html", FAQ_BODY),
-    ("Official Rules", "rules.html", RULES_BODY),
-    ("Previous Winners", "previous-winners.html", WINNERS_BODY),
-    ("Donate", "donate.html", DONATE_BODY),
-    ("Monthly Giving", "monthly-giving.html", MONTHLY_BODY),
-    ("Wills & Estates", "wills-estates.html", WILLS_BODY),
-    ("Volunteer", "volunteer.html", VOLUNTEER_BODY),
-    ("Corporate Partners", "corporate-partners.html", CORP_BODY),
-    ("Blog", "blog.html", BLOG_BODY),
-    ("How your $10 monthly donation really helps", "blog-post.html", BLOG_POST_BODY),
-    ("Videos", "videos.html", VIDEOS_BODY),
-    ("Pet Care: Cats", "pet-care-cats.html", PETCARE_CATS_BODY),
-    ("Pet Care: Dogs", "pet-care-dogs.html", PETCARE_DOGS_BODY),
-    ("Hurricane Prep", "pet-care-hurricane.html", PETCARE_HURRICANE_BODY),
-    ("Contact", "contact.html", CONTACT_BODY),
+    ("Home", "index.html", HOME_BODY, "live"),
+    ("About", "about.html", ABOUT_BODY, "live"),
+    ("Animal Programs", "animal-programs.html", PROGRAMS_BODY, "live"),
+    ("Donations Helping Animals", "donations-helping-animals.html", DONATIONS_BODY, "live"),
+    ("Impact & Outcomes", "impact.html", IMPACT_BODY, "proposed"),
+    ("Financial Transparency", "financial-transparency.html", FINANCIAL_BODY, "proposed"),
+    ("Sweepstakes", "sweepstakes.html", SWEEPSTAKES_BODY, "live"),
+    ("Raffle Plus", "raffle-plus.html", RAFFLE_BODY, "live"),
+] + [
+    (f"{p[1]} Sweepstakes", p[0], prize_body(p), "live") for p in C.PRIZES
+] + [
+    ("How the Sweepstakes Works", "how-it-works.html", HOW_IT_WORKS_BODY, "new"),
+    ("FAQ", "faq.html", FAQ_BODY, "live"),
+    ("Sweepstakes Rules", "sweepstakes-rules.html", RULES_BODY, "live"),
+    ("Previous Winners", "previous-winners.html", WINNERS_BODY, "live"),
+    ("Donate", "donate.html", DONATE_BODY, "live"),
+    ("Monthly Giving", "monthly-giving.html", MONTHLY_BODY, "proposed"),
+    ("Wills & Estates", "wills-estates.html", WILLS_BODY, "live"),
+    ("Volunteer", "volunteer.html", VOLUNTEER_BODY, "proposed"),
+    ("Corporate Partners", "corporate-partners.html", CORP_BODY, "proposed"),
+    ("Educational Messages", "blog.html", BLOG_BODY, "live"),
+    ("How Your $10 Monthly Donation Really Helps Shelter Animals", "blog-post.html", BLOG_POST_BODY, "live"),
+    ("Videos and More", "videos-and-more.html", VIDEOS_BODY, "live"),
+    ("Pet Tips", "pet-tips.html", PET_TIPS_BODY, "live"),
+    ("Cats & Dogs", "cats-and-dogs.html", CATS_DOGS_BODY, "live"),
+    ("Foods to Avoid", "foods-to-avoid.html", FOODS_BODY, "live"),
+    ("Hurricanes & Your Pets", "hurricanes-and-your-pets.html", HURRICANE_BODY, "live"),
+    ("Delaware Residents", "delaware-residents.html", DELAWARE_BODY, "live"),
+    ("Contact", "contact.html", CONTACT_BODY, "live"),
 ]
 
 
+def check_references(pages):
+    """Every internal link and local asset a page points at must exist."""
+    slugs = {slug for _t, slug, _h in pages}
+    problems = []
+    for _title, slug, html in pages:
+        for ref in re.findall(r'(?:href|src)="([^"#]+)(?:#[^"]*)?"', html):
+            if re.match(r"(https?:|mailto:|tel:|//)", ref):
+                continue
+            if ref.endswith(".html"):
+                if ref not in slugs:
+                    problems.append(f"{slug}: broken link to {ref}")
+            elif not (OUT_DIR / ref).exists():
+                problems.append(f"{slug}: missing asset {ref}")
+        for ref in re.findall(r"url\('([^']+)'\)", html):
+            if not (OUT_DIR / ref).exists():
+                problems.append(f"{slug}: missing image {ref}")
+    return sorted(set(problems))
+
+
 def main():
-    written = []
-    for title, slug, body in PAGES:
-        _, html = page(title, slug, body)
-        out = OUT_DIR / slug
-        out.write_text(html, encoding="utf-8")
-        written.append(slug)
-    print(f"Wrote {len(written)} pages:")
-    for s in written:
-        print(f"  - {s}")
+    rendered = [(title, slug, page(title.replace("&", "&amp;"), slug, body, status))
+                for title, slug, body, status in PAGES]
+    for _title, slug, html in rendered:
+        (OUT_DIR / slug).write_text(html, encoding="utf-8")
+    print(f"Wrote {len(rendered)} pages.")
+
+    # Generated pages that are no longer in PAGES would otherwise linger and
+    # still be deployed.
+    keep = {slug for _t, slug, _h in rendered}
+    for stale in sorted(OUT_DIR.glob("*.html")):
+        if stale.name not in keep:
+            stale.unlink()
+            print(f"  removed stale page {stale.name}")
+
+    problems = check_references(rendered)
+    for p in problems:
+        print(f"  ! {p}")
+    return 1 if problems else 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
