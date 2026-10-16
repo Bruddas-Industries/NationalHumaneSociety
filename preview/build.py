@@ -46,10 +46,10 @@ NAV = [
     ("Get Involved", "donate.html", [
         ("Donate", "donate.html", "live"),
         ("Monthly Giving", "monthly-giving.html", "proposed"),
-        ("Wills &amp; Estates", "wills-estates.html", "live"),
         ("Volunteer", "volunteer.html", "proposed"),
         ("Corporate Partners", "corporate-partners.html", "proposed"),
     ]),
+    ("Wills &amp; Estates", "wills-estates.html", []),
     ("Resources", "blog.html", [
         ("Educational Messages", "blog.html", "live"),
         ("Videos &amp; More", "videos-and-more.html", "live"),
@@ -62,6 +62,13 @@ NAV = [
 ]
 
 STATUS_TAG = {"new": "New", "proposed": "Proposed"}
+
+# Hidden at CJ's request (2026-10-13 and 2026-10-15) until NHS supplies real
+# figures and ratings: the home page stat band, trust strip and impact
+# section, and the footer badge row. Every number and rating in them is an
+# audit placeholder, not NHS data. The markup is kept unchanged; set this to
+# True to bring all four back.
+SHOW_PLACEHOLDER_STATS = False
 
 
 def tel(number):
@@ -137,15 +144,20 @@ def render_footer():
         for name, url in C.SOCIAL
     )
     address = "<br>".join(C.ADDRESS_LINES[1:])
-    return f"""<footer class="site-footer">
-  <div class="container">
-    <div class="footer-trust">
+    # Top-level links with no dropdown get no column above, so they go in the bottom row.
+    standalone = " · ".join(
+        f'<a href="{href}">{label}</a>' for label, href, children in NAV if not children
+    )
+    trust = f"""    <div class="footer-trust">
       <div class="badge"><strong>Charity Navigator</strong>Rating placeholder</div>
       <div class="badge"><strong>Candid / GuideStar</strong>Seal placeholder</div>
       <div class="badge"><strong>BBB Wise Giving</strong>Accreditation placeholder</div>
       <div class="badge"><strong>Tax ID</strong>{C.EIN}</div>
     </div>
-    <div class="footer-grid">
+""" if SHOW_PLACEHOLDER_STATS else ""
+    return f"""<footer class="site-footer">
+  <div class="container">
+{trust}    <div class="footer-grid">
       <div>
         <div class="footer-brand">National Humane Society</div>
         <p style="font-size:.9rem; color:rgba(255,255,255,.7)">A 501(c)(3) non-profit, tax-exempt charity dedicated to improving the lives of rescue animals across America.</p>
@@ -162,8 +174,9 @@ def render_footer():
 {chr(10).join(columns)}
     </div>
     <div class="footer-bottom">
-      <div>© 2026 National Humane Society. All rights reserved.</div>
-      <div>501(c)(3) tax-exempt charity · Tax ID {C.EIN} · <a href="contact.html">Contact</a></div>
+      <div class="footer-copy">© 2026 National Humane Society. All rights reserved.</div>
+      <div class="footer-links">501(c)(3) tax-exempt charity · Tax ID {C.EIN} · {standalone}</div>
+      <div class="footer-credit">Made with <span role="img" aria-label="love">❤️</span> by <a href="https://www.bruddasindustries.com/" target="_blank" rel="noopener">Brudda's Industries</a></div>
     </div>
   </div>
 </footer>"""
@@ -393,39 +406,89 @@ def entry_form(kind):
 """
 
 
-def prize_cards(include_cash=True):
+def prize_gallery(slug, cars):
+    """Photo strip for one prize card: swipe, or use the arrows and dots, to
+    see every car that prize page offers (nav.js wires up the controls)."""
+    slides = "\n".join(
+        f"""          <a class="prize-slide" href="{slug}" style="background-image:url('assets/img/{image}')"{'' if i == 0 else ' tabindex="-1"'}>"""
+        + (f'<span class="prize-slide-name">{name}</span>' if len(cars) > 1 else f'<span class="visually-hidden">{name}</span>')
+        + "</a>"
+        for i, (name, _note, image, _specs) in enumerate(cars)
+    )
+    controls = ""
+    if len(cars) > 1:
+        dots = "".join(
+            f'<button type="button" aria-label="Show {name}"{active}></button>'
+            for i, (name, *_rest) in enumerate(cars)
+            for active in [' class="is-active"' if i == 0 else ""]
+        )
+        controls = f"""
+        <span class="gallery-count">{len(cars)} models</span>
+        <button class="gallery-btn gallery-prev" type="button" aria-label="Previous car">‹</button>
+        <button class="gallery-btn gallery-next" type="button" aria-label="Next car">›</button>
+        <div class="gallery-dots">{dots}</div>"""
+    return f"""      <div class="prize-gallery" data-gallery>
+        <div class="prize-slides">
+{slides}
+        </div>{controls}
+      </div>"""
+
+
+CASH_CARD = """    <article class="prize-card prize-card-cash">
+      <a class="cash-face" href="sweepstakes.html">
+        <span class="cash-note">Cash prize</span>
+        <span class="cash-amount">$50,000</span>
+      </a>
+      <div class="prize-body">
+        <h3><a href="sweepstakes.html">$50,000.00 Cash</a></h3>
+        <p>Take the cash instead of a car.</p>
+      </div>
+    </article>"""
+
+
+def prize_cards(include_cash=True, slugs=None):
+    """slugs: limit (and order) the cards, e.g. the shorter home page set."""
+    prizes = {p[0]: p for p in C.PRIZES}
+    chosen = [prizes[s] for s in slugs] if slugs else C.PRIZES
     cards = []
-    for slug, label, headline, sub, _tagline, image, _cars in C.PRIZES:
-        detail = sub if sub and sub != label else headline
-        cards.append(f"""      <a class="prize-card" href="{slug}">
-        <div class="prize-image" style="background-image:url('assets/img/{image}')"></div>
-        <div class="prize-body">
-          <h3>{label}</h3>
-          <p>{detail}</p>
-        </div>
-      </a>""")
+    for slug, label, headline, sub, _tagline, _image, cars in chosen:
+        if sub and sub != label:
+            detail = sub
+        elif len(cars) > 1:
+            detail = ", ".join(car[0] for car in cars)
+        else:
+            detail = headline
+        cards.append(f"""    <article class="prize-card">
+{prize_gallery(slug, cars)}
+      <div class="prize-body">
+        <h3><a href="{slug}">{label}</a></h3>
+        <p>{detail}</p>
+      </div>
+    </article>""")
     if include_cash:
-        cards.append("""      <a class="prize-card prize-card-cash" href="sweepstakes.html">
-        <div class="prize-image" data-label="$50,000.00"></div>
-        <div class="prize-body">
-          <h3>$50,000.00 Cash</h3>
-          <p>Take the cash instead of a car.</p>
-        </div>
-      </a>""")
+        cards.append(CASH_CARD)
     return '    <div class="grid grid-3">\n' + "\n".join(cards) + "\n    </div>"
 
 
-SWEEPS_CTA = """    <div class="cta-pair">
-      <div class="cta-card">
-        <p class="eyebrow">Raffle Plus</p>
-        <h3>Win Two Cars or $100,000.00</h3>
-        <a class="btn btn-primary" href="raffle-plus.html">Enter Now</a>
-      </div>
-      <div class="cta-card">
-        <p class="eyebrow">Sweepstakes</p>
-        <h3>Win One Car or $50,000.00</h3>
-        <a class="btn btn-primary" href="sweepstakes.html">Enter Now</a>
-      </div>
+def ticket(href, tag, title, detail, variant):
+    """A call-to-action shaped like a raffle ticket: the "Enter now" stub is
+    split off by a perforation. variant: 'ticket-yellow' or 'ticket-navy',
+    plus 'ticket-hero' (sits on the video) or 'ticket-stacked' (tag above title)."""
+    return f"""<a class="ticket {variant}" href="{href}">
+      <span class="ticket-main">
+        <span class="ticket-tag">{tag}</span>
+        <span class="ticket-text"><strong>{title}</strong><small>{detail}</small></span>
+      </span>
+      <span class="ticket-stub">Enter now <span class="ticket-arrow" aria-hidden="true">→</span></span>
+    </a>"""
+
+
+_ONE_TICKET = C.TICKET_TIERS[0]  # (tickets, free, sweepstakes $, raffle plus $, popular)
+SWEEPS_CTA = f"""    <div class="cta-pair">
+    {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000",
+            f"Tickets from ${_ONE_TICKET[3]} · Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-stacked")}
+    {ticket("sweepstakes.html", "Sweepstakes", "Win one car or $50,000",
+            f"Tickets from ${_ONE_TICKET[2]} · Drawing {C.DRAWING_DATE}", "ticket-navy ticket-stacked")}
     </div>"""
 
 
@@ -478,21 +541,44 @@ DONATE_TOGGLE = """      <div class="donate-toggle">
       </div>"""
 
 
+# The live blog posts have no cover images, so each card gets a colour-coded
+# topic header instead. First keyword found in the title wins.
+BLOG_TOPICS = [
+    (("spay", "neuter"), "Spay &amp; Neuter", "teal"),
+    (("abuse", "cruelty"), "Animal Welfare", "coral"),
+    (("volunteer",), "Volunteering", "blue"),
+    (("foster",), "Fostering", "orange"),
+    (("donation", "donate"), "Giving", "coral"),
+    (("summer", "winter", "holiday", "safe "), "Pet Safety", "blue"),
+    (("stories", "transformation"), "Rescue Stories", "orange"),
+    (("adopt", "myth"), "Adoption", "navy"),
+    (("shelter",), "Shelters", "teal"),
+]
+
+
+def blog_topic(title):
+    lowered = title.lower()
+    for keywords, topic, colour in BLOG_TOPICS:
+        if any(k in lowered for k in keywords):
+            return topic, colour
+    return "Animal Care", "navy"
+
+
 def blog_cards(posts):
-    images = ["animal-vet-exam-2.jpg", "animal-first-aid-1.jpg", "animal-lost-dog.jpg",
-              "animal-winterpup.jpg", "animal-vet-exam.jpg", "animal-heartworm.jpg",
-              "animal-first-aid-2.jpg", "animal-cat.jpg"]
     cards = []
-    for i, (title, slug) in enumerate(posts):
+    for title, slug in posts:
         if slug == C.BLOG_SAMPLE_SLUG:
             href, target = "blog-post.html", ""
         else:
             href, target = f"{C.LIVE_SITE}/post/{slug}", ' target="_blank" rel="noopener"'
+        topic, colour = blog_topic(title)
         cards.append(f"""      <article class="post-card">
-        <div class="post-image" style="background-image:url('assets/img/{images[i % len(images)]}')"></div>
+        <div class="post-cover is-{colour}" aria-hidden="true">
+          <span class="post-cover-topic">{topic}</span>
+        </div>
         <div class="post-body">
-          <div class="post-tag">Educational Message</div>
           <h3><a href="{href}"{target}>{title}</a></h3>
+          <span class="post-more">Read article →</span>
         </div>
       </article>""")
     return '    <div class="grid grid-3">\n' + "\n".join(cards) + "\n    </div>"
@@ -510,22 +596,6 @@ def story_excerpt(index, words=38):
         </div>
       </div>"""
 
-
-NEWSLETTER_BLOCK = """
-<section class="section">
-  <div class="container-narrow">
-    <div class="newsletter">
-      <p class="eyebrow" style="color:var(--color-yellow)">Stay in touch</p>
-      <h2>Get rescue stories in your inbox.</h2>
-      <p style="opacity:.85">One email a month — adoption success stories, sweepstakes winners, and the impact of your support. Unsubscribe anytime.</p>
-      <form onsubmit="event.preventDefault(); alert('Preview only — newsletter capture goes here.');">
-        <input type="email" placeholder="you@example.com" required>
-        <button class="btn btn-yellow" type="submit">Subscribe</button>
-      </form>
-    </div>
-  </div>
-</section>
-"""
 
 MISSION_PILLARS = [
     ("Rescuing and Protecting Animals in Need", "Providing lifesaving care, rehabilitation, and support to vulnerable animals, while working to ensure their long-term well-being and quality of life."),
@@ -551,30 +621,17 @@ MAIL_ADDRESS = "<br>".join(C.ADDRESS_LINES)
 # ---------------------------------------------------------------------------
 
 # --- HOMEPAGE ---------------------------------------------------------------
-COVID_ITEMS = "\n".join(f"""    <div class="faq-item">
-      <h3>{q}</h3>
-      <p>{a}</p>
-    </div>""" for q, a in C.COVID_QA)
+COVID_ITEMS = "\n".join(f"""        <div class="qa-card">
+          <span class="qa-mark" aria-hidden="true">?</span>
+          <div>
+            <h3>{q}</h3>
+            <p>{a}</p>
+          </div>
+        </div>""" for q, a in C.COVID_QA)
 
-HOME_BODY = f"""
-<section class="hero-video">
-  <video autoplay muted loop playsinline preload="metadata"
-         poster="assets/video/humane-mission-poster.jpg">
-    <source src="assets/video/humane-mission.webm" type="video/webm">
-    <source src="assets/video/humane-mission.mp4" type="video/mp4">
-  </video>
-  <div class="container hero-content">
-    <p class="eyebrow">A 501(c)(3) non-profit, tax-exempt charity</p>
-    <h1>Working to end suffering for all animals.</h1>
-    <p class="lead">Every year, an estimated 4 to 6 million animals are euthanized. Our goals: spay/neutering, veterinary care for those in need and funding local shelters.</p>
-    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:var(--space-5)">
-      <a class="btn btn-primary btn-lg" href="donate.html">Donate Today</a>
-      <a class="btn btn-ghost btn-lg" href="about.html">Our Mission</a>
-    </div>
-  </div>
-</section>
-
-<!-- Stat band — audit proposal; numbers are placeholders until NHS supplies them -->
+# Placeholder stat band + trust strip that sat under the hero; shown only when
+# SHOW_PLACEHOLDER_STATS is True (see the top of this file).
+HOME_PLACEHOLDER_BANDS = f"""<!-- Stat band — audit proposal; numbers are placeholders until NHS supplies them -->
 <section class="hero-stat-band">
   <div class="container">
     <div class="hero-stat-strip">
@@ -595,6 +652,124 @@ HOME_BODY = f"""
     <div class="trust-badge"><strong>Tax ID {C.EIN}</strong>501(c)(3) tax-exempt charity</div>
   </div>
 </section>
+"""
+
+HELP_CARDS = [
+    # (title, text, button, href, colour, blob, icon) — copy, icons and colours from the current homepage
+    ("Sweepstakes", "What is better than helping animals in need while winning some incredible prizes?",
+     "Enter Now", "sweepstakes.html", "orange", "blob-1.png", "help-icon-dog.png"),
+    ("Our Programs", "These animals need our help. Learn about the ways our organization helps our furry friends in need.",
+     "Learn More", "animal-programs.html", "teal", "blob-2.png", "help-icon-cat.png"),
+    ("Donate", "Your donations go a long way to help ensure these animals find a forever home, happy and healthy.",
+     "Donate Now", "donate.html", "blue", "blob-3.png", "help-icon-clipboard.png"),
+]
+HELP_CARD_HTML = "\n".join(f"""      <div class="help-card is-{colour}">
+        <div class="help-blob" style="background-image:url('assets/img/{blob}')"><img src="assets/img/{icon}" alt="" width="84" height="84"></div>
+        <h3>{title}</h3>
+        <p>{text}</p>
+        <a class="help-btn" href="{href}">{button}</a>
+      </div>""" for title, text, button, href, colour, blob, icon in HELP_CARDS)
+
+LEARN_HOW_TO_HELP = f"""<!-- Learn How To Help (cards from the current homepage; it sits under the videos, as on the live page) -->
+<section class="section section-soft help-section">
+  <div class="container">
+    <div class="text-center" style="max-width:680px; margin:0 auto var(--space-7)">
+      <p class="eyebrow">Get involved</p>
+      <h2>Learn How To Help</h2>
+    </div>
+    <div class="grid grid-3 help-grid">
+{HELP_CARD_HTML}
+    </div>
+  </div>
+</section>
+"""
+
+
+def edu_video_carousel():
+    """YouTube Shorts from the educational playlist. Each card links to the
+    video and plays it in place when JavaScript is on (see nav.js)."""
+    cards = "\n".join(f"""      <a class="short-card" href="https://www.youtube.com/shorts/{vid}" data-video="{vid}" target="_blank" rel="noopener">
+        <img src="https://i.ytimg.com/vi/{vid}/oar2.jpg" alt="" loading="lazy">
+        <span class="short-play" aria-hidden="true"></span>
+        <span class="short-title">{title}</span>
+      </a>""" for vid, title in C.EDU_VIDEOS)
+    return f"""<!-- Educational videos (YouTube playlist, as on the current homepage) -->
+<section class="section edu-videos" data-carousel>
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Educational videos</p>
+        <h2>Meet Kapiolani</h2>
+        <p class="lead">{C.EDU_PLAYLIST_INTRO}</p>
+      </div>
+      <div class="carousel-controls">
+        <button class="carousel-btn" type="button" data-dir="-1" aria-label="Previous videos">←</button>
+        <button class="carousel-btn" type="button" data-dir="1" aria-label="Next videos">→</button>
+      </div>
+    </div>
+    <div class="short-track">
+{cards}
+    </div>
+    <p class="edu-videos-more"><a href="{C.EDU_PLAYLIST_URL}" target="_blank" rel="noopener">Watch the whole playlist on YouTube →</a></p>
+  </div>
+</section>"""
+
+
+# Prize cards on the home page (CJ asked for six at most: five cars + cash).
+# The full set stays on the Sweepstakes and Raffle Plus pages.
+HOME_PRIZES = [
+    "new-porsche-sweepstakes.html",
+    "new-corvette-sweepstakes.html",
+    "tesla-sweepstakes.html",
+    "ev-sweepstakes.html",
+    "lucid.html",
+]
+
+# Impact section — audit proposal; the three figures are placeholders. Shown
+# only when SHOW_PLACEHOLDER_STATS is True.
+HOME_IMPACT_PLACEHOLDER = """
+<!-- Impact — audit proposal; the three figures are placeholders -->
+<section class="section section-navy">
+  <div class="container">
+    <div class="text-center" style="max-width:680px; margin:0 auto var(--space-7)">
+      <p class="eyebrow">The problem</p>
+      <h2>4 to 6 million animals are euthanized every year.</h2>
+      <p class="lead" style="margin:0 auto">Through no fault of their own more than 7 million dogs and cats end up in shelters and breed rescues every year. Only one half of them will find a home.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="stat-block coral"><span class="num">[1,234]</span><span class="label">Animals placed in homes (2025)</span></div>
+      <div class="stat-block"><span class="num">[$1.2M]</span><span class="label">Granted to shelter partners</span></div>
+      <div class="stat-block coral"><span class="num">[123]</span><span class="label">Active shelter partners</span></div>
+    </div>
+    <div class="text-center" style="margin-top:var(--space-6)">
+      <a class="btn btn-yellow" href="impact.html">See full impact report →</a>
+    </div>
+  </div>
+</section>
+"""
+
+HOME_BODY = f"""
+<section class="hero-video">
+  <video autoplay muted loop playsinline preload="metadata"
+         poster="assets/video/humane-mission-poster.jpg">
+    <source src="assets/video/humane-mission.webm" type="video/webm">
+    <source src="assets/video/humane-mission.mp4" type="video/mp4">
+  </video>
+  <div class="container hero-content">
+    <p class="eyebrow">A 501(c)(3) non-profit, tax-exempt charity</p>
+    <h1>Working to end suffering for all animals.</h1>
+    <p class="lead">Every year, an estimated 4 to 6 million animals are euthanized. Our goals: to assist with spay/neutering and veterinary care for those in need, and to help fund local shelters.</p>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:var(--space-5)">
+      <a class="btn btn-primary btn-lg" href="donate.html">Donate Today</a>
+      <a class="btn btn-ghost btn-lg" href="about.html">Our Mission</a>
+    </div>
+    {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000", f"Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-hero")}
+  </div>
+</section>
+
+{HOME_PLACEHOLDER_BANDS if SHOW_PLACEHOLDER_STATS else ''}{edu_video_carousel()}
+
+{LEARN_HOW_TO_HELP}
 
 <!-- Mission pillars (verbatim from current /about page) -->
 <section class="section">
@@ -617,8 +792,11 @@ HOME_BODY = f"""
       <p class="lead" style="margin:0 auto">Choose prizes ranging from Porsche, Corvettes, Teslas, and more! Every entry supports our mission. It's a win-win!</p>
     </div>
 {SWEEPS_CTA}
-    <div style="margin-top:var(--space-6)">
-{prize_cards()}
+    <div style="margin-top:var(--space-7)">
+{prize_cards(slugs=HOME_PRIZES)}
+    </div>
+    <div class="text-center" style="margin-top:var(--space-6)">
+      <a class="btn btn-secondary" href="sweepstakes.html">See all {len(C.PRIZES)} prizes →</a>
     </div>
   </div>
 </section>
@@ -643,48 +821,41 @@ HOME_BODY = f"""
   </div>
 </section>
 
-<!-- Learn How To Help (verbatim cards from the current homepage) -->
-<section class="section section-soft">
+<!-- About Us + Make A Difference (verbatim from the current homepage, with its photos) -->
+<section class="section photo-panels">
   <div class="container">
-    <div class="text-center" style="max-width:680px; margin:0 auto var(--space-6)">
-      <h2>Learn How To Help</h2>
+    <div class="photo-panel">
+      <div class="photo-panel-img" style="background-image:url('assets/img/home-about-dog.jpg')" role="img" aria-label="A small white dog in a red sweater giving a high five"></div>
+      <div class="photo-panel-card">
+      <p class="eyebrow">About Us</p>
+      <p>The National Humane Society (The NHS) is a 501(c)(3) Non-Profit Tax Exempt Charity organization dedicated to improving the lives of rescue animals across America. We stand with shelters and humane societies around the country in the mission to find abandoned animals homes and to help rectify the over-population crisis of dogs and cats in the US.</p>
+      <p>Through our efforts each year, and through the generous donations of our supporters, the National Humane Society aids and assists in funding individual shelters to give volunteers and the animals they serve a fighting chance of making a change. We actively support and engage with communities to improve perceptions of adopting animals, and to protect the animals in question. Our belief is that through education and conversation, we can be the change needed for animals around the country.</p>
+      </div>
     </div>
-    <div class="grid grid-3">
-      <div class="card">
-        <div class="card-icon">★</div>
-        <h3>Sweepstakes</h3>
-        <p>What is better than helping animals in need while winning some incredible prizes?</p>
-        <a href="sweepstakes.html">Enter Now →</a>
-      </div>
-      <div class="card">
-        <div class="card-icon">🐾</div>
-        <h3>Our Programs</h3>
-        <p>These animals need our help. Learn about the ways our organization helps our furry friends in need.</p>
-        <a href="animal-programs.html">Learn More →</a>
-      </div>
-      <div class="card">
-        <div class="card-icon">♥</div>
-        <h3>Donate</h3>
-        <p>Your donations go a long way to help ensure these animals find a forever home, happy and healthy.</p>
-        <a href="donate.html">Donate Now →</a>
+    <div class="photo-panel is-flipped">
+      <div class="photo-panel-img" style="background-image:url('assets/img/home-difference-cat.jpg')" role="img" aria-label="A tabby cat wearing a slice of bread around its face"></div>
+      <div class="photo-panel-card">
+      <p class="eyebrow">Make A Difference</p>
+      <p>Your tax deductible contributions help us combat the animal abuse and animal overpopulation in the United States. The National Humane Society is the difference between living and dying. Your money is genuinely changing the lives of millions of cats and dogs in the United States.</p>
+      <p>Through no fault of their own more than 7 million dogs and cats end up in shelters and breed rescues every year. Only one half of them will find a home. Donations to the National Humane Society go to shelters and breed rescues nationwide.</p>
+      <a class="btn btn-primary" href="donations-helping-animals.html">See where donations go →</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- About Us + Make A Difference (verbatim from the current homepage) -->
-<section class="section section-navy">
-  <div class="container grid grid-2">
+<!-- COVID-19 & Your Pets (verbatim from the current homepage; under Make A Difference, as on the live page) -->
+<section class="section section-cream covid-section">
+  <div class="container covid-grid">
     <div>
-      <p class="eyebrow">About Us</p>
-      <p>The National Humane Society (The NHS) is a 501(c)(3) Non-Profit Tax Exempt Charity organization dedicated to improving the lives of rescue animals across America. We stand with shelters and humane societies around the country in the mission to find abandoned animals homes and to help rectify the over-population crisis of dogs and cats in the US.</p>
-      <p>Through our efforts each year, and through the generous donations of our supporters, the National Humane Society aids and assists in funding individual shelters to give volunteers and the animals they serve a fighting chance of making a change. We actively support and engage with communities to improve perceptions of adopting animals, and to protect the animals in question. Our belief is that through education and conversation, we can be the change needed for animals around the country.</p>
+      <p class="eyebrow">Pet health</p>
+      <h2>COVID-19 &amp; Your Pets</h2>
+      <div class="qa-list">
+{COVID_ITEMS}
+      </div>
     </div>
-    <div>
-      <p class="eyebrow">Make A Difference</p>
-      <p>Your tax deductible contributions help us combat the animal abuse and animal overpopulation in the United States. The National Humane Society is the difference between living and dying. Your money is genuinely changing the lives of millions of cats and dogs in the United States.</p>
-      <p>Through no fault of their own more than 7 million dogs and cats end up in shelters and breed rescues every year. Only one half of them will find a home. Donations to the National Humane Society go to shelters and breed rescues nationwide.</p>
-      <a class="btn btn-yellow" href="donations-helping-animals.html">See where donations go →</a>
+    <div class="covid-photo">
+      <img src="assets/img/home-covid-pet.jpg" alt="A small terrier wearing a nurse's cap and a toy stethoscope" width="570" height="618" loading="lazy">
     </div>
   </div>
 </section>
@@ -721,33 +892,8 @@ HOME_BODY = f"""
   </div>
 </section>
 
-<!-- Impact — audit proposal; the three figures are placeholders -->
-<section class="section section-navy">
-  <div class="container">
-    <div class="text-center" style="max-width:680px; margin:0 auto var(--space-7)">
-      <p class="eyebrow">The problem</p>
-      <h2>4 to 6 million animals are euthanized every year.</h2>
-      <p class="lead" style="margin:0 auto">Through no fault of their own more than 7 million dogs and cats end up in shelters and breed rescues every year. Only one half of them will find a home.</p>
-    </div>
-    <div class="grid grid-3">
-      <div class="stat-block coral"><span class="num">[1,234]</span><span class="label">Animals placed in homes (2025)</span></div>
-      <div class="stat-block"><span class="num">[$1.2M]</span><span class="label">Granted to shelter partners</span></div>
-      <div class="stat-block coral"><span class="num">[123]</span><span class="label">Active shelter partners</span></div>
-    </div>
-    <div class="text-center" style="margin-top:var(--space-6)">
-      <a class="btn btn-yellow" href="impact.html">See full impact report →</a>
-    </div>
-  </div>
-</section>
-
-<!-- COVID-19 & Your Pets (verbatim from the current homepage) -->
-<section class="section">
-  <div class="container-narrow">
-    <h2>COVID-19 &amp; Your Pets</h2>
-{COVID_ITEMS}
-  </div>
-</section>
-""" + NEWSLETTER_BLOCK
+{HOME_IMPACT_PLACEHOLDER if SHOW_PLACEHOLDER_STATS else ''}
+"""
 
 # --- ABOUT ------------------------------------------------------------------
 ABOUT_BODY = page_hero(

@@ -510,3 +510,29 @@ BLOG_SAMPLE_SLUG = "how-your-10-monthly-donation-really-helps-shelter-animals"
 VIDEO_IDS = ["1121408406", "1121408501", "1121408389", "1121408444",
              "1121408417", "1121408461", "1121408484", "1121408430"]
 INSTAGRAM_FEATURED = "https://www.instagram.com/p/DX8EX5HvPh_/"
+
+# ---------------------------------------------------------------------------
+# Educational videos — the YouTube Shorts carousel under the home page hero
+# ---------------------------------------------------------------------------
+# The live home page fetches this playlist in the browser through the YouTube
+# Data API, so new videos show up on their own. The prototype uses a snapshot
+# of the playlist taken on 2026-10-13 (7 videos, newest first); the WordPress
+# build should pull the playlist itself.
+EDU_PLAYLIST_ID = "PLsIcOzw_C46xsdSpdIaopLjzA4n2hSebh"
+EDU_PLAYLIST_URL = "https://www.youtube.com/playlist?list=" + EDU_PLAYLIST_ID
+# Reworded from the playlist's own description on YouTube ("Meet Kapiolani -
+# animal advocate with years of experience in shelter volunteering and animal
+# rescue. With each video, she teaches us something new about the animal safety.")
+EDU_PLAYLIST_INTRO = ("An animal advocate with years of experience in shelter volunteering and "
+                      "animal rescue, Kapiolani teaches us something new about animal safety "
+                      "in every video.")
+# (YouTube video id, title) — titles as published, minus the all-caps and emoji.
+EDU_VIDEOS = [
+    ("vsFYHhMeMpo", "We donated a $1K shopping spree"),
+    ("-l9j1tZLAjc", "The most emotional animal rescues have one thing in common"),
+    ("2APCMlkKzIA", "Why can't you volunteer or foster?"),
+    ("90Cf6X35cRU", "This 3-3-3 rule saves lives"),
+    ("SFKD_TzzcRA", "Here's why senior shelter dogs love the deepest"),
+    ("WALa7sAT5UI", "The biggest sign you should adopt a shelter pet"),
+    ("6jUTEeyMllg", "7 million new shelter dogs and cats each year"),
+]
