@@ -263,7 +263,7 @@ def ticket_tiers(kind):
     for bought, free, sweeps_price, plus_price, popular in C.TICKET_TIERS:
         price = sweeps_price if kind == "sweepstakes" else plus_price
         noun = "Ticket" if bought == 1 else "Tickets"
-        badge = '<span class="tier-badge">Most Popular</span>' if popular else ""
+        badge = '<span class="tier-badge"><span aria-hidden="true">★</span> Most Popular</span>' if popular else ""
         cls = "tier-card is-popular" if popular else "tier-card"
         cards.append(f"""      <div class="{cls}">
         {badge}
@@ -298,7 +298,7 @@ def ticket_choices(kind):
     for bought, free, sweeps_price, plus_price, popular in C.TICKET_TIERS:
         price = sweeps_price if kind == "sweepstakes" else plus_price
         noun = "Ticket" if bought == 1 else "Tickets"
-        badge = '<span class="choice-badge">Most Popular</span>' if popular else ""
+        badge = '<span class="choice-badge"><span aria-hidden="true">★</span> Most Popular</span>' if popular else ""
         cls = "choice-card ticket-choice is-popular" if popular else "choice-card ticket-choice"
         summary = f"{bought} {noun.lower()} + {free} free"
         cards.append(f"""            <label class="{cls}">
@@ -397,7 +397,7 @@ def entry_form(kind):
           <li>Ticket number(s) emailed within 48 hours</li>
           <li>No need to be present to win</li>
         </ul>
-        <p class="form-footnote">Please remember to spay or neuter your pets. For any questions, please call us at <a href="{tel(C.QUESTIONS_LINE)}">{C.QUESTIONS_LINE}</a>.</p>
+        <p class="form-footnote">Please remember to spay or neuter your pets. For any questions, please call us at <a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a>.</p>
       </aside>
     </form>
   </div>
@@ -1183,9 +1183,7 @@ RAFFLE_BODY = sweeps_hero(
 
 # --- PRIZE PAGES (one template, eight pages) --------------------------------
 # Per-page notes for the client, shown under the prize page hero.
-PRIZE_NOTES = {
-    "lucid.html": review_note("<p>This page shows two Lucid models (Gravity and Air), but both entry forms offer a single \"Lucid\" choice. Should the forms list the Gravity and the Air separately, as they now do for the Rivian R1T and R1S?</p>"),
-}
+PRIZE_NOTES = {}
 
 
 def prize_body(prize):
@@ -1350,7 +1348,7 @@ DONATE_BODY = page_hero(
 {PAYMENT_BLOCK}
         </div>
         <button type="submit" class="btn btn-primary donate-cta" style="width:100%; justify-content:center">Donate $25 monthly →</button>
-        <p class="form-footnote">Tax-deductible · 501(c)(3). Please remember to spay or neuter your pets. For any questions, please call us at <a href="{tel(C.QUESTIONS_LINE)}">{C.QUESTIONS_LINE}</a>.</p>
+        <p class="form-footnote">Tax-deductible · 501(c)(3). Please remember to spay or neuter your pets. For any questions, please call us at <a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a>.</p>
       </div>
     </form>
   </div>

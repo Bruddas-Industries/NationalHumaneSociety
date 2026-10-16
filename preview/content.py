@@ -16,7 +16,6 @@ EIN = "58-2399783"
 ADDRESS_LINES = ["National Humane Society", "406 Suburban DR #364", "Newark, DE 19711"]
 ORDER_LINE = "844-807-4052"
 CUSTOMER_SERVICE = "877-285-0710"
-QUESTIONS_LINE = "302-369-6532"
 EMAIL = "info@nationalhumanesociety.org"
 SOCIAL = [
     ("Instagram", "https://www.instagram.com/nationalhumane/"),
@@ -44,8 +43,9 @@ TICKET_TIERS = [
 # Every car a winner can choose: the same list on both entry forms, in the
 # Sweepstakes and Raffle Plus page galleries and in the prize lineup.
 # Source: the live entry forms, confirmed by CJ on 2026-10-15 as the correct
-# prize list, with the Rivian offered as two models (R1T and R1S) instead of
-# one. (The Ford F-150 Lightning on the live EV page is not a prize; CJ.)
+# prize list, with the Rivian (R1T, R1S) and the Lucid (Gravity, Air) each
+# offered as two models instead of one. (The Ford F-150 Lightning on the live
+# EV page is not a prize; CJ.)
 # Grouped by make here; the live forms list them in no particular order.
 # (label as shown on the forms, thumbnail, prize page)
 CAR_PRIZES = [
@@ -59,7 +59,8 @@ CAR_PRIZES = [
     ("Tesla Y", "prize-tesla-y.jpg", "tesla-sweepstakes.html"),
     ("Rivian R1T", "prize-rivian.jpg", "ev-sweepstakes.html"),
     ("Rivian R1S", "prize-rivian-r1s.avif", "ev-sweepstakes.html"),
-    ("Lucid", "prize-lucid-gravity.jpg", "lucid.html"),
+    ("Lucid Gravity", "prize-lucid-gravity.jpg", "lucid.html"),
+    ("Lucid Air", "prize-lucid-air.webp", "lucid.html"),
     ("Cadillac Escalade", "prize-cadillac-escalade.avif", "cadillac-sweepstakes.html"),
 ]
 
