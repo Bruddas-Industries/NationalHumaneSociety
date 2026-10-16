@@ -152,7 +152,6 @@ def render_footer():
       <div class="badge"><strong>Charity Navigator</strong>Rating placeholder</div>
       <div class="badge"><strong>Candid / GuideStar</strong>Seal placeholder</div>
       <div class="badge"><strong>BBB Wise Giving</strong>Accreditation placeholder</div>
-      <div class="badge"><strong>Tax ID</strong>{C.EIN}</div>
     </div>
 """ if SHOW_PLACEHOLDER_STATS else ""
     return f"""<footer class="site-footer">
@@ -643,13 +642,12 @@ HOME_PLACEHOLDER_BANDS = f"""<!-- Stat band — audit proposal; numbers are plac
   </div>
 </section>
 
-<!-- Trust strip — audit Section 3.4; ratings are placeholders, the tax ID is real -->
+<!-- Trust strip — audit Section 3.4; ratings are placeholders -->
 <section class="trust-strip">
   <div class="container trust-grid">
     <div class="trust-badge"><strong>Charity Navigator</strong>Rating placeholder</div>
     <div class="trust-badge"><strong>Candid Platinum</strong>Seal placeholder</div>
     <div class="trust-badge"><strong>BBB Wise Giving</strong>Accreditation placeholder</div>
-    <div class="trust-badge"><strong>Tax ID {C.EIN}</strong>501(c)(3) tax-exempt charity</div>
   </div>
 </section>
 """
@@ -924,7 +922,6 @@ ABOUT_BODY = page_hero(
     </div>
     <aside class="proceeds-panel">
       <h4>A 501(c)(3) tax-exempt charity</h4>
-      <p>Our tax ID number is {C.EIN}.</p>
       <p style="margin:0"><a href="donate.html">Donate online →</a></p>
     </aside>
   </div>
@@ -1318,7 +1315,7 @@ DONATE_BODY = page_hero(
 {PAYMENT_BLOCK}
         </div>
         <button type="submit" class="btn btn-primary donate-cta" style="width:100%; justify-content:center">Donate $25 monthly →</button>
-        <p class="form-footnote">Tax-deductible · 501(c)(3) · Tax ID {C.EIN}. Please remember to spay or neuter your pets. For any questions, please call us at <a href="{tel(C.QUESTIONS_LINE)}">{C.QUESTIONS_LINE}</a>.</p>
+        <p class="form-footnote">Tax-deductible · 501(c)(3). Please remember to spay or neuter your pets. For any questions, please call us at <a href="{tel(C.QUESTIONS_LINE)}">{C.QUESTIONS_LINE}</a>.</p>
       </div>
     </form>
   </div>
@@ -1341,7 +1338,7 @@ BEQUEST = """<blockquote class="bequest">"I give and bequeath to The National Hu
 
 WILLS_BODY = page_hero(
     "Wills &amp; Estates",
-    f"We are a 501(c)(3) tax-exempt charity. Our tax ID number is: {C.EIN}",
+    "We are a 501(c)(3) tax-exempt charity.",
     "Wills &amp; Estates",
 ) + f"""
 <section class="section">
@@ -1712,7 +1709,7 @@ FINANCIAL_BODY = page_hero(
     </ul>
 
     <h3 style="margin-top:var(--space-7)">Verify our status</h3>
-    <p>We are a 501(c)(3) tax-exempt charity. Our tax ID number is {C.EIN}.</p>
+    <p>We are a 501(c)(3) tax-exempt charity.</p>
     <div class="grid grid-3" style="margin-top:var(--space-5)">
       <div class="card text-center"><strong>Charity Navigator</strong><p style="margin-top:8px; color:var(--color-text-muted)">Rating placeholder</p></div>
       <div class="card text-center"><strong>Candid (GuideStar)</strong><p style="margin-top:8px; color:var(--color-text-muted)">Seal placeholder</p></div>

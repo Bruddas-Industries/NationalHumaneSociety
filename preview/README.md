@@ -79,13 +79,15 @@ These tokens live in `assets/css/styles.css` as CSS custom properties and will p
 
 ## Placeholder data
 
-Prices, dates, rules, prize specs, winners, the tax ID and contact details are real and come from the live site. Bracketed placeholders (`[1,234]`, `[78]%`) and "placeholder" rating badges mark audit proposals that need real numbers from the org before they could go live. They appear on the "Proposed" pages; the home page and footer ones are hidden (below). The live site publishes no organization-specific impact figures, which is itself a finding (audit Section 2.5).
+Prices, dates, rules, prize specs, winners and contact details are real and come from the live site. Bracketed placeholders (`[1,234]`, `[78]%`) and "placeholder" rating badges mark audit proposals that need real numbers from the org before they could go live. They appear on the "Proposed" pages; the home page and footer ones are hidden (below). The live site publishes no organization-specific impact figures, which is itself a finding (audit Section 2.5).
 
 ### Hidden for now
 
-- **Placeholder figures and ratings**: the home page stat band and trust strip (the two rows under the hero), the home page impact section, and the footer badge row (Charity Navigator, Candid, BBB, tax ID). Hidden on 2026-10-13 and 2026-10-15 because every figure and rating in them is a placeholder. The markup is kept in `build.py`; set `SHOW_PLACEHOLDER_STATS = True` (top of the file) to bring all four back once NHS supplies real numbers and ratings.
+- **Placeholder figures and ratings**: the home page stat band and trust strip (the two rows under the hero), the home page impact section, and the footer badge row (Charity Navigator, Candid, BBB). Hidden on 2026-10-13 and 2026-10-15 because every figure and rating in them is a placeholder. The markup is kept in `build.py`; set `SHOW_PLACEHOLDER_STATS = True` (top of the file) to bring all four back once NHS supplies real numbers and ratings.
 
 The audit's newsletter signup was removed on 2026-10-15: the live site has none.
+
+The tax ID is deliberately not shown anywhere on the site (CJ, 2026-10-15). It stays in `content.py` as `EIN` for tax receipts in the WordPress build.
 
 ## Editing & re-generating
 

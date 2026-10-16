@@ -633,7 +633,7 @@ body.is-home .site-header.at-top .brand-logo {
 }
 .trust-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-5);
   align-items: center;
 }
@@ -654,7 +654,7 @@ body.is-home .site-header.at-top .brand-logo {
   text-transform: none;
   margin-bottom: 4px;
 }
-@media (max-width: 700px) { .trust-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 700px) { .trust-grid { grid-template-columns: 1fr; } }
 
 /* Inline donate widget (homepage + donate page) */
 .donate-widget {
@@ -1074,7 +1074,7 @@ body.is-home .site-header.at-top .brand-logo {
 .footer-brand { font-family: var(--font-display); color: #fff; font-size: 1.25rem; margin-bottom: var(--space-3); }
 .footer-trust {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-4);
   padding: var(--space-5) 0;
   border-bottom: 1px solid rgba(255,255,255,.1);
@@ -1120,7 +1120,6 @@ body.is-home .site-header.at-top .brand-logo {
 
 @media (max-width: 1024px) {
   .footer-grid { grid-template-columns: 1fr 1fr; }
-  .footer-trust { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 600px) {
   .footer-grid { grid-template-columns: 1fr; }

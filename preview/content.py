@@ -10,6 +10,8 @@ change it here and re-run `python build.py`.
 # ---------------------------------------------------------------------------
 # Organization facts
 # ---------------------------------------------------------------------------
+# Not shown anywhere on the site (CJ, 2026-10-15). Kept on record for tax
+# receipts and donor emails in the WordPress build.
 EIN = "58-2399783"
 ADDRESS_LINES = ["National Humane Society", "406 Suburban DR #364", "Newark, DE 19711"]
 ORDER_LINE = "844-807-4052"
