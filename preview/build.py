@@ -175,7 +175,7 @@ def render_footer():
     </div>
     <div class="footer-bottom">
       <div class="footer-copy">© 2026 National Humane Society. All rights reserved.</div>
-      <div class="footer-links">501(c)(3) tax-exempt charity · Tax ID {C.EIN} · {standalone}</div>
+      <div class="footer-links">501(c)(3) tax-exempt charity · {standalone}</div>
       <div class="footer-credit">Made with <span role="img" aria-label="love">❤️</span> by <a href="https://www.bruddasindustries.com/" target="_blank" rel="noopener">Brudda's Industries</a></div>
     </div>
   </div>
