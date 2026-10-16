@@ -16,7 +16,6 @@ EIN = "58-2399783"
 ADDRESS_LINES = ["National Humane Society", "406 Suburban DR #364", "Newark, DE 19711"]
 ORDER_LINE = "844-807-4052"
 CUSTOMER_SERVICE = "877-285-0710"
-QUESTIONS_LINE = "302-369-6532"
 EMAIL = "info@nationalhumanesociety.org"
 SOCIAL = [
     ("Instagram", "https://www.instagram.com/nationalhumane/"),
@@ -41,38 +40,39 @@ TICKET_TIERS = [
     (10, "6000", 250, 350, False),
 ]
 
-# Prize choices offered on the live Sweepstakes entry form (cash moved last).
-# (label, thumbnail image or None for cash)
-SWEEPSTAKES_PRIZE_OPTIONS = [
-    ("Porsche 911", "prize-porsche-911.webp"),
-    ("Electric Porsche Taycan", "prize-porsche-taycan.jpg"),
-    ("Macan S", "prize-porsche-macan.webp"),
-    ("Corvette", "prize-corvette-new.jpg"),
-    ("Corvette E-Ray", "prize-corvette-eray.webp"),
-    ("Tesla Y", "prize-tesla-y.jpg"),
-    ("Rivian", "prize-rivian.jpg"),
-    ("Lucid", "prize-lucid-gravity.jpg"),
-    ("Classic 1967 Corvette", "prize-corvette-classic.jpg"),
-    ("1965 Porsche", "prize-porsche-1965.jpg"),
-    ("Cadillac Escalade", "prize-cadillac-escalade.avif"),
-    ("$50,000 Cash", None),
+# Every car a winner can choose: the same list on both entry forms, in the
+# Sweepstakes and Raffle Plus page galleries and in the prize lineup.
+# Source: the live entry forms, confirmed by CJ on 2026-10-15 as the correct
+# prize list, with the Rivian (R1T, R1S) and the Lucid (Gravity, Air) each
+# offered as two models instead of one. (The Ford F-150 Lightning on the live
+# EV page is not a prize; CJ.)
+# Grouped by make here; the live forms list them in no particular order.
+# (label as shown on the forms, thumbnail, prize page)
+CAR_PRIZES = [
+    ("Porsche 911 Carrera Cabriolet", "prize-porsche-911.webp", "new-porsche-sweepstakes.html"),
+    ("Electric Porsche Taycan", "prize-porsche-taycan.jpg", "new-porsche-sweepstakes.html"),
+    ("Macan S", "prize-porsche-macan.webp", "new-porsche-sweepstakes.html"),
+    ("1965 Porsche", "prize-porsche-1965.jpg", "1965-porsche-sweepstakes.html"),
+    ("Corvette", "prize-corvette-new.jpg", "new-corvette-sweepstakes.html"),
+    ("Corvette E-Ray", "prize-corvette-eray.webp", "new-corvette-sweepstakes.html"),
+    ("Classic 1967 Corvette", "prize-corvette-classic.jpg", "classic-corvette-sweepstakes.html"),
+    ("Tesla Y", "prize-tesla-y.jpg", "tesla-sweepstakes.html"),
+    ("Rivian R1T", "prize-rivian.jpg", "ev-sweepstakes.html"),
+    ("Rivian R1S", "prize-rivian-r1s.avif", "ev-sweepstakes.html"),
+    ("Lucid Gravity", "prize-lucid-gravity.jpg", "lucid.html"),
+    ("Lucid Air", "prize-lucid-air.webp", "lucid.html"),
+    ("Cadillac Escalade", "prize-cadillac-escalade.avif", "cadillac-sweepstakes.html"),
 ]
 
-# Prize choices offered on the live Raffle Plus entry form (cash moved last).
-# (label, thumbnail image or None for cash, kind)
+# Sweepstakes: one car or the cash. (label, thumbnail or None for cash)
+SWEEPSTAKES_PRIZE_OPTIONS = [(label, image) for label, image, _page in CAR_PRIZES] + [
+    ("$50,000.00 Cash", None),
+]
+
+# Raffle Plus: any two cars, or one car and $50,000, or $100,000 on its own.
+# (label, thumbnail or None for cash, kind)
 # kind: "car", "cash" ($50,000, pairs with one car) or "all" ($100,000, on its own)
-RAFFLE_PLUS_PRIZE_OPTIONS = [
-    ("Porsche 911 Carrera Cabriolet", "prize-porsche-911.webp", "car"),
-    ("Corvette E-Ray", "prize-corvette-eray.webp", "car"),
-    ("Macan S", "prize-porsche-macan.webp", "car"),
-    ("Lucid", "prize-lucid-gravity.jpg", "car"),
-    ("Rivian", "prize-rivian.jpg", "car"),
-    ("Cadillac Escalade", "prize-cadillac-escalade.avif", "car"),
-    ("Electric Porsche Taycan", "prize-porsche-taycan.jpg", "car"),
-    ("Classic 1967 Corvette", "prize-corvette-classic.jpg", "car"),
-    ("1965 Porsche", "prize-porsche-1965.jpg", "car"),
-    ("Tesla Y", "prize-tesla-y.jpg", "car"),
-    ("Corvette", "prize-corvette-new.jpg", "car"),
+RAFFLE_PLUS_PRIZE_OPTIONS = [(label, image, "car") for label, image, _page in CAR_PRIZES] + [
     ("$50,000.00 Cash", None, "cash"),
     ("$100,000.00 Cash", None, "all"),
 ]
@@ -175,13 +175,6 @@ PRIZES = [
             ("Range", "270 miles"),
             ("0–60", "4.5 sec"),
             ("Horsepower", "553 hp"),
-        ]),
-        ("Ford F-150 Lightning", "2024 Model", "prize-ford-lightning.jpg", [
-            ("Range", "230 mile battery only"),
-            ("Towing capacity", "7,700 lbs"),
-            ("Battery charge time", "14h at 220V"),
-            ("Horsepower", "580 hp"),
-            ("Curb weight", "6,171 lbs"),
         ]),
      ]),
     ("lucid.html", "Lucid", "Win a new EV",

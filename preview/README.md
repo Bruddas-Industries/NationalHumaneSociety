@@ -35,7 +35,7 @@ Or in VS Code: install the **Live Server** extension, right-click `index.html`, 
 
 ### How the sweepstakes actually works
 
-Each drawing has one winner, who chooses the prize. A Sweepstakes ticket wins one car or $50,000; a Raffle Plus ticket wins two cars, or $100,000, or one car and $50,000. The prize pages describe the cars on offer — they are not separate sweepstakes.
+Each drawing has one winner, who chooses the prize. The cars on offer are listed once, in `CAR_PRIZES` in `content.py`; both entry forms, the hero galleries on the two entry pages and the prize lineup follow that list. CJ confirmed it on 2026-10-15: the live entry forms, with the Rivian split into R1T and R1S. The Ford F-150 Lightning on the live EV page is not a prize and is left out. A Sweepstakes ticket wins one car or $50,000; a Raffle Plus ticket wins two cars, or $100,000, or one car and $50,000. The prize pages describe the cars on offer — they are not separate sweepstakes.
 
 Drawings are held every six months, so the date moves twice a year. It is written in exactly one place — `DRAWING_DATE` in `content.py` — and the hero, entry forms, Rules and FAQ all read it from there.
 
