@@ -405,48 +405,75 @@ def entry_form(kind):
 """
 
 
-def prize_gallery(slug, cars):
-    """Photo strip for one prize card: swipe, or use the arrows and dots, to
-    see every car that prize page offers (nav.js wires up the controls)."""
-    slides = "\n".join(
-        f"""          <a class="prize-slide" href="{slug}" style="background-image:url('assets/img/{image}')"{'' if i == 0 else ' tabindex="-1"'}>"""
-        + (f'<span class="prize-slide-name">{name}</span>' if len(cars) > 1 else f'<span class="visually-hidden">{name}</span>')
+def gallery(slides, count_label=None, autoplay=None, cls="prize-gallery"):
+    """Swipeable photo strip; arrows and dots page through it (nav.js).
+    slides: [(car name, image, link)]. autoplay: milliseconds between slides."""
+    slides_html = "\n".join(
+        f"""          <a class="prize-slide" href="{href}" style="background-image:url('assets/img/{image}')"{'' if i == 0 else ' tabindex="-1"'}>"""
+        + (f'<span class="prize-slide-name">{name}</span>' if len(slides) > 1 else f'<span class="visually-hidden">{name}</span>')
         + "</a>"
-        for i, (name, _note, image, _specs) in enumerate(cars)
+        for i, (name, image, href) in enumerate(slides)
     )
     controls = ""
-    if len(cars) > 1:
+    if len(slides) > 1:
         dots = "".join(
             f'<button type="button" aria-label="Show {name}"{active}></button>'
-            for i, (name, *_rest) in enumerate(cars)
+            for i, (name, *_rest) in enumerate(slides)
             for active in [' class="is-active"' if i == 0 else ""]
         )
-        controls = f"""
-        <span class="gallery-count">{len(cars)} models</span>
+        count = f'\n        <span class="gallery-count">{count_label}</span>' if count_label else ""
+        controls = f"""{count}
         <button class="gallery-btn gallery-prev" type="button" aria-label="Previous car">‹</button>
         <button class="gallery-btn gallery-next" type="button" aria-label="Next car">›</button>
         <div class="gallery-dots">{dots}</div>"""
-    return f"""      <div class="prize-gallery" data-gallery>
+    timer = f' data-autoplay="{autoplay}"' if autoplay else ""
+    return f"""      <div class="{cls}" data-gallery{timer}>
         <div class="prize-slides">
-{slides}
+{slides_html}
         </div>{controls}
       </div>"""
 
 
-CASH_CARD = """    <article class="prize-card prize-card-cash">
-      <a class="cash-face" href="sweepstakes.html">
+def prize_gallery(slug, cars):
+    """Photo strip for one prize card: every car that prize page offers."""
+    return gallery([(name, image, slug) for name, _note, image, _specs in cars],
+                   count_label=f"{len(cars)} models")
+
+
+def car_lineup_gallery(start=0):
+    """Hero gallery on the entry pages: every car on the entry form, cycling
+    on its own. start: which car shows first."""
+    cars = C.CAR_PRIZES[start:] + C.CAR_PRIZES[:start]
+    return gallery([(label, image, page) for label, image, page in cars],
+                   count_label=f"{len(cars)} cars to choose from", autoplay=4500,
+                   cls="prize-gallery sweeps-hero-gallery")
+
+
+def cash_card(amount, title, text):
+    """Cash prize card. Not a link (there is no cash prize page), but it keeps
+    the card hover effects."""
+    return f"""    <article class="prize-card prize-card-cash">
+      <div class="cash-face">
         <span class="cash-note">Cash prize</span>
-        <span class="cash-amount">$50,000</span>
-      </a>
+        <span class="cash-amount">{amount}</span>
+      </div>
       <div class="prize-body">
-        <h3><a href="sweepstakes.html">$50,000.00 Cash</a></h3>
-        <p>Take the cash instead of a car.</p>
+        <h3>{title}</h3>
+        <p>{text}</p>
       </div>
     </article>"""
 
 
-def prize_cards(include_cash=True, slugs=None):
-    """slugs: limit (and order) the cards, e.g. the shorter home page set."""
+SWEEPS_CASH = [cash_card("$50,000", "$50,000.00 Cash", "Take the cash instead of a car.")]
+RAFFLE_CASH = [
+    cash_card("$50,000", "$50,000.00 Cash", "Pair it with any one car."),
+    cash_card("$100,000", "$100,000.00 Cash", "Take the whole prize in cash."),
+]
+
+
+def prize_cards(cash=SWEEPS_CASH, slugs=None):
+    """slugs: limit (and order) the cards, e.g. the shorter home page set.
+    cash: the cash cards to add at the end."""
     prizes = {p[0]: p for p in C.PRIZES}
     chosen = [prizes[s] for s in slugs] if slugs else C.PRIZES
     cards = []
@@ -464,8 +491,7 @@ def prize_cards(include_cash=True, slugs=None):
         <p>{detail}</p>
       </div>
     </article>""")
-    if include_cash:
-        cards.append(CASH_CARD)
+    cards.extend(cash)
     return '    <div class="grid grid-3">\n' + "\n".join(cards) + "\n    </div>"
 
 
@@ -1044,17 +1070,20 @@ DONATIONS_BODY = page_hero(
 """
 
 # --- SWEEPSTAKES + RAFFLE PLUS (entry pages) --------------------------------
+# The live page's headline lineup disagreed with its entry form (Tesla Model S
+# and 3, no Cadillac). CJ confirmed the entry form is right (2026-10-15), so
+# the lineup now lists exactly the cars on the form (C.CAR_PRIZES).
 CAR_LINEUP = """    <ul class="lineup">
-      <li><strong>Porsche</strong> 911 Carrera Cabriolet, Macan S, Taycan, 1965 356C</li>
-      <li><strong>Corvette</strong> Stingray, Classic Corvette</li>
-      <li><strong>Tesla</strong> Model S, 3, Y</li>
-      <li><strong>EVs</strong> Rivian R1T, Corvette E-Ray</li>
+      <li><strong>Porsche</strong> 911 Carrera Cabriolet, Taycan, Macan S, 1965 356C</li>
+      <li><strong>Corvette</strong> Stingray, E-Ray, Classic 1967</li>
+      <li><strong>Tesla</strong> Model Y</li>
+      <li><strong>Rivian</strong> R1T, R1S</li>
+      <li><strong>Lucid</strong> Gravity, Air</li>
+      <li><strong>Cadillac</strong> Escalade</li>
     </ul>"""
 
-LINEUP_NOTE = review_note("<p>The headline lineup above (Tesla Model S, 3, Y; Rivian R1T) does not match the prize list in the entry form (Tesla Y, Rivian, Lucid, Cadillac Escalade). Both are carried over as published — which list is current?</p>")
 
-
-def sweeps_hero(crumb, eyebrow, headline, lead, image, ticket_fact):
+def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact):
     """Navy hero for the two entry pages, with the facts people ask about first."""
     return f"""
 <section class="sweeps-hero">
@@ -1069,7 +1098,7 @@ def sweeps_hero(crumb, eyebrow, headline, lead, image, ticket_fact):
         <a class="btn btn-ghost btn-lg" href="#prizes">See the prizes</a>
       </div>
     </div>
-    <div class="sweeps-hero-image" style="background-image:url('assets/img/{image}')" role="img" aria-label="One of the prize cars"></div>
+{car_lineup_gallery(first_car)}
   </div>
   <div class="container">
     <div class="fact-strip">
@@ -1102,7 +1131,7 @@ SWEEPSTAKES_BODY = sweeps_hero(
     "Sweepstakes",
     'Win a new car or <span class="hl">$50,000.00!</span>',
     "Choose prizes ranging from Porsche, Corvettes, Teslas, and more! Every entry supports our mission. It's a win-win!",
-    "prize-porsche-911.webp",
+    0,  # starts on the Porsche 911
     "$25.00 each",
 ) + f"""
 <section class="section" id="prizes">
@@ -1114,7 +1143,6 @@ SWEEPSTAKES_BODY = sweeps_hero(
       </div>
     </div>
 {CAR_LINEUP}
-    {LINEUP_NOTE}
 {prize_cards()}
   </div>
 </section>
@@ -1130,7 +1158,7 @@ RAFFLE_BODY = sweeps_hero(
     "Raffle Plus",
     'Win two new cars or <span class="hl">$100,000.00!</span>',
     "Pick any two cars, $100,000.00, or one car and $50,000.00. Every entry supports our mission.",
-    "prize-corvette-new.jpg",
+    4,  # starts on the Corvette
     f"From ${C.TICKET_TIERS[0][3]}",
 ) + f"""
 <section class="section" id="prizes">
@@ -1142,7 +1170,7 @@ RAFFLE_BODY = sweeps_hero(
       </div>
     </div>
 {CAR_LINEUP}
-{prize_cards(include_cash=False)}
+{prize_cards(cash=RAFFLE_CASH)}
   </div>
 </section>
 """ + upsell(
@@ -1154,8 +1182,14 @@ RAFFLE_BODY = sweeps_hero(
 
 
 # --- PRIZE PAGES (one template, eight pages) --------------------------------
+# Per-page notes for the client, shown under the prize page hero.
+PRIZE_NOTES = {
+    "lucid.html": review_note("<p>This page shows two Lucid models (Gravity and Air), but both entry forms offer a single \"Lucid\" choice. Should the forms list the Gravity and the Air separately, as they now do for the Rivian R1T and R1S?</p>"),
+}
+
+
 def prize_body(prize):
-    _slug, label, headline, sub, tagline, _image, cars = prize
+    slug, label, headline, sub, tagline, _image, cars = prize
     blocks = []
     for name, year, image, specs in cars:
         rows = "\n".join(f"          <dt>{k}</dt><dd>{v}</dd>" for k, v in specs)
@@ -1185,6 +1219,7 @@ def prize_body(prize):
 
 <section class="section">
   <div class="container">
+{PRIZE_NOTES.get(slug, "")}
 {chr(10).join(blocks)}
   </div>
 </section>

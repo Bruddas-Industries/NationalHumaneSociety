@@ -137,8 +137,12 @@
     });
   });
 
-  // Prize card photo strips: arrows and dots page through the cars (wrapping
-  // round at the ends); swiping works through the scroll container itself.
+  // Photo strips (prize cards, entry-page heroes): arrows and dots page
+  // through the cars, wrapping round at the ends; swiping works through the
+  // scroll container itself. With data-autoplay="ms" the strip also moves on
+  // by itself, pausing while the pointer or keyboard focus is on it, and
+  // never for visitors who ask for reduced motion.
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.querySelectorAll('[data-gallery]').forEach((gallery) => {
     const track = gallery.querySelector('.prize-slides');
     const count = track ? track.children.length : 0;
@@ -146,13 +150,32 @@
     const dots = [...gallery.querySelectorAll('.gallery-dots button')];
     const current = () => Math.round(track.scrollLeft / track.clientWidth);
     const go = (i) => track.scrollTo({ left: ((i + count) % count) * track.clientWidth });
-    gallery.querySelector('.gallery-prev').addEventListener('click', () => go(current() - 1));
-    gallery.querySelector('.gallery-next').addEventListener('click', () => go(current() + 1));
-    dots.forEach((dot, i) => dot.addEventListener('click', () => go(i)));
+
+    const delay = Number(gallery.dataset.autoplay) || 0;
+    let timer = null;
+    let paused = false;
+    const restart = () => {
+      if (!delay || reduceMotion) return;
+      clearInterval(timer);
+      timer = setInterval(() => {
+        if (!paused && !document.hidden) go(current() + 1);
+      }, delay);
+    };
+    gallery.addEventListener('mouseenter', () => { paused = true; });
+    gallery.addEventListener('mouseleave', () => { paused = false; restart(); });
+    gallery.addEventListener('focusin', () => { paused = true; });
+    gallery.addEventListener('focusout', () => { paused = false; restart(); });
+    track.addEventListener('touchstart', restart, { passive: true });
+
+    const step = (i) => { go(i); restart(); };
+    gallery.querySelector('.gallery-prev').addEventListener('click', () => step(current() - 1));
+    gallery.querySelector('.gallery-next').addEventListener('click', () => step(current() + 1));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => step(i)));
     track.addEventListener('scroll', () => {
       const i = current();
       dots.forEach((dot, j) => dot.classList.toggle('is-active', i === j));
     }, { passive: true });
+    restart();
   });
 
   // Sweepstakes / Raffle Plus entry forms (preview only): keep the summary
