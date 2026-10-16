@@ -95,6 +95,66 @@
     });
   });
 
+  // Educational video carousel: arrows page through the cards, and a card
+  // plays its video in place (one at a time) instead of opening YouTube.
+  document.querySelectorAll('[data-carousel]').forEach((carousel) => {
+    const track = carousel.querySelector('.short-track');
+    if (!track) return;
+    const prev = carousel.querySelector('.carousel-btn[data-dir="-1"]');
+    const next = carousel.querySelector('.carousel-btn[data-dir="1"]');
+    const updateArrows = () => {
+      const max = track.scrollWidth - track.clientWidth - 2;
+      if (prev) prev.disabled = track.scrollLeft <= 2;
+      if (next) next.disabled = track.scrollLeft >= max;
+    };
+    carousel.querySelectorAll('.carousel-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        track.scrollBy({ left: Number(btn.dataset.dir) * track.clientWidth });
+      });
+    });
+    track.addEventListener('scroll', updateArrows, { passive: true });
+    window.addEventListener('resize', updateArrows);
+    updateArrows();
+
+    let playing = null; // { player, card }: the card goes back when another video starts
+    track.querySelectorAll('a.short-card').forEach((card) => {
+      card.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (playing) playing.player.replaceWith(playing.card);
+        const player = document.createElement('div');
+        player.className = 'short-card is-playing';
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube-nocookie.com/embed/${card.dataset.video}?autoplay=1&playsinline=1&rel=0`;
+        iframe.title = card.querySelector('.short-title')?.textContent || 'Video';
+        iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+        iframe.allowFullscreen = true;
+        // YouTube refuses to play embeds that arrive without a referrer (error 153).
+        iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+        player.appendChild(iframe);
+        card.replaceWith(player);
+        playing = { player, card };
+      });
+    });
+  });
+
+  // Prize card photo strips: arrows and dots page through the cars (wrapping
+  // round at the ends); swiping works through the scroll container itself.
+  document.querySelectorAll('[data-gallery]').forEach((gallery) => {
+    const track = gallery.querySelector('.prize-slides');
+    const count = track ? track.children.length : 0;
+    if (count < 2) return;
+    const dots = [...gallery.querySelectorAll('.gallery-dots button')];
+    const current = () => Math.round(track.scrollLeft / track.clientWidth);
+    const go = (i) => track.scrollTo({ left: ((i + count) % count) * track.clientWidth });
+    gallery.querySelector('.gallery-prev').addEventListener('click', () => go(current() - 1));
+    gallery.querySelector('.gallery-next').addEventListener('click', () => go(current() + 1));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => go(i)));
+    track.addEventListener('scroll', () => {
+      const i = current();
+      dots.forEach((dot, j) => dot.classList.toggle('is-active', i === j));
+    }, { passive: true });
+  });
+
   // Sweepstakes / Raffle Plus entry forms (preview only): keep the summary
   // panel in step with the selected ticket bundle and prize.
   document.querySelectorAll('[data-entry]').forEach((form) => {

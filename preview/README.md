@@ -25,7 +25,8 @@ Or in VS Code: install the **Live Server** extension, right-click `index.html`, 
 | Home | `index.html` |
 | Our Mission | `about.html`, `animal-programs.html`, `donations-helping-animals.html`, `impact.html`*, `financial-transparency.html`* |
 | Sweepstakes | `sweepstakes.html` and `raffle-plus.html` (the two entry pages), eight prize pages from one template (`new-porsche-sweepstakes.html`, `1965-porsche-sweepstakes.html`, `new-corvette-sweepstakes.html`, `classic-corvette-sweepstakes.html`, `tesla-sweepstakes.html`, `ev-sweepstakes.html`, `lucid.html`, `cadillac-sweepstakes.html`), `how-it-works.html`†, `faq.html`, `sweepstakes-rules.html`, `previous-winners.html` |
-| Get Involved | `donate.html`, `monthly-giving.html`*, `wills-estates.html`, `volunteer.html`*, `corporate-partners.html`* |
+| Get Involved | `donate.html`, `monthly-giving.html`*, `volunteer.html`*, `corporate-partners.html`* |
+| Wills & Estates | `wills-estates.html` — its own link on the nav bar, as on the live site, not inside a dropdown |
 | Resources | `blog.html`, `blog-post.html`, `videos-and-more.html`, `pet-tips.html`, `cats-and-dogs.html`, `foods-to-avoid.html`, `hurricanes-and-your-pets.html`, `delaware-residents.html` |
 | Contact | `contact.html` |
 
@@ -37,6 +38,12 @@ Or in VS Code: install the **Live Server** extension, right-click `index.html`, 
 Each drawing has one winner, who chooses the prize. A Sweepstakes ticket wins one car or $50,000; a Raffle Plus ticket wins two cars, or $100,000, or one car and $50,000. The prize pages describe the cars on offer — they are not separate sweepstakes.
 
 Drawings are held every six months, so the date moves twice a year. It is written in exactly one place — `DRAWING_DATE` in `content.py` — and the hero, entry forms, Rules and FAQ all read it from there.
+
+The home page hero carries a yellow ticket-shaped Raffle Plus button under the Donate Today and Our Mission buttons. It replaces the full-width red Raffle Plus bar on the live home page. The same ticket design (`ticket()` in `build.py`) is used for the Raffle Plus / Sweepstakes pair on the home page, the prize pages and Previous Winners.
+
+Prize cards show every car a prize page offers: swipe the photo, or use the arrows and dots. The home page shows five prizes plus the cash card (`HOME_PRIZES` in `build.py`) and links to the full set; the Sweepstakes and Raffle Plus pages show all of them. The cash card is styled as a banknote.
+
+Under the hero, a carousel plays the YouTube Shorts from NHS's educational playlist (the same playlist the live home page loads). The prototype lists the videos in `EDU_VIDEOS` in `content.py`, a snapshot of the playlist; the WordPress build should read the playlist itself so new videos appear on their own. Videos play only when the page is served over http(s) (Vercel, or `python -m http.server`): opened straight from disk, YouTube refuses the embed with error 153.
 
 On the two entry pages the ticket bundles and prizes are selectable cards rather than dropdowns, with a summary panel that follows the selection. The Raffle Plus form enforces the prize rule (any two cars, or one car and $50,000, or $100,000 on its own).
 
@@ -55,10 +62,10 @@ The live forms collect card number, expiry and CVV in plain text fields. The pre
 | 1. Fix duplicate "Previous Winners" nav link | Sitemap rebuilt — single, correct entry under Sweepstakes dropdown |
 | 2. Remove COVID-19 section | Not present anywhere |
 | 3. Eliminate triple-repeated hero | Single, outcome-anchored hero on `index.html` |
-| 4. Add trust signals package | Trust strip on home + dedicated `financial-transparency.html` + footer trust grid |
+| 4. Add trust signals package | Dedicated `financial-transparency.html`; the home trust strip and footer trust grid are built but hidden until NHS supplies real ratings (see Hidden for now) |
 | 5. Rebalance sweepstakes/mission ratio | Mission pillars front-and-center on home; sweepstakes is one well-designed section |
 | 6. Replace generic Donate buttons with inline widget | `donate-widget` component on home + `donate.html` + `monthly-giving.html` |
-| 7. Build missing content categories | Stories, shelter-partner directory, volunteer signup, newsletter capture, financial transparency, leadership |
+| 7. Build missing content categories | Stories, shelter-partner directory, volunteer signup, financial transparency, leadership |
 | 8. Restructure IA to 5-item nav, split `/animal-info` into 3 pages | Done — `pet-care-cats.html`, `pet-care-dogs.html`, `pet-care-hurricane.html` are separate pages |
 | 9. Original rescue-animal photography | Placeholder regions clearly labeled "Original rescue-animal photography goes here" — needs commissioning before launch |
 | 10. WordPress block theme | This preview is the spec for that theme |
@@ -72,7 +79,15 @@ These tokens live in `assets/css/styles.css` as CSS custom properties and will p
 
 ## Placeholder data
 
-Prices, dates, rules, prize specs, winners, the tax ID and contact details are real and come from the live site. Bracketed placeholders (`[1,234]`, `[78]%`) and "placeholder" rating badges mark audit proposals that need real numbers from the org before they could go live. They appear on the "Proposed" pages, on the home page (stat band, trust strip, impact section) and in the footer badge row; the home page newsletter signup is also a proposal. The live site publishes no organization-specific impact figures, which is itself a finding (audit Section 2.5).
+Prices, dates, rules, prize specs, winners and contact details are real and come from the live site. Bracketed placeholders (`[1,234]`, `[78]%`) and "placeholder" rating badges mark audit proposals that need real numbers from the org before they could go live. They appear on the "Proposed" pages; the home page and footer ones are hidden (below). The live site publishes no organization-specific impact figures, which is itself a finding (audit Section 2.5).
+
+### Hidden for now
+
+- **Placeholder figures and ratings**: the home page stat band and trust strip (the two rows under the hero), the home page impact section, and the footer badge row (Charity Navigator, Candid, BBB). Hidden on 2026-10-13 and 2026-10-15 because every figure and rating in them is a placeholder. The markup is kept in `build.py`; set `SHOW_PLACEHOLDER_STATS = True` (top of the file) to bring all four back once NHS supplies real numbers and ratings.
+
+The audit's newsletter signup was removed on 2026-10-15: the live site has none.
+
+The tax ID is deliberately not shown anywhere on the site (CJ, 2026-10-15). It stays in `content.py` as `EIN` for tax receipts in the WordPress build.
 
 ## Editing & re-generating
 
