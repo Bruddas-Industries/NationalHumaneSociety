@@ -77,33 +77,62 @@
 <main>
 
 
-<section class="page-hero">
+<section class="sweeps-hero">
+  <div class="container sweeps-hero-grid">
+    <div>
+      <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; Classic Corvette</div>
+      <p class="eyebrow">Car Sweepstakes</p>
+      <h1>Win a <span class="hl">Classic Corvette</span></h1>
+      <p class="lead">The Classic Corvette 1967 Stingray — or take $50,000.00 instead. Every entry supports our mission.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="sweepstakes.html#enter">Enter Now</a>
+        <a class="btn btn-ghost btn-lg" href="#specs">See the specs</a>
+      </div>
+    </div>
+      <div class="prize-gallery sweeps-hero-gallery" data-gallery>
+        <div class="prize-slides">
+          <a class="prize-slide" href="#car-1" style="background-image:url('assets/img/prize-corvette-classic.jpg')"><span class="visually-hidden">Classic Corvette 1967 Stingray</span></a>
+        </div>
+      </div>
+  </div>
   <div class="container">
-    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; Classic Corvette</div>
-    <p class="eyebrow">Car Sweepstakes</p>
-    <h1>Win a Classic Corvette</h1>
-    <p class="lead">1967 Stingray — or $50,000.00!</p>
-    <p><strong>Drawing date December 31, 2026.</strong> Need not be present to win!</p>
+    <div class="fact-strip">
+      <div><span class="fact-label">Next drawing</span><span class="fact-value">December 31, 2026</span></div>
+      <div><span class="fact-label">Tickets</span><span class="fact-value">From $25</span></div>
+      <div><span class="fact-label">To win</span><span class="fact-value">No need to be present</span></div>
+      <div><span class="fact-label">Ticket numbers</span><span class="fact-value">Emailed within 48 hours</span></div>
+    </div>
   </div>
 </section>
 
-<section class="section">
+<section class="section" id="specs">
   <div class="container">
-
-    <div class="car-block">
-      <img src="assets/img/prize-corvette-classic.jpg" alt="Classic Corvette 1967 Stingray" loading="lazy">
+    <div class="section-head">
       <div>
-        
-        <h3>Classic Corvette 1967 Stingray Specs</h3>
-        <dl class="spec-list">
-          <dt>Engine</dt><dd>16-valve V-8 427 cu in (6994 cc)</dd>
-          <dt>Transmission</dt><dd>4-speed manual</dd>
-          <dt>Horsepower</dt><dd>435 HP @ 5800 RPM</dd>
-          <dt>Torque</dt><dd>460 LB-FT @ 4000 RPM</dd>
-          <dt>Top speed</dt><dd>142 mph</dd>
-          <dt>Acceleration</dt><dd>0–60 mph 4.7 seconds</dd>
-        </dl>
+        <p class="eyebrow">The specs</p>
+        <h2>Specs at a glance</h2>
       </div>
+    </div>
+
+    <div class="car-sheets">
+    <article class="car-sheet" id="car-1">
+      <div class="car-sheet-photo">
+        <img src="assets/img/prize-corvette-classic.jpg" alt="Classic Corvette 1967 Stingray" loading="lazy">
+        
+      </div>
+      <div class="car-sheet-body">
+        <h3>Classic Corvette 1967 Stingray</h3>
+        <dl class="spec-grid">
+          <div class="spec-tile"><dt>Engine</dt><dd>16-valve V-8 427 cu in (6994 cc)</dd></div>
+          <div class="spec-tile"><dt>Transmission</dt><dd>4-speed manual</dd></div>
+          <div class="spec-tile"><dt>Horsepower</dt><dd>435 HP @ 5800 RPM</dd></div>
+          <div class="spec-tile"><dt>Torque</dt><dd>460 LB-FT @ 4000 RPM</dd></div>
+          <div class="spec-tile"><dt>Top speed</dt><dd>142 mph</dd></div>
+          <div class="spec-tile"><dt>Acceleration</dt><dd>0–60 mph 4.7 seconds</dd></div>
+        </dl>
+        <a class="btn btn-primary" href="sweepstakes.html?prize=Classic%201967%20Corvette#enter">Enter to win this car →</a>
+      </div>
+    </article>
     </div>
   </div>
 </section>
@@ -111,24 +140,27 @@
 <section class="section section-soft">
   <div class="container">
     <div class="tier-grid">
-      <div class="tier-card">
+      <a class="tier-card" href="sweepstakes.html?tickets=1#enter">
         
         <h3>Buy 1 Ticket</h3>
         <p class="tier-free">Get 50 Free!</p>
         <p class="tier-price">$25</p>
-      </div>
-      <div class="tier-card is-popular">
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="tier-card is-popular" href="sweepstakes.html?tickets=3#enter">
         <span class="tier-badge"><span aria-hidden="true">★</span> Most Popular</span>
         <h3>Buy 3 Tickets</h3>
         <p class="tier-free">Get 2500 Free!</p>
         <p class="tier-price">$75</p>
-      </div>
-      <div class="tier-card">
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="tier-card" href="sweepstakes.html?tickets=10#enter">
         
         <h3>Buy 10 Tickets</h3>
         <p class="tier-free">Get 6000 Free!</p>
         <p class="tier-price">$250</p>
-      </div>
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
     </div>
     <div style="margin-top:var(--space-6)">
     <div class="cta-pair">

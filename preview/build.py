@@ -19,6 +19,8 @@ import re
 import sys
 from pathlib import Path
 
+import urllib.parse
+
 import content as C
 
 OUT_DIR = Path(__file__).parent
@@ -258,19 +260,23 @@ def bullet_list(items, cls="list-check"):
 
 
 def ticket_tiers(kind):
-    """kind: 'sweepstakes' or 'raffle-plus' — picks the price column."""
+    """kind: 'sweepstakes' or 'raffle-plus' — picks the price column and the
+    entry page. Each card links to that page's entry form with the bundle
+    already selected (nav.js reads ?tickets=)."""
+    page = "sweepstakes.html" if kind == "sweepstakes" else "raffle-plus.html"
     cards = []
     for bought, free, sweeps_price, plus_price, popular in C.TICKET_TIERS:
         price = sweeps_price if kind == "sweepstakes" else plus_price
         noun = "Ticket" if bought == 1 else "Tickets"
         badge = '<span class="tier-badge"><span aria-hidden="true">★</span> Most Popular</span>' if popular else ""
         cls = "tier-card is-popular" if popular else "tier-card"
-        cards.append(f"""      <div class="{cls}">
+        cards.append(f"""      <a class="{cls}" href="{page}?tickets={bought}#enter">
         {badge}
         <h3>Buy {bought} {noun}</h3>
         <p class="tier-free">Get {free} Free!</p>
         <p class="tier-price">${price}</p>
-      </div>""")
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>""")
     return '    <div class="tier-grid">\n' + "\n".join(cards) + "\n    </div>"
 
 
@@ -1099,8 +1105,12 @@ CAR_LINEUP = """    <ul class="lineup">
     </ul>"""
 
 
-def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact):
-    """Navy hero for the two entry pages, with the facts people ask about first."""
+def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact, gallery_html=None, actions=None):
+    """Navy hero for the entry pages and the prize pages, with the facts people
+    ask about first. Entry pages show every prize car; prize pages pass their
+    own gallery and buttons."""
+    actions = actions or [("Enter Now", "#enter"), ("See the prizes", "#prizes")]
+    (primary_label, primary_href), (ghost_label, ghost_href) = actions
     return f"""
 <section class="sweeps-hero">
   <div class="container sweeps-hero-grid">
@@ -1110,11 +1120,11 @@ def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact):
       <h1>{headline}</h1>
       <p class="lead">{lead}</p>
       <div class="hero-actions">
-        <a class="btn btn-primary btn-lg" href="#enter">Enter Now</a>
-        <a class="btn btn-ghost btn-lg" href="#prizes">See the prizes</a>
+        <a class="btn btn-primary btn-lg" href="{primary_href}">{primary_label}</a>
+        <a class="btn btn-ghost btn-lg" href="{ghost_href}">{ghost_label}</a>
       </div>
     </div>
-{car_lineup_gallery(first_car)}
+{gallery_html or car_lineup_gallery(first_car)}
   </div>
   <div class="container">
     <div class="fact-strip">
@@ -1202,39 +1212,77 @@ RAFFLE_BODY = sweeps_hero(
 PRIZE_NOTES = {}
 
 
-def prize_body(prize):
-    slug, label, headline, sub, tagline, _image, cars = prize
-    blocks = []
-    for name, year, image, specs in cars:
-        rows = "\n".join(f"          <dt>{k}</dt><dd>{v}</dd>" for k, v in specs)
-        year_html = f'<p class="eyebrow">{year}</p>' if year else ""
-        blocks.append(f"""    <div class="car-block">
-      <img src="assets/img/{image}" alt="{name}" loading="lazy">
-      <div>
-        {year_html}
-        <h3>{name} Specs</h3>
-        <dl class="spec-list">
-{rows}
-        </dl>
-      </div>
-    </div>""")
-    eyebrow = f"{tagline} · Car Sweepstakes" if tagline else "Car Sweepstakes"
-    sub_html = f"{sub} — or $50,000.00!" if sub else "Or $50,000.00!"
-    return f"""
-<section class="page-hero">
-  <div class="container">
-    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; {label}</div>
-    <p class="eyebrow">{eyebrow}</p>
-    <h1>{headline}</h1>
-    <p class="lead">{sub_html}</p>
-    <p><strong>Drawing date {C.DRAWING_DATE}.</strong> Need not be present to win!</p>
-  </div>
-</section>
+# Entry-form label for each car photo, so "Enter to win" can open the form
+# with that car already picked (nav.js reads ?prize=).
+FORM_LABEL_BY_IMAGE = {image: label for label, image, _page in C.CAR_PRIZES}
 
-<section class="section">
+
+def car_sheet(i, name, year, image, specs):
+    """One car on a prize page: big photo, specs as tiles, enter button.
+    Photo and text swap sides on every other car."""
+    tiles = "\n".join(f"""          <div class="spec-tile"><dt>{k}</dt><dd>{v}</dd></div>""" for k, v in specs)
+    year_html = f'<span class="car-sheet-year">{year}</span>' if year else ""
+    form_label = FORM_LABEL_BY_IMAGE.get(image)
+    enter = f"sweepstakes.html?prize={urllib.parse.quote(form_label)}#enter" if form_label else "sweepstakes.html#enter"
+    flipped = " is-flipped" if i % 2 else ""
+    return f"""    <article class="car-sheet{flipped}" id="car-{i + 1}">
+      <div class="car-sheet-photo">
+        <img src="assets/img/{image}" alt="{name}" loading="lazy">
+        {year_html}
+      </div>
+      <div class="car-sheet-body">
+        <h3>{name}</h3>
+        <dl class="spec-grid">
+{tiles}
+        </dl>
+        <a class="btn btn-primary" href="{enter}">Enter to win this car →</a>
+      </div>
+    </article>"""
+
+
+def prize_body(prize):
+    # The live pages' small taglines ("Accept No Substitute.", "Ultimate
+    # Thrill") are dropped: only some pages had one (CJ, 2026-10-18).
+    slug, label, headline, sub, _tagline, _image, cars = prize
+    sheets = "\n".join(car_sheet(i, *car) for i, car in enumerate(cars))
+    names = [car[0] for car in cars]
+    if len(names) > 1:
+        choice = ", ".join(names[:-1]) + " or " + names[-1]
+        lead = f"Choose the {choice} — or take $50,000.00 instead. Every entry supports our mission."
+        specs_heading = f"{len(names)} {label} models to choose from"
+    else:
+        lead = f"The {names[0]} — or take $50,000.00 instead. Every entry supports our mission."
+        specs_heading = "Specs at a glance"  # the car's name is right below
+    title = headline
+    if headline.startswith("Win a "):
+        title = f'Win a <span class="hl">{headline[len("Win a "):]}</span>'
+    hero_gallery = gallery([(name, image, f"#car-{i + 1}") for i, (name, _y, image, _s) in enumerate(cars)],
+                           count_label=f"{len(cars)} models" if len(cars) > 1 else None,
+                           autoplay=4500 if len(cars) > 1 else None,
+                           cls="prize-gallery sweeps-hero-gallery")
+    hero = sweeps_hero(
+        f'<a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; {label}',
+        "Car Sweepstakes",
+        title,
+        lead,
+        0,
+        f"From ${C.TICKET_TIERS[0][2]}",
+        gallery_html=hero_gallery,
+        actions=[("Enter Now", "sweepstakes.html#enter"), ("See the specs", "#specs")],
+    )
+    return hero + f"""
+<section class="section" id="specs">
   <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">The specs</p>
+        <h2>{specs_heading}</h2>
+      </div>
+    </div>
 {PRIZE_NOTES.get(slug, "")}
-{chr(10).join(blocks)}
+    <div class="car-sheets">
+{sheets}
+    </div>
   </div>
 </section>
 
@@ -1900,7 +1948,8 @@ def check_references(pages):
     slugs = {slug for _t, slug, _h in pages}
     problems = []
     for _title, slug, html in pages:
-        for ref in re.findall(r'(?:href|src)="([^"#]+)(?:#[^"]*)?"', html):
+        # The path only: query strings (?tickets=3) and #fragments are ignored.
+        for ref in re.findall(r'(?:href|src)="([^"#?]+)(?:[?#][^"]*)?"', html):
             if re.match(r"(https?:|mailto:|tel:|//)", ref):
                 continue
             if ref.endswith(".html"):

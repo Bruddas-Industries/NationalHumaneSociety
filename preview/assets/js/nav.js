@@ -224,6 +224,17 @@
       }
     };
     form.addEventListener('change', update);
+
+    // Links from the prize pages arrive with ?tickets=3 or ?prize=Rivian%20R1T:
+    // start the form with that bundle / car already chosen.
+    const params = new URLSearchParams(location.search);
+    const preset = (name, value) => {
+      if (!value) return;
+      const input = [...form.querySelectorAll(`input[name="${name}"]`)].find((i) => i.value === value);
+      if (input) input.checked = true;
+    };
+    preset('tickets', params.get('tickets'));
+    preset('prize', params.get('prize'));
     update();
   });
 })();
