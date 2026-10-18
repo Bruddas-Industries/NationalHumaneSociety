@@ -471,9 +471,12 @@ RAFFLE_CASH = [
 ]
 
 
-def prize_cards(cash=SWEEPS_CASH, slugs=None):
+def prize_cards(cash=SWEEPS_CASH, slugs=None, cash_row=False):
     """slugs: limit (and order) the cards, e.g. the shorter home page set.
-    cash: the cash cards to add at the end."""
+    cash: the cash cards to add at the end.
+    cash_row: on the entry pages, cars sit four across (eight cars, two even
+    rows) and the cash cards get their own row underneath; the home page
+    keeps everything in one three-across grid."""
     prizes = {p[0]: p for p in C.PRIZES}
     chosen = [prizes[s] for s in slugs] if slugs else C.PRIZES
     cards = []
@@ -491,6 +494,11 @@ def prize_cards(cash=SWEEPS_CASH, slugs=None):
         <p>{detail}</p>
       </div>
     </article>""")
+    if cash_row:
+        wide = [c.replace('class="prize-card prize-card-cash"', 'class="prize-card prize-card-cash is-wide"') for c in cash]
+        return ('    <div class="grid prize-grid-4">\n' + "\n".join(cards) + "\n    </div>\n"
+                '    <div class="cash-row">\n      <p class="eyebrow">Or take the cash</p>\n'
+                '      <div class="cash-grid">\n' + "\n".join(wide) + "\n      </div>\n    </div>")
     cards.extend(cash)
     return '    <div class="grid grid-3">\n' + "\n".join(cards) + "\n    </div>"
 
@@ -1143,7 +1151,7 @@ SWEEPSTAKES_BODY = sweeps_hero(
       </div>
     </div>
 {CAR_LINEUP}
-{prize_cards()}
+{prize_cards(cash_row=True)}
   </div>
 </section>
 """ + upsell(
@@ -1166,11 +1174,11 @@ RAFFLE_BODY = sweeps_hero(
     <div class="section-head">
       <div>
         <p class="eyebrow">The prizes</p>
-        <h2>One winner. Any two cars — or $100,000.00.</h2>
+        <h2>One winner. Any two cars, one car and $50,000.00 — or $100,000.00.</h2>
       </div>
     </div>
 {CAR_LINEUP}
-{prize_cards(cash=RAFFLE_CASH)}
+{prize_cards(cash=RAFFLE_CASH, cash_row=True)}
   </div>
 </section>
 """ + upsell(
