@@ -178,6 +178,19 @@
     restart();
   });
 
+  // Prize pages: switch the ticket bundles between Sweepstakes and Raffle Plus
+  document.querySelectorAll('[data-tier-switch]').forEach((box) => {
+    const tabs = [...box.querySelectorAll('[data-tier]')];
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+        box.querySelectorAll('[data-tier-panel]').forEach((panel) => {
+          panel.hidden = panel.dataset.tierPanel !== tab.dataset.tier;
+        });
+      });
+    });
+  });
+
   // Sweepstakes / Raffle Plus entry forms (preview only): keep the summary
   // panel in step with the selected ticket bundle and prize.
   document.querySelectorAll('[data-entry]').forEach((form) => {

@@ -1109,8 +1109,8 @@ def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact, gallery_
     """Navy hero for the entry pages and the prize pages, with the facts people
     ask about first. Entry pages show every prize car; prize pages pass their
     own gallery and buttons."""
-    actions = actions or [("Enter Now", "#enter"), ("See the prizes", "#prizes")]
-    (primary_label, primary_href), (ghost_label, ghost_href) = actions
+    actions = actions or [("Enter Now", "#enter", "btn-primary"), ("See the prizes", "#prizes", "btn-ghost")]
+    buttons = "\n".join(f'        <a class="btn {cls} btn-lg" href="{href}">{label}</a>' for label, href, cls in actions)
     return f"""
 <section class="sweeps-hero">
   <div class="container sweeps-hero-grid">
@@ -1120,8 +1120,7 @@ def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact, gallery_
       <h1>{headline}</h1>
       <p class="lead">{lead}</p>
       <div class="hero-actions">
-        <a class="btn btn-primary btn-lg" href="{primary_href}">{primary_label}</a>
-        <a class="btn btn-ghost btn-lg" href="{ghost_href}">{ghost_label}</a>
+{buttons}
       </div>
     </div>
 {gallery_html or car_lineup_gallery(first_car)}
@@ -1223,7 +1222,7 @@ def car_sheet(i, name, year, image, specs):
     tiles = "\n".join(f"""          <div class="spec-tile"><dt>{k}</dt><dd>{v}</dd></div>""" for k, v in specs)
     year_html = f'<span class="car-sheet-year">{year}</span>' if year else ""
     form_label = FORM_LABEL_BY_IMAGE.get(image)
-    enter = f"sweepstakes.html?prize={urllib.parse.quote(form_label)}#enter" if form_label else "sweepstakes.html#enter"
+    pick = f"?prize={urllib.parse.quote(form_label)}" if form_label else ""
     flipped = " is-flipped" if i % 2 else ""
     return f"""    <article class="car-sheet{flipped}" id="car-{i + 1}">
       <div class="car-sheet-photo">
@@ -1235,7 +1234,11 @@ def car_sheet(i, name, year, image, specs):
         <dl class="spec-grid">
 {tiles}
         </dl>
-        <a class="btn btn-primary" href="{enter}">Enter to win this car →</a>
+        <p class="car-sheet-win">Win this car with</p>
+        <div class="car-sheet-actions">
+          <a class="btn btn-primary" href="sweepstakes.html{pick}#enter">Sweepstakes · from ${C.TICKET_TIERS[0][2]}</a>
+          <a class="btn btn-yellow" href="raffle-plus.html{pick}#enter">Raffle Plus · from ${C.TICKET_TIERS[0][3]}</a>
+        </div>
       </div>
     </article>"""
 
@@ -1246,12 +1249,15 @@ def prize_body(prize):
     slug, label, headline, sub, _tagline, _image, cars = prize
     sheets = "\n".join(car_sheet(i, *car) for i, car in enumerate(cars))
     names = [car[0] for car in cars]
+    # Either ticket wins these cars, so the copy and buttons offer both.
+    both_ways = ("Win it with a Sweepstakes ticket, or with Raffle Plus pair it with "
+                 "a second car or $50,000.00.")
     if len(names) > 1:
         choice = ", ".join(names[:-1]) + " or " + names[-1]
-        lead = f"Choose the {choice} — or take $50,000.00 instead. Every entry supports our mission."
+        lead = f"Choose the {choice}. {both_ways}"
         specs_heading = f"{len(names)} {label} models to choose from"
     else:
-        lead = f"The {names[0]} — or take $50,000.00 instead. Every entry supports our mission."
+        lead = f"The {names[0]}. {both_ways}"
         specs_heading = "Specs at a glance"  # the car's name is right below
     title = headline
     if headline.startswith("Win a "):
@@ -1262,13 +1268,14 @@ def prize_body(prize):
                            cls="prize-gallery sweeps-hero-gallery")
     hero = sweeps_hero(
         f'<a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; {label}',
-        "Car Sweepstakes",
+        "Sweepstakes &amp; Raffle Plus",
         title,
         lead,
         0,
-        f"From ${C.TICKET_TIERS[0][2]}",
+        f"${C.TICKET_TIERS[0][2]} or ${C.TICKET_TIERS[0][3]} Raffle Plus",
         gallery_html=hero_gallery,
-        actions=[("Enter Now", "sweepstakes.html#enter"), ("See the specs", "#specs")],
+        actions=[("Enter Sweepstakes", "sweepstakes.html#enter", "btn-primary"),
+                 ("Enter Raffle Plus", "raffle-plus.html#enter", "btn-yellow")],
     )
     return hero + f"""
 <section class="section" id="specs">
@@ -1288,8 +1295,23 @@ def prize_body(prize):
 
 <section class="section section-soft">
   <div class="container">
+    <div class="text-center" style="margin-bottom:var(--space-5)">
+      <p class="eyebrow">Tickets</p>
+      <h2>Pick your tickets</h2>
+    </div>
+    <div class="tier-switch" data-tier-switch>
+      <div class="tier-toggle" role="tablist" aria-label="Ticket type">
+        <button type="button" role="tab" aria-selected="true" data-tier="sweepstakes">Sweepstakes<small>One car or $50,000</small></button>
+        <button type="button" role="tab" aria-selected="false" data-tier="raffle-plus">Raffle Plus<small>Two cars or $100,000</small></button>
+      </div>
+      <div data-tier-panel="sweepstakes">
 {ticket_tiers("sweepstakes")}
-    <div style="margin-top:var(--space-6)">
+      </div>
+      <div data-tier-panel="raffle-plus" hidden>
+{ticket_tiers("raffle-plus")}
+      </div>
+    </div>
+    <div style="margin-top:var(--space-7)">
 {SWEEPS_CTA}
     </div>
   </div>

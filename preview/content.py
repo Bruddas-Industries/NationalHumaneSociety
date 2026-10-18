@@ -80,7 +80,9 @@ RAFFLE_PLUS_PRIZE_OPTIONS = [(label, image, "car") for label, image, _page in CA
 AD_SOURCES = ["Postcard", "Email", "Instagram", "Facebook", "Google Ad",
               "Google Search", "Other (Enter in comment)"]
 
-# One entry per prize page on the live site.
+# One entry per prize page on the live site. Headlines are the live ones,
+# except the Rivian and Lucid pages, which both said "Win a new EV" (CJ,
+# 2026-10-18).
 # slug, card label, headline, sub-headline, tagline, card image, cars
 # car = (name, model-year note, image, [(spec label, value), ...])
 PRIZES = [
@@ -163,7 +165,7 @@ PRIZES = [
             ("Acceleration", "0–60 mph 3.5 seconds"),
         ]),
      ]),
-    ("ev-sweepstakes.html", "Rivian", "Win a new EV",
+    ("ev-sweepstakes.html", "Rivian", "Win a new Rivian",
      "Rivian", "", "prize-rivian.jpg", [
         ("Rivian R1T", "2026 Model", "prize-rivian.jpg", [
             ("Range", "260 to 314 mi battery-only"),
@@ -177,7 +179,7 @@ PRIZES = [
             ("Horsepower", "553 hp"),
         ]),
      ]),
-    ("lucid.html", "Lucid", "Win a new EV",
+    ("lucid.html", "Lucid", "Win a new Lucid",
      "Lucid", "", "prize-lucid-gravity.jpg", [
         ("Lucid Gravity", "2026 Model", "prize-lucid-gravity.jpg", [
             ("Range", "up to 450 mi"),
