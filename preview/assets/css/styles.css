@@ -1940,3 +1940,66 @@ body.is-home .site-footer { margin-top: 0; }
   .ticket-choice.is-popular, .tier-card.is-popular,
   .ticket-choice.is-popular:hover { transform: none; }
 }
+
+/* ==========================================================================
+   Entry-page prize grid: cars four across, cash in its own row underneath
+   ========================================================================== */
+.prize-grid-4 { grid-template-columns: repeat(4, 1fr); }
+.prize-grid-4 .prize-card .prize-body { padding: var(--space-4) var(--space-5) var(--space-5); }
+.cash-row { margin-top: var(--space-7); }
+.cash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: var(--space-5); }
+/* Wide cash card: banknote on the left, text on the right */
+.prize-card-cash.is-wide { flex-direction: row; }
+.prize-card-cash.is-wide .cash-face { flex: 0 0 52%; aspect-ratio: auto; min-height: 210px; }
+.prize-card-cash.is-wide .prize-body { align-self: center; padding: var(--space-5) var(--space-6); }
+.prize-card-cash.is-wide h3 { font-size: 1.5rem; }
+@media (max-width: 1100px) {
+  .prize-grid-4 { grid-template-columns: repeat(2, 1fr); }
+  /* Two banknotes side by side get too narrow for $100,000: stack them */
+  .cash-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .prize-grid-4 { grid-template-columns: 1fr; }
+  .cash-grid { grid-template-columns: 1fr; }
+  .prize-card-cash.is-wide { flex-direction: column; }
+  .prize-card-cash.is-wide .cash-face { flex: none; aspect-ratio: 16/10; min-height: 0; }
+  .prize-card-cash.is-wide .prize-body { align-self: stretch; padding: var(--space-5); }
+  .prize-card-cash.is-wide h3 { font-size: 1.4rem; }
+}
+
+/* ==========================================================================
+   Cash cards and cash choices: a light sweeps across the banknote every few
+   seconds, and they glow gold on hover. Same on both entry pages.
+   ========================================================================== */
+.cash-face, .choice-thumb.is-cash { overflow: hidden; }
+.cash-face::after,
+.choice-thumb.is-cash::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  left: -45%;
+  width: 30%;
+  background: linear-gradient(100deg, rgba(255,255,255,0), rgba(255,255,255,.32), rgba(255,255,255,0));
+  transform: skewX(-20deg);
+  animation: ticket-sheen 6s ease-in-out infinite;
+  pointer-events: none;
+}
+.cash-amount { text-shadow: 0 3px 0 #0f3b2b, 0 10px 24px rgba(0,0,0,.35), 0 0 28px rgba(251,255,0,.25); }
+.prize-card-cash:hover,
+.prize-choice:has(.is-cash):hover {
+  border-color: #d9c73a;
+  box-shadow: 0 0 0 3px rgba(251,255,0,.35), 0 16px 36px rgba(19,76,55,.35);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cash-face::after, .choice-thumb.is-cash::after { display: none; }
+}
+
+/* A single cash card (Sweepstakes) is as wide as one of the two on Raffle
+   Plus, not the whole row */
+.cash-grid:has(> :only-child) { grid-template-columns: minmax(0, calc(50% - var(--space-5) / 2)); }
+@media (max-width: 1100px) { .cash-grid:has(> :only-child) { grid-template-columns: minmax(0, 720px); } }
+@media (max-width: 600px) { .cash-grid:has(> :only-child) { grid-template-columns: 1fr; } }
+
+/* Home page Raffle Plus section: both tickets the same size; the Raffle Plus
+   one comes first and keeps a yellow glow so the section leans towards it */
+.ticket-featured { box-shadow: 0 0 0 5px rgba(251,255,0,.28), var(--shadow-lg); }

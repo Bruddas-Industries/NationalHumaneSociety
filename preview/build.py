@@ -471,9 +471,12 @@ RAFFLE_CASH = [
 ]
 
 
-def prize_cards(cash=SWEEPS_CASH, slugs=None):
+def prize_cards(cash=SWEEPS_CASH, slugs=None, cash_row=False):
     """slugs: limit (and order) the cards, e.g. the shorter home page set.
-    cash: the cash cards to add at the end."""
+    cash: the cash cards to add at the end.
+    cash_row: on the entry pages, cars sit four across (eight cars, two even
+    rows) and the cash cards get their own row underneath; the home page
+    keeps everything in one three-across grid."""
     prizes = {p[0]: p for p in C.PRIZES}
     chosen = [prizes[s] for s in slugs] if slugs else C.PRIZES
     cards = []
@@ -491,6 +494,11 @@ def prize_cards(cash=SWEEPS_CASH, slugs=None):
         <p>{detail}</p>
       </div>
     </article>""")
+    if cash_row:
+        wide = [c.replace('class="prize-card prize-card-cash"', 'class="prize-card prize-card-cash is-wide"') for c in cash]
+        return ('    <div class="grid prize-grid-4">\n' + "\n".join(cards) + "\n    </div>\n"
+                '    <div class="cash-row">\n      <p class="eyebrow">Or take the cash</p>\n'
+                '      <div class="cash-grid">\n' + "\n".join(wide) + "\n      </div>\n    </div>")
     cards.extend(cash)
     return '    <div class="grid grid-3">\n' + "\n".join(cards) + "\n    </div>"
 
@@ -739,12 +747,13 @@ def edu_video_carousel():
 </section>"""
 
 
-# Prize cards on the home page (CJ asked for six at most: five cars + cash).
-# The full set stays on the Sweepstakes and Raffle Plus pages.
+# Prize cards in the home page's Raffle Plus section. CJ asked for six cards
+# at most; with both Raffle Plus cash cards that leaves four cars (the ones
+# with several models, so their photo strips show the most). The full set
+# stays on the Sweepstakes and Raffle Plus pages.
 HOME_PRIZES = [
     "new-porsche-sweepstakes.html",
     "new-corvette-sweepstakes.html",
-    "tesla-sweepstakes.html",
     "ev-sweepstakes.html",
     "lucid.html",
 ]
@@ -807,20 +816,27 @@ HOME_BODY = f"""
   </div>
 </section>
 
-<!-- Sweepstakes — single section, links to the two entry pages -->
+<!-- Raffle Plus — the home page's prize section (CJ, 2026-10-18). The
+     Raffle Plus ticket is the featured one; the Sweepstakes keeps its own
+     Enter now ticket beside it. -->
 <section class="section section-soft">
   <div class="container">
     <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
-      <p class="eyebrow">Sweepstakes · Drawing {C.DRAWING_DATE}</p>
-      <h2>Win two cars or $100,000 — or one car or $50,000.</h2>
+      <p class="eyebrow">Raffle Plus · Drawing {C.DRAWING_DATE}</p>
+      <h2>Drive home your dream cars while helping animals in need.</h2>
       <p class="lead" style="margin:0 auto">Choose prizes ranging from Porsche, Corvettes, Teslas, and more! Every entry supports our mission. It's a win-win!</p>
     </div>
-{SWEEPS_CTA}
+    <div class="cta-pair">
+    {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000",
+            f"Tickets from ${_ONE_TICKET[3]}", "ticket-yellow ticket-stacked ticket-featured")}
+    {ticket("sweepstakes.html", "Sweepstakes", "Win one car or $50,000",
+            f"Tickets from ${_ONE_TICKET[2]}", "ticket-navy ticket-stacked")}
+    </div>
     <div style="margin-top:var(--space-7)">
-{prize_cards(slugs=HOME_PRIZES)}
+{prize_cards(cash=RAFFLE_CASH, slugs=HOME_PRIZES)}
     </div>
     <div class="text-center" style="margin-top:var(--space-6)">
-      <a class="btn btn-secondary" href="sweepstakes.html">See all {len(C.PRIZES)} prizes →</a>
+      <a class="btn btn-secondary" href="raffle-plus.html#prizes">See all prizes →</a>
     </div>
   </div>
 </section>
@@ -1143,7 +1159,7 @@ SWEEPSTAKES_BODY = sweeps_hero(
       </div>
     </div>
 {CAR_LINEUP}
-{prize_cards()}
+{prize_cards(cash_row=True)}
   </div>
 </section>
 """ + upsell(
@@ -1166,11 +1182,11 @@ RAFFLE_BODY = sweeps_hero(
     <div class="section-head">
       <div>
         <p class="eyebrow">The prizes</p>
-        <h2>One winner. Any two cars — or $100,000.00.</h2>
+        <h2>One winner. Any two cars, one car and $50,000.00 — or $100,000.00.</h2>
       </div>
     </div>
 {CAR_LINEUP}
-{prize_cards(cash=RAFFLE_CASH)}
+{prize_cards(cash=RAFFLE_CASH, cash_row=True)}
   </div>
 </section>
 """ + upsell(
