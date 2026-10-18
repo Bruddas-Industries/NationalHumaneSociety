@@ -1993,3 +1993,13 @@ body.is-home .site-footer { margin-top: 0; }
 @media (prefers-reduced-motion: reduce) {
   .cash-face::after, .choice-thumb.is-cash::after { display: none; }
 }
+
+/* A single cash card (Sweepstakes) is as wide as one of the two on Raffle
+   Plus, not the whole row */
+.cash-grid:has(> :only-child) { grid-template-columns: minmax(0, calc(50% - var(--space-5) / 2)); }
+@media (max-width: 1100px) { .cash-grid:has(> :only-child) { grid-template-columns: minmax(0, 720px); } }
+@media (max-width: 600px) { .cash-grid:has(> :only-child) { grid-template-columns: 1fr; } }
+
+/* Home page Raffle Plus section: both tickets the same size; the Raffle Plus
+   one comes first and keeps a yellow glow so the section leans towards it */
+.ticket-featured { box-shadow: 0 0 0 5px rgba(251,255,0,.28), var(--shadow-lg); }
