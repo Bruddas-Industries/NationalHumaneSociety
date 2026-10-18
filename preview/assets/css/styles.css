@@ -813,6 +813,12 @@ body.is-home .site-header.at-top .brand-logo {
 }
 
 /* Cash card: a banknote — $ pattern on money green, framed like a bill */
+.cash-face,
+.choice-thumb.is-cash {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg font-family='Georgia,serif' font-weight='700' fill='%23ffffff' fill-opacity='.09'%3E%3Ctext x='6' y='30' font-size='26'%3E%24%3C/text%3E%3Ctext x='38' y='62' font-size='26'%3E%24%3C/text%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse at center, #2f8f6a 0%, #1d6b4e 55%, #134c37 100%);
+}
 .cash-face {
   position: relative;
   aspect-ratio: 16/10;
@@ -822,9 +828,6 @@ body.is-home .site-header.at-top .brand-logo {
   justify-content: center;
   gap: var(--space-2);
   color: #fff;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg font-family='Georgia,serif' font-weight='700' fill='%23ffffff' fill-opacity='.09'%3E%3Ctext x='6' y='30' font-size='26'%3E%24%3C/text%3E%3Ctext x='38' y='62' font-size='26'%3E%24%3C/text%3E%3C/g%3E%3C/svg%3E"),
-    radial-gradient(ellipse at center, #2f8f6a 0%, #1d6b4e 55%, #134c37 100%);
 }
 .cash-face::before {
   content: "";
@@ -1560,11 +1563,21 @@ body.is-home .site-header.at-top .brand-logo {
   aspect-ratio: 16/10;
   background: var(--color-mist) center/cover no-repeat;
 }
+/* Cash choices in the entry forms: the same banknote as the cash prize cards */
 .choice-thumb.is-cash {
-  background: var(--color-navy);
+  position: relative;
   color: var(--color-yellow);
   font-family: var(--font-display);
   font-size: 1.35rem;
+  text-shadow: 0 2px 0 #0f3b2b, 0 6px 14px rgba(0,0,0,.35);
+}
+.choice-thumb.is-cash::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 1.5px solid rgba(251,255,0,.45);
+  border-radius: 8px;
+  pointer-events: none;
 }
 .choice-label { display: block; padding: var(--space-3); font-weight: 600; font-size: .95rem; line-height: 1.25; color: var(--color-navy); }
 
