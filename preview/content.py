@@ -203,7 +203,8 @@ PRIZES = [
      ]),
 ]
 
-# Verbatim, in the order published on /sweepstakes-rules.
+# Verbatim, in the order published on /sweepstakes-rules, plus the 18+ age
+# rule from the FAQ (added at CJ's request, 2026-10-18).
 RULES = [
     "Tickets are $25.00 and can be paid for by credit card, money order or check.",
     "Winner will be announced at time and place of drawing.",
@@ -214,6 +215,7 @@ RULES = [
     "Need not be present to win.",
     "All decisions and interpretations of the rules and regulations are of the National Humane Society and its judgment is final.",
     "The event is subject to all federal rules, local laws and regulations and is void where prohibited by law.",
+    "Entrants must be 18 years of age or older.",
     "All employees of the sponsoring organization and their families are not eligible to win.",
     "The winner of the prize must enter into contract within 30 days of selection of the winner and agree to execute all the documents necessary to effect the intent of these rules and accomplish the transfer of title.",
     "Payment of all applicable federal, state and local taxes, fees and surcharges, tags and registrations fees are the responsibility of the winner, who must provide proof of insurance to take delivery.",
@@ -234,11 +236,11 @@ RULES = [
 # 2025 drawing date and a different mailing address; those are swapped for the
 # values used everywhere else on the site and called out in a review note.
 FAQ = [
-    ("How old do I have to be to purchase a Raffle ticket?",
-     "<p>You must be 18 years or older to purchase a ticket for our sweepstakes.</p>"),
-    ("How do I purchase a Raffle ticket?",
-     "<p>Tickets are on sale on our website. Place an order online, send a check to 406 Suburban DR #364, Newark, DE 19711 or call our order line — 844 807 4052.</p>"
-     f"<p>The winning ticket will be drawn on {DRAWING_DATE}.</p>"),
+    ("How old do I have to be to purchase a Sweepstakes or Raffle Plus ticket?",
+     "<p>You must be 18 years or older to purchase a ticket for our Sweepstakes or Raffle Plus.</p>"),
+    ("How do I purchase a Sweepstakes or Raffle Plus ticket?",
+     "<p>Sweepstakes and Raffle Plus tickets are on sale on our website. Place an order online, send a check to 406 Suburban DR #364, Newark, DE 19711 or call our order line at 844-807-4052.</p>"
+     f'<p>The winning ticket will be drawn on <strong class="faq-date">{DRAWING_DATE}</strong>.</p>'),
     ("Can I buy a ticket as a gift for or on behalf of someone else?",
      "<p>Yes! To purchase an entry for someone else, simply use their name and contact information when completing your purchase.</p>"),
     ("How can I get a copy of my ticket?",
@@ -246,21 +248,21 @@ FAQ = [
     ("How will the winners be informed?",
      "<p>The lucky prize winner will receive a phone call directly from us immediately following the drawings. In the event that we cannot reach winners by phone, we will email them.</p>"),
     ("Do I have to be present for the drawing in order to win?",
-     "<p>No, winners need not be present to win.</p>"),
+     "<p>No, winners do not need to be present to win.</p>"),
     ("What is the value of the prizes?",
-     "<p>Depending on the car that the winner chooses.</p>"),
+     "<p>Varies depending on the car or cash prize selected.</p>"),
     ("When are the drawings?",
-     f"<p>The winning ticket will be drawn on {DRAWING_DATE}.</p>"),
+     f'<p>The winning ticket will be drawn on <strong class="faq-date">{DRAWING_DATE}</strong>.</p>'),
     ("What percentage of the money raised goes to charity?",
      "<p>100% of your donation goes to the National Humane Society, a 501(c)(3) organization.</p>"
      "<p>All of the donations benefit animal shelters, Spay and Neuter programs to help reduce the large number of unwanted animals born in the US each year, Veterinarian bills for pet owners and other animal related aspects of our charitable mission.</p>"
      "<p>A few of the groups that have benefited from donations are: Second Chance Animal Rescue Society, The Humane Society of the United States, American Society for the Prevention of Cruelty to Animals, San Francisco Humane Society, Jacksonville Humane Society among many others.</p>"),
-    ("How many tickets are sold?",
-     "<p>Only 1000 participants will be allowed to purchase tickets.</p>"),
+    ("Is there a limit on how many people can enter?",
+     "<p>Yes. Only 1,000 participants can purchase tickets for each drawing.</p>"),
     ("Who provides the prizes?",
-     "<p>Cars provided by Winner Automobile Group of Delaware and Porsche of Delaware.</p>"),
-    ("If I still have questions about the National Humane Society's Charitable sweepstakes, who do I contact?",
-     "<p>Send an e-mail to <a href=\"mailto:info@nationalhumanesociety.org\">info@nationalhumanesociety.org</a> or call us 877 285 0710 or 302 369 6532 and we will gladly clear up any questions you may have!</p>"),
+     "<p>Cars are provided by Winner Automobile Group of Delaware and Porsche of Delaware.</p>"),
+    ("If I still have questions about the National Humane Society's Sweepstakes or Raffle Plus, who do I contact?",
+     "<p>Send an e-mail to <a href=\"mailto:info@nationalhumanesociety.org\">info@nationalhumanesociety.org</a> or call us at 877-285-0710 and we will gladly clear up any questions you may have!</p>"),
 ]
 
 # (name, state, image file or None) in the order shown on /previous-winners.

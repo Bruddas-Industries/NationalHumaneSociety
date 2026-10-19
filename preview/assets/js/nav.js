@@ -178,6 +178,47 @@
     restart();
   });
 
+  // FAQ cards: ease the answer open and closed instead of snapping. The
+  // <details> element still works on its own if this script doesn't run.
+  document.querySelectorAll('.faq-card').forEach((card) => {
+    const summary = card.querySelector('summary');
+    const answer = card.querySelector('.faq-a');
+    if (!summary || !answer) return;
+    // Animate from the current height to the target; reading offsetHeight
+    // between the two forces the start value to apply, so the motion begins
+    // on the first frame.
+    const animate = (from, to, done) => {
+      card.classList.remove('is-animating');
+      answer.style.height = from + 'px';
+      answer.style.opacity = to ? '0' : '1';
+      void answer.offsetHeight;
+      card.classList.add('is-animating');
+      answer.style.height = to + 'px';
+      answer.style.opacity = to ? '1' : '0';
+      let ended = false;
+      const end = () => {
+        if (ended) return;
+        ended = true;
+        if (done) done();
+        card.classList.remove('is-animating');
+        answer.style.height = '';
+        answer.style.opacity = '';
+      };
+      answer.addEventListener('transitionend', (ev) => { if (ev.propertyName === 'height') end(); }, { once: true });
+      setTimeout(end, 400);
+    };
+    summary.addEventListener('click', (e) => {
+      if (reduceMotion || card.classList.contains('is-animating')) return;
+      e.preventDefault();
+      if (card.open) {
+        animate(answer.offsetHeight, 0, () => { card.open = false; });
+      } else {
+        card.open = true;
+        animate(0, answer.scrollHeight);
+      }
+    });
+  });
+
   // Prize pages: switch the ticket bundles between Sweepstakes and Raffle Plus
   document.querySelectorAll('[data-tier-switch]').forEach((box) => {
     const tabs = [...box.querySelectorAll('[data-tier]')];

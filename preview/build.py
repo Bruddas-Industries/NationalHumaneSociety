@@ -513,10 +513,11 @@ def ticket(href, tag, title, detail, variant):
     """A call-to-action shaped like a raffle ticket: the "Enter now" stub is
     split off by a perforation. variant: 'ticket-yellow' or 'ticket-navy',
     plus 'ticket-hero' (sits on the video) or 'ticket-stacked' (tag above title)."""
+    tag_html = f'<span class="ticket-tag">{tag}</span>\n        ' if tag else ""
+    detail_html = f"<small>{detail}</small>" if detail else ""
     return f"""<a class="ticket {variant}" href="{href}">
       <span class="ticket-main">
-        <span class="ticket-tag">{tag}</span>
-        <span class="ticket-text"><strong>{title}</strong><small>{detail}</small></span>
+        {tag_html}<span class="ticket-text"><strong>{title}</strong>{detail_html}</span>
       </span>
       <span class="ticket-stub">Enter now <span class="ticket-arrow" aria-hidden="true">→</span></span>
     </a>"""
@@ -1115,12 +1116,12 @@ CAR_LINEUP = """    <ul class="lineup">
     </ul>"""
 
 
-def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact, gallery_html=None, actions=None):
+def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact, gallery_html=None, actions=None, actions_html=None):
     """Navy hero for the entry pages and the prize pages, with the facts people
     ask about first. Entry pages show every prize car; prize pages pass their
-    own gallery and buttons."""
+    own gallery and their own buttons (actions_html: ticket buttons)."""
     actions = actions or [("Enter Now", "#enter", "btn-primary"), ("See the prizes", "#prizes", "btn-ghost")]
-    buttons = "\n".join(f'        <a class="btn {cls} btn-lg" href="{href}">{label}</a>' for label, href, cls in actions)
+    buttons = actions_html or "\n".join(f'        <a class="btn {cls} btn-lg" href="{href}">{label}</a>' for label, href, cls in actions)
     return f"""
 <section class="sweeps-hero">
   <div class="container sweeps-hero-grid">
@@ -1246,8 +1247,8 @@ def car_sheet(i, name, year, image, specs):
         </dl>
         <p class="car-sheet-win">Win this car with</p>
         <div class="car-sheet-actions">
-          <a class="btn btn-primary" href="sweepstakes.html{pick}#enter">Sweepstakes · from ${C.TICKET_TIERS[0][2]}</a>
-          <a class="btn btn-yellow" href="raffle-plus.html{pick}#enter">Raffle Plus · from ${C.TICKET_TIERS[0][3]}</a>
+          {ticket(f"sweepstakes.html{pick}#enter", None, "Sweepstakes", f"From ${C.TICKET_TIERS[0][2]}", "ticket-navy ticket-compact")}
+          {ticket(f"raffle-plus.html{pick}#enter", None, "Raffle Plus", f"From ${C.TICKET_TIERS[0][3]}", "ticket-yellow ticket-compact")}
         </div>
       </div>
     </article>"""
@@ -1284,8 +1285,10 @@ def prize_body(prize):
         0,
         f"${C.TICKET_TIERS[0][2]} or ${C.TICKET_TIERS[0][3]} Raffle Plus",
         gallery_html=hero_gallery,
-        actions=[("Enter Sweepstakes", "sweepstakes.html#enter", "btn-primary"),
-                 ("Enter Raffle Plus", "raffle-plus.html#enter", "btn-yellow")],
+        actions_html=(
+            "        " + ticket("sweepstakes.html#enter", None, "Sweepstakes", None, "ticket-navy ticket-compact ticket-lg") + "\n"
+            "        " + ticket("raffle-plus.html#enter", None, "Raffle Plus", None, "ticket-yellow ticket-compact ticket-lg")
+        ),
     )
     return hero + f"""
 <section class="section" id="specs">
@@ -1364,21 +1367,65 @@ HOW_IT_WORKS_BODY = page_hero(
 """
 
 # --- FAQ --------------------------------------------------------------------
-FAQ_ITEMS = "\n".join(f"""    <div class="faq-item">
-      <h3>{q}</h3>
-      {a}
-    </div>""" for q, a in C.FAQ)
+# FAQ questions grouped by topic (indexes into C.FAQ, which keeps the live
+# order). Every question appears exactly once.
+FAQ_GROUPS = [
+    ("Buying tickets", [0, 1, 2, 3, 9]),
+    ("The drawing", [7, 5, 4]),
+    ("The prizes", [6, 10]),
+    ("Where your money goes", [8]),
+    ("Still have questions?", [11]),
+]
+assert sorted(i for _t, idx in FAQ_GROUPS for i in idx) == list(range(len(C.FAQ)))
 
+
+def faq_accordion():
+    """Questions as cards that open to show the answer; the first one starts open."""
+    groups, n = [], 0
+    for topic, indexes in FAQ_GROUPS:
+        items = []
+        for i in indexes:
+            q, a = C.FAQ[i]
+            n += 1
+            opened = " open" if n == 1 else ""
+            items.append(f"""        <details class="faq-card"{opened}>
+          <summary><span class="faq-num">{n:02d}</span><span class="faq-q">{q}</span><span class="faq-icon" aria-hidden="true"></span></summary>
+          <div class="faq-a"><div class="faq-a-inner">{a}</div></div>
+        </details>""")
+        groups.append(f"""      <div class="faq-group">
+        <p class="eyebrow">{topic}</p>
+{chr(10).join(items)}
+      </div>""")
+    return "\n".join(groups)
+
+# The review notes that sat here were answered by CJ on 2026-10-18: the
+# drawing date and Suburban Dr address used everywhere are correct, the 18+
+# rule is now in the Rules too, and the 1,000-participant limit still holds.
 FAQ_BODY = page_hero(
     "Frequently Asked Questions",
-    "",
+    "Everything you need to know about entering the Sweepstakes and Raffle Plus.",
     "FAQ",
     parent=("Sweepstakes", "sweepstakes.html"),
 ) + f"""
 <section class="section">
-  <div class="container-narrow">
-    {review_note("<ul><li>The current FAQ still says the drawing is on June 27, 2025 at 10 A.M. and gives 40 E Main St, Newark as the address for checks. This preview uses {C.DRAWING_DATE} and 406 Suburban DR #364, which appear everywhere else on the site.</li><li>The FAQ says entrants must be 18 or older; the Rules do not state a minimum age.</li><li>“Only 1000 participants will be allowed to purchase tickets” — still accurate?</li></ul>")}
-{FAQ_ITEMS}
+  <div class="container faq-layout">
+    <div class="faq-list">
+{faq_accordion()}
+    </div>
+    <aside class="faq-help">
+      <h3>Still have questions?</h3>
+      <p>We will gladly clear up any questions you may have.</p>
+      <ul class="faq-contacts">
+        <li><span>Customer Service</span><a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a></li>
+        <li><span>Order Line</span><a href="{tel(C.ORDER_LINE)}">{C.ORDER_LINE}</a></li>
+        <li><span>Email</span><a href="mailto:{C.EMAIL}">{C.EMAIL}</a></li>
+      </ul>
+      <div class="faq-help-actions">
+      {ticket("sweepstakes.html#enter", None, "Sweepstakes", None, "ticket-navy ticket-compact")}
+      {ticket("raffle-plus.html#enter", None, "Raffle Plus", None, "ticket-yellow ticket-compact")}
+      </div>
+      <p class="faq-help-more"><a href="sweepstakes-rules.html">Read the full rules →</a></p>
+    </aside>
   </div>
 </section>
 """ + winners_strip()
