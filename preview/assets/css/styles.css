@@ -2221,13 +2221,15 @@ a.tier-card:hover .tier-cta span { transform: translateX(4px); }
 .ticket-compact .ticket-main { padding: 14px var(--space-4); }
 .ticket-compact .ticket-text strong { font-size: 1.15rem; }
 .ticket-compact .ticket-stub { padding: 0 var(--space-4); font-size: .95rem; }
-/* Navy ticket on the navy panel: lift it with a lighter fill and an outline */
-.faq-help .ticket-navy { background: #26254d; outline: 1px solid rgba(255,255,255,.22); outline-offset: -1px; }
+/* Navy ticket on a navy background (FAQ panel, car page hero): lift it with
+   a lighter fill and an outline */
+.faq-help .ticket-navy,
+.sweeps-hero .ticket-navy { background: #26254d; outline: 1px solid rgba(255,255,255,.22); outline-offset: -1px; }
 @media (max-width: 600px) {
   /* keep the compact tickets side-by-side inside, not stacked */
   .ticket.ticket-compact { flex-direction: row; }
   .ticket-compact .ticket-stub { border-top: 0; border-left: 2px dashed rgba(24,23,51,.45); padding: 0 var(--space-4); }
-  .faq-help .ticket-navy.ticket-compact .ticket-stub { border-left-color: rgba(255,255,255,.4); }
+  .ticket-navy.ticket-compact .ticket-stub { border-left-color: rgba(255,255,255,.4); }
 }
 .faq-help-more { margin: var(--space-4) 0 0; text-align: center; }
 .faq-help-more a { color: rgba(255,255,255,.85); font-weight: 600; }
@@ -2253,3 +2255,18 @@ a.tier-card:hover .tier-cta span { transform: translateX(4px); }
 /* FAQ answers ease open and closed (nav.js animates the height) */
 .faq-a { overflow: hidden; }
 .faq-card.is-animating .faq-a { transition: height .3s cubic-bezier(.4, 0, .2, 1), opacity .3s ease; }
+
+/* Car pages: the hero tickets sit side by side at equal width; each car's
+   pair stacks at equal width (the text column is too narrow for two) */
+.hero-actions:has(.ticket) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 600px; }
+.ticket-compact.ticket-lg .ticket-main { padding: 16px var(--space-4); }
+.ticket-compact.ticket-lg .ticket-text strong { font-size: 1.2rem; white-space: nowrap; }
+.ticket-compact.ticket-lg .ticket-stub { padding: 0 var(--space-4); }
+.car-sheet-actions { display: grid; grid-template-columns: minmax(0, 340px); }
+.hero-actions .ticket-compact .ticket-main, .car-sheet-actions .ticket-compact .ticket-main { min-width: 0; }
+@media (max-width: 600px) {
+  .hero-actions:has(.ticket) { grid-template-columns: 1fr; }
+  .car-sheet-actions { grid-template-columns: 1fr; }
+}
+.ticket-compact .ticket-text small { margin-top: 0; font-size: .82rem; opacity: .85; }
+.sweeps-hero .ticket-navy .ticket-stub { border-left-color: rgba(255,255,255,.4); }

@@ -1116,12 +1116,12 @@ CAR_LINEUP = """    <ul class="lineup">
     </ul>"""
 
 
-def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact, gallery_html=None, actions=None):
+def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact, gallery_html=None, actions=None, actions_html=None):
     """Navy hero for the entry pages and the prize pages, with the facts people
     ask about first. Entry pages show every prize car; prize pages pass their
-    own gallery and buttons."""
+    own gallery and their own buttons (actions_html: ticket buttons)."""
     actions = actions or [("Enter Now", "#enter", "btn-primary"), ("See the prizes", "#prizes", "btn-ghost")]
-    buttons = "\n".join(f'        <a class="btn {cls} btn-lg" href="{href}">{label}</a>' for label, href, cls in actions)
+    buttons = actions_html or "\n".join(f'        <a class="btn {cls} btn-lg" href="{href}">{label}</a>' for label, href, cls in actions)
     return f"""
 <section class="sweeps-hero">
   <div class="container sweeps-hero-grid">
@@ -1247,8 +1247,8 @@ def car_sheet(i, name, year, image, specs):
         </dl>
         <p class="car-sheet-win">Win this car with</p>
         <div class="car-sheet-actions">
-          <a class="btn btn-primary" href="sweepstakes.html{pick}#enter">Sweepstakes · from ${C.TICKET_TIERS[0][2]}</a>
-          <a class="btn btn-yellow" href="raffle-plus.html{pick}#enter">Raffle Plus · from ${C.TICKET_TIERS[0][3]}</a>
+          {ticket(f"sweepstakes.html{pick}#enter", None, "Sweepstakes", f"From ${C.TICKET_TIERS[0][2]}", "ticket-navy ticket-compact")}
+          {ticket(f"raffle-plus.html{pick}#enter", None, "Raffle Plus", f"From ${C.TICKET_TIERS[0][3]}", "ticket-yellow ticket-compact")}
         </div>
       </div>
     </article>"""
@@ -1285,8 +1285,10 @@ def prize_body(prize):
         0,
         f"${C.TICKET_TIERS[0][2]} or ${C.TICKET_TIERS[0][3]} Raffle Plus",
         gallery_html=hero_gallery,
-        actions=[("Enter Sweepstakes", "sweepstakes.html#enter", "btn-primary"),
-                 ("Enter Raffle Plus", "raffle-plus.html#enter", "btn-yellow")],
+        actions_html=(
+            "        " + ticket("sweepstakes.html#enter", None, "Sweepstakes", None, "ticket-navy ticket-compact ticket-lg") + "\n"
+            "        " + ticket("raffle-plus.html#enter", None, "Raffle Plus", None, "ticket-yellow ticket-compact ticket-lg")
+        ),
     )
     return hero + f"""
 <section class="section" id="specs">
