@@ -178,6 +178,19 @@
     restart();
   });
 
+  // Prize pages: switch the ticket bundles between Sweepstakes and Raffle Plus
+  document.querySelectorAll('[data-tier-switch]').forEach((box) => {
+    const tabs = [...box.querySelectorAll('[data-tier]')];
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+        box.querySelectorAll('[data-tier-panel]').forEach((panel) => {
+          panel.hidden = panel.dataset.tierPanel !== tab.dataset.tier;
+        });
+      });
+    });
+  });
+
   // Sweepstakes / Raffle Plus entry forms (preview only): keep the summary
   // panel in step with the selected ticket bundle and prize.
   document.querySelectorAll('[data-entry]').forEach((form) => {
@@ -224,6 +237,17 @@
       }
     };
     form.addEventListener('change', update);
+
+    // Links from the prize pages arrive with ?tickets=3 or ?prize=Rivian%20R1T:
+    // start the form with that bundle / car already chosen.
+    const params = new URLSearchParams(location.search);
+    const preset = (name, value) => {
+      if (!value) return;
+      const input = [...form.querySelectorAll(`input[name="${name}"]`)].find((i) => i.value === value);
+      if (input) input.checked = true;
+    };
+    preset('tickets', params.get('tickets'));
+    preset('prize', params.get('prize'));
     update();
   });
 })();

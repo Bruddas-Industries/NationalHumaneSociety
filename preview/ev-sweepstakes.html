@@ -77,82 +77,167 @@
 <main>
 
 
-<section class="page-hero">
+<section class="sweeps-hero">
+  <div class="container sweeps-hero-grid">
+    <div>
+      <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; Rivian</div>
+      <p class="eyebrow">Sweepstakes &amp; Raffle Plus</p>
+      <h1>Win a <span class="hl">new Rivian</span></h1>
+      <p class="lead">Choose the Rivian R1T or Rivian R1S. Win it with a Sweepstakes ticket, or with Raffle Plus pair it with a second car or $50,000.00.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="sweepstakes.html#enter">Enter Sweepstakes</a>
+        <a class="btn btn-yellow btn-lg" href="raffle-plus.html#enter">Enter Raffle Plus</a>
+      </div>
+    </div>
+      <div class="prize-gallery sweeps-hero-gallery" data-gallery data-autoplay="4500">
+        <div class="prize-slides">
+          <a class="prize-slide" href="#car-1" style="background-image:url('assets/img/prize-rivian.jpg')"><span class="prize-slide-name">Rivian R1T</span></a>
+          <a class="prize-slide" href="#car-2" style="background-image:url('assets/img/prize-rivian-r1s.avif')" tabindex="-1"><span class="prize-slide-name">Rivian R1S</span></a>
+        </div>
+        <span class="gallery-count">2 models</span>
+        <button class="gallery-btn gallery-prev" type="button" aria-label="Previous car">‹</button>
+        <button class="gallery-btn gallery-next" type="button" aria-label="Next car">›</button>
+        <div class="gallery-dots"><button type="button" aria-label="Show Rivian R1T" class="is-active"></button><button type="button" aria-label="Show Rivian R1S"></button></div>
+      </div>
+  </div>
   <div class="container">
-    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; Rivian</div>
-    <p class="eyebrow">Car Sweepstakes</p>
-    <h1>Win a new EV</h1>
-    <p class="lead">Rivian — or $50,000.00!</p>
-    <p><strong>Drawing date December 31, 2026.</strong> Need not be present to win!</p>
+    <div class="fact-strip">
+      <div><span class="fact-label">Next drawing</span><span class="fact-value">December 31, 2026</span></div>
+      <div><span class="fact-label">Tickets</span><span class="fact-value">$25 or $125 Raffle Plus</span></div>
+      <div><span class="fact-label">To win</span><span class="fact-value">No need to be present</span></div>
+      <div><span class="fact-label">Ticket numbers</span><span class="fact-value">Emailed within 48 hours</span></div>
+    </div>
   </div>
 </section>
 
-<section class="section">
+<section class="section" id="specs">
   <div class="container">
-
-    <div class="car-block">
-      <img src="assets/img/prize-rivian.jpg" alt="Rivian R1T" loading="lazy">
+    <div class="section-head">
       <div>
-        <p class="eyebrow">2026 Model</p>
-        <h3>Rivian R1T Specs</h3>
-        <dl class="spec-list">
-          <dt>Range</dt><dd>260 to 314 mi battery-only</dd>
-          <dt>Towing capacity</dt><dd>11,000 lbs</dd>
-          <dt>Battery charge</dt><dd>13h at 220V</dd>
-          <dt>Horsepower</dt><dd>600 to 835 hp</dd>
-        </dl>
+        <p class="eyebrow">The specs</p>
+        <h2>2 Rivian models to choose from</h2>
       </div>
     </div>
-    <div class="car-block">
-      <img src="assets/img/prize-rivian-r1s.avif" alt="Rivian R1S" loading="lazy">
-      <div>
-        <p class="eyebrow">2026 Model</p>
-        <h3>Rivian R1S Specs</h3>
-        <dl class="spec-list">
-          <dt>Range</dt><dd>270 miles</dd>
-          <dt>0–60</dt><dd>4.5 sec</dd>
-          <dt>Horsepower</dt><dd>553 hp</dd>
-        </dl>
+
+    <div class="car-sheets">
+    <article class="car-sheet" id="car-1">
+      <div class="car-sheet-photo">
+        <img src="assets/img/prize-rivian.jpg" alt="Rivian R1T" loading="lazy">
+        <span class="car-sheet-year">2026 Model</span>
       </div>
+      <div class="car-sheet-body">
+        <h3>Rivian R1T</h3>
+        <dl class="spec-grid">
+          <div class="spec-tile"><dt>Range</dt><dd>260 to 314 mi battery-only</dd></div>
+          <div class="spec-tile"><dt>Towing capacity</dt><dd>11,000 lbs</dd></div>
+          <div class="spec-tile"><dt>Battery charge</dt><dd>13h at 220V</dd></div>
+          <div class="spec-tile"><dt>Horsepower</dt><dd>600 to 835 hp</dd></div>
+        </dl>
+        <p class="car-sheet-win">Win this car with</p>
+        <div class="car-sheet-actions">
+          <a class="btn btn-primary" href="sweepstakes.html?prize=Rivian%20R1T#enter">Sweepstakes · from $25</a>
+          <a class="btn btn-yellow" href="raffle-plus.html?prize=Rivian%20R1T#enter">Raffle Plus · from $125</a>
+        </div>
+      </div>
+    </article>
+    <article class="car-sheet is-flipped" id="car-2">
+      <div class="car-sheet-photo">
+        <img src="assets/img/prize-rivian-r1s.avif" alt="Rivian R1S" loading="lazy">
+        <span class="car-sheet-year">2026 Model</span>
+      </div>
+      <div class="car-sheet-body">
+        <h3>Rivian R1S</h3>
+        <dl class="spec-grid">
+          <div class="spec-tile"><dt>Range</dt><dd>270 miles</dd></div>
+          <div class="spec-tile"><dt>0–60</dt><dd>4.5 sec</dd></div>
+          <div class="spec-tile"><dt>Horsepower</dt><dd>553 hp</dd></div>
+        </dl>
+        <p class="car-sheet-win">Win this car with</p>
+        <div class="car-sheet-actions">
+          <a class="btn btn-primary" href="sweepstakes.html?prize=Rivian%20R1S#enter">Sweepstakes · from $25</a>
+          <a class="btn btn-yellow" href="raffle-plus.html?prize=Rivian%20R1S#enter">Raffle Plus · from $125</a>
+        </div>
+      </div>
+    </article>
     </div>
   </div>
 </section>
 
 <section class="section section-soft">
   <div class="container">
+    <div class="text-center" style="margin-bottom:var(--space-5)">
+      <p class="eyebrow">Tickets</p>
+      <h2>Pick your tickets</h2>
+    </div>
+    <div class="tier-switch" data-tier-switch>
+      <div class="tier-toggle" role="tablist" aria-label="Ticket type">
+        <button type="button" role="tab" aria-selected="true" data-tier="sweepstakes">Sweepstakes<small>One car or $50,000</small></button>
+        <button type="button" role="tab" aria-selected="false" data-tier="raffle-plus">Raffle Plus<small>Two cars or $100,000</small></button>
+      </div>
+      <div data-tier-panel="sweepstakes">
     <div class="tier-grid">
-      <div class="tier-card">
+      <a class="tier-card" href="sweepstakes.html?tickets=1#enter">
         
         <h3>Buy 1 Ticket</h3>
         <p class="tier-free">Get 50 Free!</p>
         <p class="tier-price">$25</p>
-      </div>
-      <div class="tier-card is-popular">
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="tier-card is-popular" href="sweepstakes.html?tickets=3#enter">
         <span class="tier-badge"><span aria-hidden="true">★</span> Most Popular</span>
         <h3>Buy 3 Tickets</h3>
         <p class="tier-free">Get 2500 Free!</p>
         <p class="tier-price">$75</p>
-      </div>
-      <div class="tier-card">
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="tier-card" href="sweepstakes.html?tickets=10#enter">
         
         <h3>Buy 10 Tickets</h3>
         <p class="tier-free">Get 6000 Free!</p>
         <p class="tier-price">$250</p>
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
+    </div>
+      </div>
+      <div data-tier-panel="raffle-plus" hidden>
+    <div class="tier-grid">
+      <a class="tier-card" href="raffle-plus.html?tickets=1#enter">
+        
+        <h3>Buy 1 Ticket</h3>
+        <p class="tier-free">Get 50 Free!</p>
+        <p class="tier-price">$125</p>
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="tier-card is-popular" href="raffle-plus.html?tickets=3#enter">
+        <span class="tier-badge"><span aria-hidden="true">★</span> Most Popular</span>
+        <h3>Buy 3 Tickets</h3>
+        <p class="tier-free">Get 2500 Free!</p>
+        <p class="tier-price">$175</p>
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="tier-card" href="raffle-plus.html?tickets=10#enter">
+        
+        <h3>Buy 10 Tickets</h3>
+        <p class="tier-free">Get 6000 Free!</p>
+        <p class="tier-price">$350</p>
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
+    </div>
       </div>
     </div>
-    <div style="margin-top:var(--space-6)">
+    <div style="margin-top:var(--space-7)">
     <div class="cta-pair">
-    <a class="ticket ticket-yellow ticket-stacked" href="raffle-plus.html">
-      <span class="ticket-main">
-        <span class="ticket-tag">Raffle Plus</span>
-        <span class="ticket-text"><strong>Win two cars or $100,000</strong><small>Tickets from $125 · Drawing December 31, 2026</small></span>
-      </span>
-      <span class="ticket-stub">Enter now <span class="ticket-arrow" aria-hidden="true">→</span></span>
-    </a>
     <a class="ticket ticket-navy ticket-stacked" href="sweepstakes.html">
       <span class="ticket-main">
         <span class="ticket-tag">Sweepstakes</span>
         <span class="ticket-text"><strong>Win one car or $50,000</strong><small>Tickets from $25 · Drawing December 31, 2026</small></span>
+      </span>
+      <span class="ticket-stub">Enter now <span class="ticket-arrow" aria-hidden="true">→</span></span>
+    </a>
+    <a class="ticket ticket-yellow ticket-stacked" href="raffle-plus.html">
+      <span class="ticket-main">
+        <span class="ticket-tag">Raffle Plus</span>
+        <span class="ticket-text"><strong>Win two cars or $100,000</strong><small>Tickets from $125 · Drawing December 31, 2026</small></span>
       </span>
       <span class="ticket-stub">Enter now <span class="ticket-arrow" aria-hidden="true">→</span></span>
     </a>

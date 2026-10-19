@@ -77,70 +77,143 @@
 <main>
 
 
-<section class="page-hero">
+<section class="sweeps-hero">
+  <div class="container sweeps-hero-grid">
+    <div>
+      <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; Cadillac</div>
+      <p class="eyebrow">Sweepstakes &amp; Raffle Plus</p>
+      <h1>Win a <span class="hl">new Cadillac</span></h1>
+      <p class="lead">The Cadillac Escalade. Win it with a Sweepstakes ticket, or with Raffle Plus pair it with a second car or $50,000.00.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="sweepstakes.html#enter">Enter Sweepstakes</a>
+        <a class="btn btn-yellow btn-lg" href="raffle-plus.html#enter">Enter Raffle Plus</a>
+      </div>
+    </div>
+      <div class="prize-gallery sweeps-hero-gallery" data-gallery>
+        <div class="prize-slides">
+          <a class="prize-slide" href="#car-1" style="background-image:url('assets/img/prize-cadillac-escalade.avif')"><span class="visually-hidden">Cadillac Escalade</span></a>
+        </div>
+      </div>
+  </div>
   <div class="container">
-    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; Cadillac</div>
-    <p class="eyebrow">Accept No Substitute. · Car Sweepstakes</p>
-    <h1>Win a new Cadillac</h1>
-    <p class="lead">Or $50,000.00!</p>
-    <p><strong>Drawing date December 31, 2026.</strong> Need not be present to win!</p>
+    <div class="fact-strip">
+      <div><span class="fact-label">Next drawing</span><span class="fact-value">December 31, 2026</span></div>
+      <div><span class="fact-label">Tickets</span><span class="fact-value">$25 or $125 Raffle Plus</span></div>
+      <div><span class="fact-label">To win</span><span class="fact-value">No need to be present</span></div>
+      <div><span class="fact-label">Ticket numbers</span><span class="fact-value">Emailed within 48 hours</span></div>
+    </div>
   </div>
 </section>
 
-<section class="section">
+<section class="section" id="specs">
   <div class="container">
-
-    <div class="car-block">
-      <img src="assets/img/prize-cadillac-escalade.avif" alt="Cadillac Escalade" loading="lazy">
+    <div class="section-head">
       <div>
-        <p class="eyebrow">2026 Model</p>
-        <h3>Cadillac Escalade Specs</h3>
-        <dl class="spec-list">
-          <dt>Engine</dt><dd>6.2L V8 with premium gasoline</dd>
-          <dt>Horsepower</dt><dd>420 hp</dd>
-          <dt>Torque</dt><dd>460 lb-ft with premium gasoline</dd>
-          <dt>Towing capacity</dt><dd>8100 lbs max available on 2WD models</dd>
-        </dl>
+        <p class="eyebrow">The specs</p>
+        <h2>Specs at a glance</h2>
       </div>
+    </div>
+
+    <div class="car-sheets">
+    <article class="car-sheet" id="car-1">
+      <div class="car-sheet-photo">
+        <img src="assets/img/prize-cadillac-escalade.avif" alt="Cadillac Escalade" loading="lazy">
+        <span class="car-sheet-year">2026 Model</span>
+      </div>
+      <div class="car-sheet-body">
+        <h3>Cadillac Escalade</h3>
+        <dl class="spec-grid">
+          <div class="spec-tile"><dt>Engine</dt><dd>6.2L V8 with premium gasoline</dd></div>
+          <div class="spec-tile"><dt>Horsepower</dt><dd>420 hp</dd></div>
+          <div class="spec-tile"><dt>Torque</dt><dd>460 lb-ft with premium gasoline</dd></div>
+          <div class="spec-tile"><dt>Towing capacity</dt><dd>8100 lbs max available on 2WD models</dd></div>
+        </dl>
+        <p class="car-sheet-win">Win this car with</p>
+        <div class="car-sheet-actions">
+          <a class="btn btn-primary" href="sweepstakes.html?prize=Cadillac%20Escalade#enter">Sweepstakes · from $25</a>
+          <a class="btn btn-yellow" href="raffle-plus.html?prize=Cadillac%20Escalade#enter">Raffle Plus · from $125</a>
+        </div>
+      </div>
+    </article>
     </div>
   </div>
 </section>
 
 <section class="section section-soft">
   <div class="container">
+    <div class="text-center" style="margin-bottom:var(--space-5)">
+      <p class="eyebrow">Tickets</p>
+      <h2>Pick your tickets</h2>
+    </div>
+    <div class="tier-switch" data-tier-switch>
+      <div class="tier-toggle" role="tablist" aria-label="Ticket type">
+        <button type="button" role="tab" aria-selected="true" data-tier="sweepstakes">Sweepstakes<small>One car or $50,000</small></button>
+        <button type="button" role="tab" aria-selected="false" data-tier="raffle-plus">Raffle Plus<small>Two cars or $100,000</small></button>
+      </div>
+      <div data-tier-panel="sweepstakes">
     <div class="tier-grid">
-      <div class="tier-card">
+      <a class="tier-card" href="sweepstakes.html?tickets=1#enter">
         
         <h3>Buy 1 Ticket</h3>
         <p class="tier-free">Get 50 Free!</p>
         <p class="tier-price">$25</p>
-      </div>
-      <div class="tier-card is-popular">
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="tier-card is-popular" href="sweepstakes.html?tickets=3#enter">
         <span class="tier-badge"><span aria-hidden="true">★</span> Most Popular</span>
         <h3>Buy 3 Tickets</h3>
         <p class="tier-free">Get 2500 Free!</p>
         <p class="tier-price">$75</p>
-      </div>
-      <div class="tier-card">
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="tier-card" href="sweepstakes.html?tickets=10#enter">
         
         <h3>Buy 10 Tickets</h3>
         <p class="tier-free">Get 6000 Free!</p>
         <p class="tier-price">$250</p>
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
+    </div>
+      </div>
+      <div data-tier-panel="raffle-plus" hidden>
+    <div class="tier-grid">
+      <a class="tier-card" href="raffle-plus.html?tickets=1#enter">
+        
+        <h3>Buy 1 Ticket</h3>
+        <p class="tier-free">Get 50 Free!</p>
+        <p class="tier-price">$125</p>
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="tier-card is-popular" href="raffle-plus.html?tickets=3#enter">
+        <span class="tier-badge"><span aria-hidden="true">★</span> Most Popular</span>
+        <h3>Buy 3 Tickets</h3>
+        <p class="tier-free">Get 2500 Free!</p>
+        <p class="tier-price">$175</p>
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="tier-card" href="raffle-plus.html?tickets=10#enter">
+        
+        <h3>Buy 10 Tickets</h3>
+        <p class="tier-free">Get 6000 Free!</p>
+        <p class="tier-price">$350</p>
+        <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
+      </a>
+    </div>
       </div>
     </div>
-    <div style="margin-top:var(--space-6)">
+    <div style="margin-top:var(--space-7)">
     <div class="cta-pair">
-    <a class="ticket ticket-yellow ticket-stacked" href="raffle-plus.html">
-      <span class="ticket-main">
-        <span class="ticket-tag">Raffle Plus</span>
-        <span class="ticket-text"><strong>Win two cars or $100,000</strong><small>Tickets from $125 · Drawing December 31, 2026</small></span>
-      </span>
-      <span class="ticket-stub">Enter now <span class="ticket-arrow" aria-hidden="true">→</span></span>
-    </a>
     <a class="ticket ticket-navy ticket-stacked" href="sweepstakes.html">
       <span class="ticket-main">
         <span class="ticket-tag">Sweepstakes</span>
         <span class="ticket-text"><strong>Win one car or $50,000</strong><small>Tickets from $25 · Drawing December 31, 2026</small></span>
+      </span>
+      <span class="ticket-stub">Enter now <span class="ticket-arrow" aria-hidden="true">→</span></span>
+    </a>
+    <a class="ticket ticket-yellow ticket-stacked" href="raffle-plus.html">
+      <span class="ticket-main">
+        <span class="ticket-tag">Raffle Plus</span>
+        <span class="ticket-text"><strong>Win two cars or $100,000</strong><small>Tickets from $125 · Drawing December 31, 2026</small></span>
       </span>
       <span class="ticket-stub">Enter now <span class="ticket-arrow" aria-hidden="true">→</span></span>
     </a>

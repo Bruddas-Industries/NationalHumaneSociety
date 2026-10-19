@@ -1285,22 +1285,6 @@ body.is-home .site-header.at-top .brand-logo {
 .lineup strong { display: inline-block; min-width: 6.5em; font-family: var(--font-display); font-weight: 400; }
 
 /* Prize pages */
-.car-block {
-  display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--space-6);
-  align-items: center;
-  padding: var(--space-6) 0;
-  border-bottom: 1px solid var(--color-border);
-}
-.car-block:first-child { padding-top: 0; }
-.car-block:last-child { border-bottom: 0; padding-bottom: 0; }
-.car-block img { width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: var(--radius-lg); }
-.spec-list { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-2) var(--space-4); margin: 0; }
-.spec-list dt {
-  font-family: var(--font-eyebrow); font-size: .75rem; font-weight: 700;
-  letter-spacing: .12em; text-transform: uppercase; color: var(--color-text-muted);
-  padding-top: 3px;
-}
-.spec-list dd { margin: 0; }
 
 /* Entry and donation forms */
 .form-grid.form-wide { max-width: none; }
@@ -1389,7 +1373,7 @@ body.is-home .site-header.at-top .brand-logo {
 .footer-social a { color: var(--color-yellow); }
 
 @media (max-width: 900px) {
-  .cta-pair, .tier-grid, .car-block, .video-grid { grid-template-columns: 1fr; }
+  .cta-pair, .tier-grid, .video-grid { grid-template-columns: 1fr; }
   .winner-grid { grid-template-columns: repeat(2, 1fr); }
   .check-grid { grid-template-columns: 1fr 1fr; }
   .dir-states { columns: 1; }
@@ -2003,3 +1987,142 @@ body.is-home .site-footer { margin-top: 0; }
 /* Home page Raffle Plus section: both tickets the same size; the Raffle Plus
    one comes first and keeps a yellow glow so the section leans towards it */
 .ticket-featured { box-shadow: 0 0 0 5px rgba(251,255,0,.28), var(--shadow-lg); }
+
+/* ==========================================================================
+   Prize pages: one "spec sheet" per car — big photo with the model year,
+   specs as tiles, and an enter button that picks that car on the form.
+   Photo and text swap sides on every other car.
+   ========================================================================== */
+.car-sheets { display: grid; gap: var(--space-8); }
+.car-sheet {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: var(--space-7);
+  align-items: center;
+  scroll-margin-top: 110px;
+}
+.car-sheet.is-flipped { grid-template-columns: 1fr 1.15fr; }
+.car-sheet.is-flipped .car-sheet-photo { order: 2; }
+.car-sheet-photo {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-navy);
+  box-shadow: var(--shadow-lg);
+}
+.car-sheet-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+  transition: transform .6s ease;
+}
+.car-sheet:hover .car-sheet-photo img { transform: scale(1.04); }
+.car-sheet-year {
+  position: absolute;
+  top: var(--space-4); left: var(--space-4);
+  background: var(--color-yellow);
+  color: var(--color-navy);
+  font-family: var(--font-eyebrow);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 8px 12px 6px;
+  border-radius: var(--radius-pill);
+}
+.car-sheet-body h3 { font-size: clamp(1.6rem, 2.6vw, 2.2rem); margin-bottom: var(--space-5); }
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  margin: 0 0 var(--space-6);
+}
+.spec-tile {
+  background: var(--color-mist);
+  border-left: 3px solid var(--color-coral);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+}
+.spec-tile dt {
+  font-family: var(--font-eyebrow);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.spec-tile dd { margin: 4px 0 0; font-weight: 700; color: var(--color-navy); line-height: 1.35; }
+@media (max-width: 900px) {
+  .car-sheet, .car-sheet.is-flipped { grid-template-columns: 1fr; gap: var(--space-5); }
+  .car-sheet.is-flipped .car-sheet-photo { order: 0; }
+}
+@media (max-width: 600px) { .spec-grid { grid-template-columns: 1fr; } }
+
+/* Ticket bundles on the prize pages are links into the entry form */
+a.tier-card {
+  display: block;
+  color: inherit;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+a.tier-card:hover { text-decoration: none; transform: translateY(-4px); border-color: var(--color-coral); box-shadow: var(--shadow-md); }
+a.tier-card.is-popular:hover {
+  border-color: var(--color-yellow);
+  transform: translateY(-10px) scale(1.04);
+  box-shadow: 0 0 0 6px rgba(251,255,0,.35), 0 24px 50px rgba(24,23,51,.35);
+}
+a.tier-card:focus-visible { outline: 3px solid var(--color-coral); outline-offset: 3px; }
+.tier-cta { display: inline-block; margin-top: var(--space-4); font-weight: 700; color: var(--color-coral-dark); }
+.tier-cta span { display: inline-block; transition: transform .15s ease; }
+a.tier-card:hover .tier-cta span { transform: translateX(4px); }
+.tier-card.is-popular .tier-cta { color: var(--color-yellow); }
+@media (max-width: 900px) { a.tier-card.is-popular:hover { transform: none; } }
+
+/* Prize pages: both ways to win a car */
+.car-sheet-win {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-eyebrow);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.car-sheet-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+
+/* Sweepstakes / Raffle Plus switch above the ticket bundles */
+.tier-toggle {
+  display: flex;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto var(--space-7);
+  padding: 5px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+}
+.tier-toggle button {
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-pill);
+  padding: 10px 26px;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--color-navy);
+  line-height: 1.2;
+  transition: background .15s ease, color .15s ease;
+}
+.tier-toggle button small {
+  display: block;
+  font-family: var(--font-body);
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.tier-toggle button[aria-selected="true"] { background: var(--color-navy); color: #fff; }
+.tier-toggle button[aria-selected="true"] small { color: var(--color-yellow); }
+.tier-toggle button[data-tier="raffle-plus"][aria-selected="true"] { background: var(--color-yellow); color: var(--color-navy); }
+.tier-toggle button[data-tier="raffle-plus"][aria-selected="true"] small { color: var(--color-navy); }
+@media (max-width: 600px) { .tier-toggle button { padding: 8px 16px; font-size: .95rem; } }
