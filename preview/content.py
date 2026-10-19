@@ -260,7 +260,7 @@ FAQ = [
     ("Is there a limit on how many people can enter?",
      "<p>Yes. Only 1,000 participants can purchase tickets for each drawing.</p>"),
     ("Who provides the prizes?",
-     "<p>Cars provided by Winner Automobile Group of Delaware and Porsche of Delaware.</p>"),
+     "<p>Cars are provided by Winner Automobile Group of Delaware and Porsche of Delaware.</p>"),
     ("If I still have questions about the National Humane Society's Sweepstakes or Raffle Plus, who do I contact?",
      "<p>Send an e-mail to <a href=\"mailto:info@nationalhumanesociety.org\">info@nationalhumanesociety.org</a> or call us at 877-285-0710 and we will gladly clear up any questions you may have!</p>"),
 ]
