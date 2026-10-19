@@ -530,6 +530,16 @@ SWEEPS_CTA = f"""    <div class="cta-pair">
             f"Tickets from ${_ONE_TICKET[2]} · Drawing {C.DRAWING_DATE}", "ticket-navy ticket-stacked")}
     </div>"""
 
+# Prize pages list Sweepstakes before Raffle Plus everywhere (hero buttons,
+# per-car buttons, ticket switch), so their ticket pair follows the same order;
+# it stacks Sweepstakes first on small screens too. Other pages keep SWEEPS_CTA.
+SWEEPS_CTA_SWEEPS_FIRST = f"""    <div class="cta-pair">
+    {ticket("sweepstakes.html", "Sweepstakes", "Win one car or $50,000",
+            f"Tickets from ${_ONE_TICKET[2]} · Drawing {C.DRAWING_DATE}", "ticket-navy ticket-stacked")}
+    {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000",
+            f"Tickets from ${_ONE_TICKET[3]} · Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-stacked")}
+    </div>"""
+
 
 def winners_grid(photos_only=False, limit=None):
     cards = []
@@ -1312,7 +1322,7 @@ def prize_body(prize):
       </div>
     </div>
     <div style="margin-top:var(--space-7)">
-{SWEEPS_CTA}
+{SWEEPS_CTA_SWEEPS_FIRST}
     </div>
   </div>
 </section>
