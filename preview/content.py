@@ -236,11 +236,11 @@ RULES = [
 # 2025 drawing date and a different mailing address; those are swapped for the
 # values used everywhere else on the site and called out in a review note.
 FAQ = [
-    ("How old do I have to be to purchase a Raffle ticket?",
-     "<p>You must be 18 years or older to purchase a ticket for our sweepstakes.</p>"),
-    ("How do I purchase a Raffle ticket?",
-     "<p>Tickets are on sale on our website. Place an order online, send a check to 406 Suburban DR #364, Newark, DE 19711 or call our order line — 844 807 4052.</p>"
-     f"<p>The winning ticket will be drawn on {DRAWING_DATE}.</p>"),
+    ("How old do I have to be to purchase a Sweepstakes or Raffle Plus ticket?",
+     "<p>You must be 18 years or older to purchase a ticket for our Sweepstakes or Raffle Plus.</p>"),
+    ("How do I purchase a Sweepstakes or Raffle Plus ticket?",
+     "<p>Sweepstakes and Raffle Plus tickets are on sale on our website. Place an order online, send a check to 406 Suburban DR #364, Newark, DE 19711 or call our order line at 844-807-4052.</p>"
+     f'<p>The winning ticket will be drawn on <strong class="faq-date">{DRAWING_DATE}</strong>.</p>'),
     ("Can I buy a ticket as a gift for or on behalf of someone else?",
      "<p>Yes! To purchase an entry for someone else, simply use their name and contact information when completing your purchase.</p>"),
     ("How can I get a copy of my ticket?",
@@ -248,9 +248,9 @@ FAQ = [
     ("How will the winners be informed?",
      "<p>The lucky prize winner will receive a phone call directly from us immediately following the drawings. In the event that we cannot reach winners by phone, we will email them.</p>"),
     ("Do I have to be present for the drawing in order to win?",
-     "<p>No, winners need not be present to win.</p>"),
+     "<p>No, winners do not need to be present to win.</p>"),
     ("What is the value of the prizes?",
-     "<p>Depending on the car that the winner chooses.</p>"),
+     "<p>Varies depending on the car or cash prize selected.</p>"),
     ("When are the drawings?",
      f"<p>The winning ticket will be drawn on {DRAWING_DATE}.</p>"),
     ("What percentage of the money raised goes to charity?",
@@ -261,7 +261,7 @@ FAQ = [
      "<p>Yes. Only 1,000 participants can purchase tickets for each drawing.</p>"),
     ("Who provides the prizes?",
      "<p>Cars provided by Winner Automobile Group of Delaware and Porsche of Delaware.</p>"),
-    ("If I still have questions about the National Humane Society's Charitable sweepstakes, who do I contact?",
+    ("If I still have questions about the National Humane Society's Sweepstakes or Raffle Plus, who do I contact?",
      "<p>Send an e-mail to <a href=\"mailto:info@nationalhumanesociety.org\">info@nationalhumanesociety.org</a> or call us at 877-285-0710 and we will gladly clear up any questions you may have!</p>"),
 ]
 

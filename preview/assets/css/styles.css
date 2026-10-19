@@ -2217,8 +2217,15 @@ a.tier-card:hover .tier-cta span { transform: translateX(4px); }
   color: var(--color-yellow);
 }
 .faq-contacts a { color: #fff; font-weight: 700; word-break: break-word; }
-.faq-help-actions { display: grid; gap: var(--space-3); }
-.faq-help-actions .btn { justify-content: center; }
+/* The Enter tickets, stacked to fit the panel (tag, title, then the stub) */
+.faq-help-actions { display: grid; gap: var(--space-4); }
+.faq-help .ticket { flex-direction: column; box-shadow: 0 10px 26px rgba(0,0,0,.35); }
+.faq-help .ticket-stacked .ticket-main { padding: var(--space-4) var(--space-5); gap: var(--space-2); }
+.faq-help .ticket-text strong { font-size: 1.25rem; }
+.faq-help .ticket-stub { justify-content: center; padding: 10px var(--space-4); border-left: 0; border-top: 2px dashed rgba(24,23,51,.45); }
+/* Navy ticket on the navy panel: lift it with a lighter fill and an outline */
+.faq-help .ticket-navy { background: #26254d; outline: 1px solid rgba(255,255,255,.22); outline-offset: -1px; }
+.faq-help .ticket-navy .ticket-stub { border-top-color: rgba(255,255,255,.35); }
 .faq-help-more { margin: var(--space-4) 0 0; text-align: center; }
 .faq-help-more a { color: rgba(255,255,255,.85); font-weight: 600; }
 @media (max-width: 900px) {
@@ -2230,3 +2237,16 @@ a.tier-card:hover .tier-cta span { transform: translateX(4px); }
   .faq-q { font-size: 1rem; }
   .faq-a { padding: 0 var(--space-4) var(--space-4); }
 }
+
+/* The drawing date in the "How do I purchase" answer */
+.faq-date {
+  background: var(--color-yellow);
+  color: var(--color-navy);
+  padding: 1px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+/* FAQ answers ease open and closed (nav.js animates the height) */
+.faq-a { overflow: hidden; }
+.faq-card.is-animating .faq-a { transition: height .32s ease, opacity .32s ease; }

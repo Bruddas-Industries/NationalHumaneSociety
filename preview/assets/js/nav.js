@@ -178,6 +178,38 @@
     restart();
   });
 
+  // FAQ cards: ease the answer open and closed instead of snapping. The
+  // <details> element still works on its own if this script doesn't run.
+  document.querySelectorAll('.faq-card').forEach((card) => {
+    const summary = card.querySelector('summary');
+    const answer = card.querySelector('.faq-a');
+    if (!summary || !answer) return;
+    summary.addEventListener('click', (e) => {
+      if (reduceMotion || card.classList.contains('is-animating')) return;
+      e.preventDefault();
+      const finish = () => {
+        card.classList.remove('is-animating');
+        answer.style.height = '';
+        answer.style.opacity = '';
+      };
+      card.classList.add('is-animating');
+      if (card.open) {
+        answer.style.height = answer.scrollHeight + 'px';
+        requestAnimationFrame(() => { answer.style.height = '0px'; answer.style.opacity = '0'; });
+        setTimeout(() => { card.open = false; finish(); }, 330);
+      } else {
+        card.open = true;
+        answer.style.height = '0px';
+        answer.style.opacity = '0';
+        requestAnimationFrame(() => {
+          answer.style.height = answer.scrollHeight + 'px';
+          answer.style.opacity = '1';
+        });
+        setTimeout(finish, 330);
+      }
+    });
+  });
+
   // Prize pages: switch the ticket bundles between Sweepstakes and Raffle Plus
   document.querySelectorAll('[data-tier-switch]').forEach((box) => {
     const tabs = [...box.querySelectorAll('[data-tier]')];

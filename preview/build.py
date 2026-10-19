@@ -1418,8 +1418,10 @@ FAQ_BODY = page_hero(
         <li><span>Email</span><a href="mailto:{C.EMAIL}">{C.EMAIL}</a></li>
       </ul>
       <div class="faq-help-actions">
-        <a class="btn btn-primary" href="sweepstakes.html#enter">Enter Sweepstakes</a>
-        <a class="btn btn-yellow" href="raffle-plus.html#enter">Enter Raffle Plus</a>
+      {ticket("sweepstakes.html#enter", "Sweepstakes", "Win one car or $50,000",
+              f"Tickets from ${C.TICKET_TIERS[0][2]}", "ticket-navy ticket-stacked")}
+      {ticket("raffle-plus.html#enter", "Raffle Plus", "Win two cars or $100,000",
+              f"Tickets from ${C.TICKET_TIERS[0][3]}", "ticket-yellow ticket-stacked")}
       </div>
       <p class="faq-help-more"><a href="sweepstakes-rules.html">Read the full rules →</a></p>
     </aside>
