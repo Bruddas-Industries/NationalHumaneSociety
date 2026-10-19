@@ -252,7 +252,7 @@ FAQ = [
     ("What is the value of the prizes?",
      "<p>Varies depending on the car or cash prize selected.</p>"),
     ("When are the drawings?",
-     f"<p>The winning ticket will be drawn on {DRAWING_DATE}.</p>"),
+     f'<p>The winning ticket will be drawn on <strong class="faq-date">{DRAWING_DATE}</strong>.</p>'),
     ("What percentage of the money raised goes to charity?",
      "<p>100% of your donation goes to the National Humane Society, a 501(c)(3) organization.</p>"
      "<p>All of the donations benefit animal shelters, Spay and Neuter programs to help reduce the large number of unwanted animals born in the US each year, Veterinarian bills for pet owners and other animal related aspects of our charitable mission.</p>"

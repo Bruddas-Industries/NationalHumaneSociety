@@ -513,10 +513,11 @@ def ticket(href, tag, title, detail, variant):
     """A call-to-action shaped like a raffle ticket: the "Enter now" stub is
     split off by a perforation. variant: 'ticket-yellow' or 'ticket-navy',
     plus 'ticket-hero' (sits on the video) or 'ticket-stacked' (tag above title)."""
+    tag_html = f'<span class="ticket-tag">{tag}</span>\n        ' if tag else ""
+    detail_html = f"<small>{detail}</small>" if detail else ""
     return f"""<a class="ticket {variant}" href="{href}">
       <span class="ticket-main">
-        <span class="ticket-tag">{tag}</span>
-        <span class="ticket-text"><strong>{title}</strong><small>{detail}</small></span>
+        {tag_html}<span class="ticket-text"><strong>{title}</strong>{detail_html}</span>
       </span>
       <span class="ticket-stub">Enter now <span class="ticket-arrow" aria-hidden="true">→</span></span>
     </a>"""
@@ -1387,7 +1388,7 @@ def faq_accordion():
             opened = " open" if n == 1 else ""
             items.append(f"""        <details class="faq-card"{opened}>
           <summary><span class="faq-num">{n:02d}</span><span class="faq-q">{q}</span><span class="faq-icon" aria-hidden="true"></span></summary>
-          <div class="faq-a">{a}</div>
+          <div class="faq-a"><div class="faq-a-inner">{a}</div></div>
         </details>""")
         groups.append(f"""      <div class="faq-group">
         <p class="eyebrow">{topic}</p>
@@ -1418,10 +1419,8 @@ FAQ_BODY = page_hero(
         <li><span>Email</span><a href="mailto:{C.EMAIL}">{C.EMAIL}</a></li>
       </ul>
       <div class="faq-help-actions">
-      {ticket("sweepstakes.html#enter", "Sweepstakes", "Win one car or $50,000",
-              f"Tickets from ${C.TICKET_TIERS[0][2]}", "ticket-navy ticket-stacked")}
-      {ticket("raffle-plus.html#enter", "Raffle Plus", "Win two cars or $100,000",
-              f"Tickets from ${C.TICKET_TIERS[0][3]}", "ticket-yellow ticket-stacked")}
+      {ticket("sweepstakes.html#enter", None, "Sweepstakes", None, "ticket-navy ticket-compact")}
+      {ticket("raffle-plus.html#enter", None, "Raffle Plus", None, "ticket-yellow ticket-compact")}
       </div>
       <p class="faq-help-more"><a href="sweepstakes-rules.html">Read the full rules →</a></p>
     </aside>
