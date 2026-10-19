@@ -203,7 +203,8 @@ PRIZES = [
      ]),
 ]
 
-# Verbatim, in the order published on /sweepstakes-rules.
+# Verbatim, in the order published on /sweepstakes-rules, plus the 18+ age
+# rule from the FAQ (added at CJ's request, 2026-10-18).
 RULES = [
     "Tickets are $25.00 and can be paid for by credit card, money order or check.",
     "Winner will be announced at time and place of drawing.",
@@ -214,6 +215,7 @@ RULES = [
     "Need not be present to win.",
     "All decisions and interpretations of the rules and regulations are of the National Humane Society and its judgment is final.",
     "The event is subject to all federal rules, local laws and regulations and is void where prohibited by law.",
+    "Entrants must be 18 years of age or older.",
     "All employees of the sponsoring organization and their families are not eligible to win.",
     "The winner of the prize must enter into contract within 30 days of selection of the winner and agree to execute all the documents necessary to effect the intent of these rules and accomplish the transfer of title.",
     "Payment of all applicable federal, state and local taxes, fees and surcharges, tags and registrations fees are the responsibility of the winner, who must provide proof of insurance to take delivery.",
@@ -255,12 +257,12 @@ FAQ = [
      "<p>100% of your donation goes to the National Humane Society, a 501(c)(3) organization.</p>"
      "<p>All of the donations benefit animal shelters, Spay and Neuter programs to help reduce the large number of unwanted animals born in the US each year, Veterinarian bills for pet owners and other animal related aspects of our charitable mission.</p>"
      "<p>A few of the groups that have benefited from donations are: Second Chance Animal Rescue Society, The Humane Society of the United States, American Society for the Prevention of Cruelty to Animals, San Francisco Humane Society, Jacksonville Humane Society among many others.</p>"),
-    ("How many tickets are sold?",
-     "<p>Only 1000 participants will be allowed to purchase tickets.</p>"),
+    ("Is there a limit on how many people can enter?",
+     "<p>Yes. Only 1,000 participants can purchase tickets for each drawing.</p>"),
     ("Who provides the prizes?",
      "<p>Cars provided by Winner Automobile Group of Delaware and Porsche of Delaware.</p>"),
     ("If I still have questions about the National Humane Society's Charitable sweepstakes, who do I contact?",
-     "<p>Send an e-mail to <a href=\"mailto:info@nationalhumanesociety.org\">info@nationalhumanesociety.org</a> or call us 877 285 0710 or 302 369 6532 and we will gladly clear up any questions you may have!</p>"),
+     "<p>Send an e-mail to <a href=\"mailto:info@nationalhumanesociety.org\">info@nationalhumanesociety.org</a> or call us at 877-285-0710 and we will gladly clear up any questions you may have!</p>"),
 ]
 
 # (name, state, image file or None) in the order shown on /previous-winners.

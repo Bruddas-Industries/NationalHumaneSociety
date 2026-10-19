@@ -1364,21 +1364,65 @@ HOW_IT_WORKS_BODY = page_hero(
 """
 
 # --- FAQ --------------------------------------------------------------------
-FAQ_ITEMS = "\n".join(f"""    <div class="faq-item">
-      <h3>{q}</h3>
-      {a}
-    </div>""" for q, a in C.FAQ)
+# FAQ questions grouped by topic (indexes into C.FAQ, which keeps the live
+# order). Every question appears exactly once.
+FAQ_GROUPS = [
+    ("Buying tickets", [0, 1, 2, 3, 9]),
+    ("The drawing", [7, 5, 4]),
+    ("The prizes", [6, 10]),
+    ("Where your money goes", [8]),
+    ("Still have questions?", [11]),
+]
+assert sorted(i for _t, idx in FAQ_GROUPS for i in idx) == list(range(len(C.FAQ)))
 
+
+def faq_accordion():
+    """Questions as cards that open to show the answer; the first one starts open."""
+    groups, n = [], 0
+    for topic, indexes in FAQ_GROUPS:
+        items = []
+        for i in indexes:
+            q, a = C.FAQ[i]
+            n += 1
+            opened = " open" if n == 1 else ""
+            items.append(f"""        <details class="faq-card"{opened}>
+          <summary><span class="faq-num">{n:02d}</span><span class="faq-q">{q}</span><span class="faq-icon" aria-hidden="true"></span></summary>
+          <div class="faq-a">{a}</div>
+        </details>""")
+        groups.append(f"""      <div class="faq-group">
+        <p class="eyebrow">{topic}</p>
+{chr(10).join(items)}
+      </div>""")
+    return "\n".join(groups)
+
+# The review notes that sat here were answered by CJ on 2026-10-18: the
+# drawing date and Suburban Dr address used everywhere are correct, the 18+
+# rule is now in the Rules too, and the 1,000-participant limit still holds.
 FAQ_BODY = page_hero(
     "Frequently Asked Questions",
-    "",
+    "Everything you need to know about entering the Sweepstakes and Raffle Plus.",
     "FAQ",
     parent=("Sweepstakes", "sweepstakes.html"),
 ) + f"""
 <section class="section">
-  <div class="container-narrow">
-    {review_note("<ul><li>The current FAQ still says the drawing is on June 27, 2025 at 10 A.M. and gives 40 E Main St, Newark as the address for checks. This preview uses {C.DRAWING_DATE} and 406 Suburban DR #364, which appear everywhere else on the site.</li><li>The FAQ says entrants must be 18 or older; the Rules do not state a minimum age.</li><li>“Only 1000 participants will be allowed to purchase tickets” — still accurate?</li></ul>")}
-{FAQ_ITEMS}
+  <div class="container faq-layout">
+    <div class="faq-list">
+{faq_accordion()}
+    </div>
+    <aside class="faq-help">
+      <h3>Still have questions?</h3>
+      <p>We will gladly clear up any questions you may have.</p>
+      <ul class="faq-contacts">
+        <li><span>Customer Service</span><a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a></li>
+        <li><span>Order Line</span><a href="{tel(C.ORDER_LINE)}">{C.ORDER_LINE}</a></li>
+        <li><span>Email</span><a href="mailto:{C.EMAIL}">{C.EMAIL}</a></li>
+      </ul>
+      <div class="faq-help-actions">
+        <a class="btn btn-primary" href="sweepstakes.html#enter">Enter Sweepstakes</a>
+        <a class="btn btn-yellow" href="raffle-plus.html#enter">Enter Raffle Plus</a>
+      </div>
+      <p class="faq-help-more"><a href="sweepstakes-rules.html">Read the full rules →</a></p>
+    </aside>
   </div>
 </section>
 """ + winners_strip()
