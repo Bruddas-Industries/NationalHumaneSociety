@@ -228,7 +228,7 @@ RULES = [
     "If a prize is not generally available at programs end, a substitution of equal value will be made at the sponsors sole discretion.",
     "If a minimum number of tickets are not sold the prize becomes a cash amount of the net proceeds to be determined by the National Humane Society.",
     "The NHS reserves the right to refuse anyone from participating in any of it's drawings that they deem detrimental to the drawing or the charity.",
-    f"Drawing date {DRAWING_DATE}.",
+    f'Drawing date <strong class="faq-date">{DRAWING_DATE}</strong>.',
     "No purchase is necessary. Please send a self-addressed stamped envelope to NHS 406 Suburban Dr #364 Newark, DE 19711.",
 ]
 

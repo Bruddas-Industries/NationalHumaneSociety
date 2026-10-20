@@ -1352,8 +1352,34 @@ body.is-home .site-header.at-top .brand-logo {
   border-left: 4px solid var(--color-navy);
   border-radius: var(--radius);
 }
-.rules-list { padding-left: 1.4em; line-height: 1.7; }
-.rules-list li { margin-bottom: var(--space-3); }
+/* Rules: numbered cards (same family as the FAQ cards) beside an
+   "At a glance" panel */
+.rules-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+.rule-card {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-coral);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+.rule-num {
+  flex: 0 0 auto;
+  min-width: 2ch;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-coral);
+}
+.rule-card p { margin: 0; line-height: 1.6; color: var(--color-text); }
+.faq-contacts strong { color: #fff; }
+.rules-glance p:not(.faq-help-more) a { color: var(--color-yellow); font-weight: 700; }
+@media (max-width: 600px) {
+  .rule-card { padding: var(--space-4); gap: var(--space-3); }
+}
 
 /* Assistance directory */
 .dir-list { list-style: none; padding: 0; margin: 0; }

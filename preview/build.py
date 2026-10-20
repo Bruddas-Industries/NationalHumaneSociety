@@ -1447,19 +1447,37 @@ FAQ_BODY = page_hero(
 """ + winners_strip()
 
 # --- RULES ------------------------------------------------------------------
-RULES_ITEMS = "\n".join(f"      <li>{r}</li>" for r in C.RULES)
+RULES_ITEMS = "\n".join(f"""      <li class="rule-card"><span class="rule-num" aria-hidden="true">{i:02d}</span><p>{r}</p></li>"""
+                        for i, r in enumerate(C.RULES, 1))
 
+# Title and lead from CJ (2026-10-19); the rules themselves stay verbatim
+# and in their published order.
 RULES_BODY = page_hero(
-    "Sweepstakes Rules",
-    "Rules and Regulations of the National Humane Society Sweepstakes.",
+    "Sweepstakes &amp; Raffle Rules",
+    "Rules and regulations of the National Humane Society Sweepstakes and Raffle.",
     "Rules",
     parent=("Sweepstakes", "sweepstakes.html"),
 ) + f"""
-<section class="section">
-  <div class="container-narrow">
+<section class="section section-soft">
+  <div class="container faq-layout">
     <ol class="rules-list">
 {RULES_ITEMS}
     </ol>
+    <aside class="faq-help rules-glance">
+      <h3>At a glance</h3>
+      <ul class="faq-contacts">
+        <li><span>Next drawing</span><strong>{C.DRAWING_DATE}</strong></li>
+        <li><span>Tickets</span><strong>From ${C.TICKET_TIERS[0][2]} · Raffle Plus from ${C.TICKET_TIERS[0][3]}</strong></li>
+        <li><span>To enter</span><strong>18 or older</strong></li>
+        <li><span>To win</span><strong>No need to be present</strong></li>
+      </ul>
+      <p>Questions about the rules? Call Customer Service at <a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a>.</p>
+      <div class="faq-help-actions">
+      {ticket("sweepstakes.html#enter", None, "Sweepstakes", None, "ticket-navy ticket-compact")}
+      {ticket("raffle-plus.html#enter", None, "Raffle Plus", None, "ticket-yellow ticket-compact")}
+      </div>
+      <p class="faq-help-more"><a href="faq.html">Read the FAQ →</a></p>
+    </aside>
   </div>
 </section>
 """ + winners_strip()
@@ -2019,7 +2037,7 @@ PAGES = [
 ] + [
     ("How the Sweepstakes Works", "how-it-works.html", HOW_IT_WORKS_BODY, "new"),
     ("FAQ", "faq.html", FAQ_BODY, "live"),
-    ("Sweepstakes Rules", "sweepstakes-rules.html", RULES_BODY, "live"),
+    ("Sweepstakes & Raffle Rules", "sweepstakes-rules.html", RULES_BODY, "live"),
     ("Previous Winners", "previous-winners.html", WINNERS_BODY, "live"),
     ("Donate", "donate.html", DONATE_BODY, "live"),
     ("Monthly Giving", "monthly-giving.html", MONTHLY_BODY, "proposed"),
