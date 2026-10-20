@@ -1872,6 +1872,8 @@ a.short-card:hover .short-play { transform: translate(-50%, -50%) scale(1.1); }
 }
 /* The home page ends on a coloured section, so no white gap above the footer */
 body.is-home .site-footer { margin-top: 0; }
+/* Car pages end on the grey ticket section too (only they have the ticket switch) */
+body:has([data-tier-switch]) .site-footer { margin-top: 0; }
 
 /* ==========================================================================
    Most popular ticket bundle (entry forms + prize pages): an inverted navy
