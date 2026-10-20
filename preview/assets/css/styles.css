@@ -305,7 +305,9 @@ body.is-home .site-header.at-top .brand-logo {
   .nav-primary .nav-link.is-active { color: var(--color-coral-dark); }
   .nav-dropdown { position: static; box-shadow: none; border: 0; padding: 0 0 var(--space-3) var(--space-4); display: block; }
   .menu-toggle { display: grid; place-items: center; }
-  .header-cta .btn { display: none; }
+  /* Donate stays in the bar next to the menu button, pulse and all */
+  .header-cta { gap: var(--space-2); }
+  .header-cta .btn-donate { padding: 9px 16px; font-size: .92rem; gap: 6px; }
 }
 
 /* ==========================================================================
@@ -2383,4 +2385,12 @@ a.tier-card:hover .tier-cta span { transform: translateX(4px); }
 .btn-donate:hover::after, .btn-donate:focus-visible::after { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {
   .btn-donate::after, .donate-heart { animation: none; }
+}
+
+/* Narrow phones: tighten the header so logo, Donate and menu fit one row */
+@media (max-width: 400px) {
+  .header-inner { gap: var(--space-2); padding-left: var(--space-4); padding-right: var(--space-4); }
+  .brand-logo { height: 40px; }
+  .header-cta .btn-donate { padding: 8px 12px; font-size: .88rem; }
+  .menu-toggle { width: 40px; }
 }
