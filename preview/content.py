@@ -203,14 +203,16 @@ PRIZES = [
      ]),
 ]
 
-# Verbatim, in the order published on /sweepstakes-rules, plus the 18+ age
-# rule from the FAQ (added at CJ's request, 2026-10-18).
+# In the order published on /sweepstakes-rules, plus the 18+ age rule from the
+# FAQ (added at CJ's request, 2026-10-18). Wording is verbatim except rule 1
+# (both ticket prices) and two "it's" -> "its" fixes (CJ, 2026-10-19).
 RULES = [
-    "Tickets are $25.00 and can be paid for by credit card, money order or check.",
+    # Rule 1 named only the Sweepstakes price; both are given (CJ, 2026-10-19).
+    f"Tickets start at ${TICKET_TIERS[0][2]}.00 for the Sweepstakes and ${TICKET_TIERS[0][3]}.00 for Raffle Plus, and can be paid for by credit card, money order or check.",
     "Winner will be announced at time and place of drawing.",
     "All entries to \"the presenter\" will remain property of the presenter.",
     "All tickets will be sent within 48 hours via email or USPS.",
-    "By entering, entrants release the \"presenter\" and it's members, agents, employees and other related entities from any and all liabilities with respect to the prize.",
+    "By entering, entrants release the \"presenter\" and its members, agents, employees and other related entities from any and all liabilities with respect to the prize.",
     "By entering winners consent to promotional use of their names and likeness without additional compensation.",
     "Need not be present to win.",
     "All decisions and interpretations of the rules and regulations are of the National Humane Society and its judgment is final.",
@@ -227,7 +229,7 @@ RULES = [
     "By entering or accepting a prize winners agree to be bound by these official rules.",
     "If a prize is not generally available at programs end, a substitution of equal value will be made at the sponsors sole discretion.",
     "If a minimum number of tickets are not sold the prize becomes a cash amount of the net proceeds to be determined by the National Humane Society.",
-    "The NHS reserves the right to refuse anyone from participating in any of it's drawings that they deem detrimental to the drawing or the charity.",
+    "The NHS reserves the right to refuse anyone from participating in any of its drawings that they deem detrimental to the drawing or the charity.",
     f'Drawing date <strong class="faq-date">{DRAWING_DATE}</strong>.',
     "No purchase is necessary. Please send a self-addressed stamped envelope to NHS 406 Suburban Dr #364 Newark, DE 19711.",
 ]
