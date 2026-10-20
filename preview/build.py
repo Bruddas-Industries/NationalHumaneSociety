@@ -115,7 +115,7 @@ def render_header():
 {render_nav()}
     </nav>
     <div class="header-cta">
-      <a class="btn btn-primary" href="donate.html">Donate</a>
+      <a class="btn btn-primary btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Donate</a>
       <button class="menu-toggle" aria-label="Toggle menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M4 7h16M4 12h16M4 17h16"/>
