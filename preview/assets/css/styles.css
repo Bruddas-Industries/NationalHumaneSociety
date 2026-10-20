@@ -2297,3 +2297,69 @@ a.tier-card:hover .tier-cta span { transform: translateX(4px); }
 }
 .ticket-compact .ticket-text small { margin-top: 0; font-size: .82rem; opacity: .85; }
 .sweeps-hero .ticket-navy .ticket-stub { border-left-color: rgba(255,255,255,.4); }
+
+/* ==========================================================================
+   Previous Winners page: a wall of winner cards. No photo -> a colour-coded
+   paw-print tile (the .post-cover look) with the winner's initials.
+   ========================================================================== */
+.winners-count { margin-bottom: var(--space-5); }
+.winner-wall { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5); }
+.winner-tile {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.winner-tile:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.winner-pic { position: relative; aspect-ratio: 4/3; overflow: hidden; background: var(--color-navy); }
+.winner-pic img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
+.winner-tile:hover .winner-pic img { transform: scale(1.05); }
+/* Winner with no photo: colour-coded paw-print tile with initials */
+.winner-blank {
+  --cover: var(--color-navy);
+  display: grid;
+  place-items: center;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84'%3E%3Cg fill='%23ffffff' fill-opacity='.13' transform='rotate(-18 42 42)'%3E%3Cellipse cx='25' cy='34' rx='5' ry='7'/%3E%3Cellipse cx='36' cy='25' rx='5' ry='7.5'/%3E%3Cellipse cx='49' cy='25' rx='5' ry='7.5'/%3E%3Cellipse cx='60' cy='34' rx='5' ry='7'/%3E%3Cpath d='M42 40c-9 0-17 9-17 16 0 6 5 8 9 7 3-1 5-2 8-2s5 1 8 2c4 1 9-1 9-7 0-7-8-16-17-16z'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(135deg, var(--cover), color-mix(in srgb, var(--cover) 70%, #000));
+}
+.winner-blank.is-coral  { --cover: var(--color-coral); }
+.winner-blank.is-teal   { --cover: var(--color-teal); }
+.winner-blank.is-blue   { --cover: var(--color-blue); }
+.winner-blank.is-orange { --cover: var(--color-orange); }
+.winner-initials {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 4vw, 3.2rem);
+  color: #fff;
+  letter-spacing: .02em;
+  text-shadow: 0 3px 14px rgba(0,0,0,.18);
+}
+.winner-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+.winner-info h3 { margin: 0; font-size: 1.1rem; }
+.winner-state {
+  flex: 0 0 auto;
+  font-family: var(--font-eyebrow);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--color-navy);
+  background: var(--color-mist);
+  border-radius: var(--radius-pill);
+  padding: 7px 10px 5px;
+}
+@media (max-width: 1024px) { .winner-wall { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 700px) {
+  .winner-wall { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+  .winner-info { flex-direction: column; align-items: flex-start; padding: var(--space-3); }
+  .winner-info h3 { font-size: 1rem; }
+}

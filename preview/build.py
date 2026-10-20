@@ -560,6 +560,29 @@ PRIZE_PAGE_TICKET_PAIR = f"""    <div style="margin-top:var(--space-7)">
     </div>"""
 
 
+# Colours for winners with no photo, in turn (the Educational Messages palette)
+WINNER_TILE_COLOURS = ["navy", "coral", "teal", "blue", "orange"]
+
+
+def winners_wall():
+    """Previous Winners page: every winner as a card. Winners with no photo get
+    a colour-coded paw-print tile with their initials."""
+    cards, blank = [], 0
+    for name, state, image in C.WINNERS:
+        if image:
+            pic = f"""<div class="winner-pic"><img src="assets/img/{image}" alt="{name}, {state}" loading="lazy"></div>"""
+        else:
+            initials = "".join(part[0] for part in name.split()[:2]).upper()
+            colour = WINNER_TILE_COLOURS[blank % len(WINNER_TILE_COLOURS)]
+            blank += 1
+            pic = f"""<div class="winner-pic winner-blank is-{colour}" aria-hidden="true"><span class="winner-initials">{initials}</span></div>"""
+        cards.append(f"""      <article class="winner-tile">
+        {pic}
+        <div class="winner-info"><h3>{name}</h3><span class="winner-state">{state}</span></div>
+      </article>""")
+    return '    <div class="winner-wall">\n' + "\n".join(cards) + "\n    </div>"
+
+
 def winners_grid(photos_only=False, limit=None):
     cards = []
     for name, state, image in C.WINNERS:
@@ -1485,16 +1508,24 @@ RULES_BODY = page_hero(
 # --- PREVIOUS WINNERS -------------------------------------------------------
 WINNERS_BODY = page_hero(
     "Previous Winners",
-    "",
+    "Congratulations to the past winners of our Sweepstakes and Raffle Plus drawings.",
     "Previous Winners",
     parent=("Sweepstakes", "sweepstakes.html"),
 ) + f"""
+<section class="section section-soft">
+  <div class="container">
+    <p class="eyebrow winners-count">{len(C.WINNERS)} winners and counting</p>
+{winners_wall()}
+  </div>
+</section>
+
 <section class="section">
   <div class="container">
-{winners_grid()}
-    <div style="margin-top:var(--space-7)">
-{SWEEPS_CTA}
+    <div class="text-center" style="max-width:640px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Next drawing · {C.DRAWING_DATE}</p>
+      <h2>Could you be next?</h2>
     </div>
+{SWEEPS_CTA}
   </div>
 </section>
 """
