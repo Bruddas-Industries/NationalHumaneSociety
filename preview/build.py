@@ -196,6 +196,14 @@ def review_note(html):
     return f'<aside class="review-note"><strong>For client review</strong>{html}</aside>'
 
 
+# Extra scripts for single pages. The Previous Winners confetti (CJ,
+# 2026-10-19) plays on every load for now; set SHOW_WINNERS_CONFETTI to False
+# to turn it off.
+SHOW_WINNERS_CONFETTI = True
+PAGE_SCRIPTS = {
+    "previous-winners.html": ["assets/js/confetti.js"] if SHOW_WINNERS_CONFETTI else [],
+}
+
 # Section backgrounds that are not white (see styles.css)
 COLOURED_SECTIONS = {"section-soft", "section-cream", "section-navy"}
 
@@ -204,6 +212,7 @@ def page(title, slug, body, status="live", description=None):
     """Returns the full html string for a single page."""
     desc = description or f"{title} — National Humane Society"
     body_class = "is-home" if slug == "index.html" else "is-interior"
+    extra_scripts = "".join(f'<script src="{src}"></script>\n' for src in PAGE_SCRIPTS.get(slug, []))
     # A page that ends on a coloured section runs straight into the footer,
     # with no white gap between them.
     last_section = re.findall(r'<section class="([^"]*)"', body)
@@ -236,7 +245,7 @@ def page(title, slug, body, status="live", description=None):
   <span class="preview-flag-close" aria-label="Dismiss preview indicator">&times;</span>
 </button>
 <script src="assets/js/nav.js"></script>
-</body>
+{extra_scripts}</body>
 </html>
 """
 
@@ -573,7 +582,7 @@ def winners_wall(winners=None):
     cards, blank = [], 0
     for name, state, image in (C.WINNERS if winners is None else winners):
         if image:
-            pic = f"""<div class="winner-pic"><img src="assets/img/{image}" alt="{name}, {state}" loading="lazy"></div>"""
+            pic = f"""<div class="winner-pic"><img src="assets/img/{image}" alt="{name}, {state}" loading="lazy" decoding="async"></div>"""
         else:
             initials = "".join(part[0] for part in name.split()[:2]).upper()
             colour = WINNER_TILE_COLOURS[blank % len(WINNER_TILE_COLOURS)]
