@@ -839,7 +839,7 @@ HOME_BODY = f"""
     <h1>Working to end suffering for all animals.</h1>
     <p class="lead">Every year, an estimated 4 to 6 million animals are euthanized. Our goals: to assist with spay/neutering and veterinary care for those in need, and to help fund local shelters.</p>
     <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:var(--space-5)">
-      <a class="btn btn-primary btn-lg" href="donate.html">Donate Today</a>
+      <a class="btn btn-primary btn-lg btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Donate Today</a>
       <a class="btn btn-ghost btn-lg" href="about.html">Our Mission</a>
     </div>
     {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000", f"Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-hero")}

@@ -38,6 +38,9 @@
   if (toggle && header) {
     toggle.addEventListener('click', () => {
       header.classList.toggle('is-open');
+      // Freeze the page behind the open menu so swipes scroll the menu only.
+      document.documentElement.classList.toggle('menu-open', header.classList.contains('is-open'));
+      toggle.setAttribute('aria-expanded', String(header.classList.contains('is-open')));
       // When the mobile menu is open over the video hero, force the header
       // out of its transparent state so dropdown items remain readable.
       if (header.classList.contains('is-open')) header.classList.remove('at-top');

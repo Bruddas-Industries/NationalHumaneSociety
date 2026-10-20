@@ -292,6 +292,13 @@ body.is-home .site-header.at-top .brand-logo {
     gap: 0;
     display: none;
     box-shadow: var(--shadow-md);
+    /* Never taller than the screen below the header (100% here is the
+       header's height); longer menus scroll inside the panel. */
+    max-height: calc(100vh - 100%);
+    max-height: calc(100dvh - 100%);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
   .site-header.is-open .nav-primary { display: flex; }
   /* The mobile drawer is a white panel — restore navy text inside it. */
@@ -2394,3 +2401,7 @@ a.tier-card:hover .tier-cta span { transform: translateX(4px); }
   .header-cta .btn-donate { padding: 8px 12px; font-size: .88rem; }
   .menu-toggle { width: 40px; }
 }
+
+/* Page behind the open mobile menu stays put */
+html.menu-open, html.menu-open body { overflow: hidden; }
+@media (min-width: 1025px) { html.menu-open, html.menu-open body { overflow: visible; } }
