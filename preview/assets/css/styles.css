@@ -292,6 +292,13 @@ body.is-home .site-header.at-top .brand-logo {
     gap: 0;
     display: none;
     box-shadow: var(--shadow-md);
+    /* Never taller than the screen below the header (100% here is the
+       header's height); longer menus scroll inside the panel. */
+    max-height: calc(100vh - 100%);
+    max-height: calc(100dvh - 100%);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
   .site-header.is-open .nav-primary { display: flex; }
   /* The mobile drawer is a white panel — restore navy text inside it. */
@@ -305,7 +312,9 @@ body.is-home .site-header.at-top .brand-logo {
   .nav-primary .nav-link.is-active { color: var(--color-coral-dark); }
   .nav-dropdown { position: static; box-shadow: none; border: 0; padding: 0 0 var(--space-3) var(--space-4); display: block; }
   .menu-toggle { display: grid; place-items: center; }
-  .header-cta .btn { display: none; }
+  /* Donate stays in the bar next to the menu button, pulse and all */
+  .header-cta { gap: var(--space-2); }
+  .header-cta .btn-donate { padding: 9px 16px; font-size: .92rem; gap: 6px; }
 }
 
 /* ==========================================================================
@@ -1308,19 +1317,6 @@ body.is-home .site-header.at-top .brand-logo {
 .payment-placeholder p { margin: 0; color: var(--color-text-muted); }
 
 /* Winners */
-.winner-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5); }
-.winner-card { text-align: center; }
-.winner-photo {
-  aspect-ratio: 4/3;
-  border-radius: var(--radius-lg);
-  background: var(--color-mist) center/cover no-repeat;
-  margin-bottom: var(--space-3);
-}
-.winner-photo.is-empty { background: var(--color-navy) url("../img/logo.png") center/55% no-repeat; }
-.winner-card cite {
-  font-style: normal; font-family: var(--font-eyebrow); font-size: .78rem;
-  letter-spacing: .14em; text-transform: uppercase; color: var(--color-text-muted);
-}
 
 /* Donations helping animals */
 .logo-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--space-7); }
@@ -1400,7 +1396,6 @@ body.is-home .site-header.at-top .brand-logo {
 
 @media (max-width: 900px) {
   .cta-pair, .tier-grid, .video-grid { grid-template-columns: 1fr; }
-  .winner-grid { grid-template-columns: repeat(2, 1fr); }
   .check-grid { grid-template-columns: 1fr 1fr; }
   .dir-states { columns: 1; }
   .story-photo { float: none; width: 100%; margin: 0 0 var(--space-4); }
@@ -2297,3 +2292,116 @@ a.tier-card:hover .tier-cta span { transform: translateX(4px); }
 }
 .ticket-compact .ticket-text small { margin-top: 0; font-size: .82rem; opacity: .85; }
 .sweeps-hero .ticket-navy .ticket-stub { border-left-color: rgba(255,255,255,.4); }
+
+/* ==========================================================================
+   Previous Winners page: a wall of winner cards. No photo -> a colour-coded
+   paw-print tile (the .post-cover look) with the winner's initials.
+   ========================================================================== */
+.winners-count { margin-bottom: var(--space-5); }
+.winner-wall { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5); }
+.winner-tile {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.winner-tile:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.winner-pic { position: relative; aspect-ratio: 4/3; overflow: hidden; background: var(--color-navy); }
+.winner-pic img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
+.winner-tile:hover .winner-pic img { transform: scale(1.05); }
+/* Winner with no photo: colour-coded paw-print tile with initials */
+.winner-blank {
+  --cover: var(--color-navy);
+  display: grid;
+  place-items: center;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84'%3E%3Cg fill='%23ffffff' fill-opacity='.13' transform='rotate(-18 42 42)'%3E%3Cellipse cx='25' cy='34' rx='5' ry='7'/%3E%3Cellipse cx='36' cy='25' rx='5' ry='7.5'/%3E%3Cellipse cx='49' cy='25' rx='5' ry='7.5'/%3E%3Cellipse cx='60' cy='34' rx='5' ry='7'/%3E%3Cpath d='M42 40c-9 0-17 9-17 16 0 6 5 8 9 7 3-1 5-2 8-2s5 1 8 2c4 1 9-1 9-7 0-7-8-16-17-16z'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(135deg, var(--cover), color-mix(in srgb, var(--cover) 70%, #000));
+}
+.winner-blank.is-coral  { --cover: var(--color-coral); }
+.winner-blank.is-teal   { --cover: var(--color-teal); }
+.winner-blank.is-blue   { --cover: var(--color-blue); }
+.winner-blank.is-orange { --cover: var(--color-orange); }
+.winner-initials {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 4vw, 3.2rem);
+  color: #fff;
+  letter-spacing: .02em;
+  text-shadow: 0 3px 14px rgba(0,0,0,.18);
+}
+.winner-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+.winner-info h3 { margin: 0; font-size: 1.1rem; }
+.winner-state {
+  flex: 0 0 auto;
+  font-family: var(--font-eyebrow);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--color-navy);
+  background: var(--color-mist);
+  border-radius: var(--radius-pill);
+  padding: 7px 10px 5px;
+}
+@media (max-width: 1024px) { .winner-wall { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 700px) {
+  .winner-wall { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+  .winner-info { flex-direction: column; align-items: flex-start; padding: var(--space-3); }
+  .winner-info h3 { font-size: 1rem; }
+}
+
+/* Header Donate button: a coral ring pulses out every few seconds and the
+   heart beats with it, to draw the eye without getting in the way */
+.btn-donate { position: relative; isolation: isolate; }
+.btn-donate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 0 rgba(250,88,83,.7);
+  animation: donate-pulse 3.2s ease-out infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+.donate-heart {
+  display: inline-block;
+  font-size: .95em;
+  line-height: 1;
+  animation: donate-beat 3.2s ease-in-out infinite;
+}
+@keyframes donate-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(250,88,83,.7); }
+  45%  { box-shadow: 0 0 0 14px rgba(250,88,83,0); }
+  100% { box-shadow: 0 0 0 14px rgba(250,88,83,0); }
+}
+@keyframes donate-beat {
+  0%, 30%, 100% { transform: scale(1); }
+  8%  { transform: scale(1.3); }
+  16% { transform: scale(1); }
+  22% { transform: scale(1.22); }
+}
+.btn-donate:hover::after, .btn-donate:focus-visible::after { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .btn-donate::after, .donate-heart { animation: none; }
+}
+
+/* Narrow phones: tighten the header so logo, Donate and menu fit one row */
+@media (max-width: 400px) {
+  .header-inner { gap: var(--space-2); padding-left: var(--space-4); padding-right: var(--space-4); }
+  .brand-logo { height: 40px; }
+  .header-cta .btn-donate { padding: 8px 12px; font-size: .88rem; }
+  .menu-toggle { width: 40px; }
+}
+
+/* Page behind the open mobile menu stays put */
+html.menu-open, html.menu-open body { overflow: hidden; }
+@media (min-width: 1025px) { html.menu-open, html.menu-open body { overflow: visible; } }

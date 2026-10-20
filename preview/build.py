@@ -115,7 +115,7 @@ def render_header():
 {render_nav()}
     </nav>
     <div class="header-cta">
-      <a class="btn btn-primary" href="donate.html">Donate</a>
+      <a class="btn btn-primary btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Donate</a>
       <button class="menu-toggle" aria-label="Toggle menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M4 7h16M4 12h16M4 17h16"/>
@@ -196,6 +196,14 @@ def review_note(html):
     return f'<aside class="review-note"><strong>For client review</strong>{html}</aside>'
 
 
+# Extra scripts for single pages. The Previous Winners confetti (CJ,
+# 2026-10-19) plays on every load for now; set SHOW_WINNERS_CONFETTI to False
+# to turn it off.
+SHOW_WINNERS_CONFETTI = True
+PAGE_SCRIPTS = {
+    "previous-winners.html": ["assets/js/confetti.js"] if SHOW_WINNERS_CONFETTI else [],
+}
+
 # Section backgrounds that are not white (see styles.css)
 COLOURED_SECTIONS = {"section-soft", "section-cream", "section-navy"}
 
@@ -204,6 +212,7 @@ def page(title, slug, body, status="live", description=None):
     """Returns the full html string for a single page."""
     desc = description or f"{title} — National Humane Society"
     body_class = "is-home" if slug == "index.html" else "is-interior"
+    extra_scripts = "".join(f'<script src="{src}"></script>\n' for src in PAGE_SCRIPTS.get(slug, []))
     # A page that ends on a coloured section runs straight into the footer,
     # with no white gap between them.
     last_section = re.findall(r'<section class="([^"]*)"', body)
@@ -236,7 +245,7 @@ def page(title, slug, body, status="live", description=None):
   <span class="preview-flag-close" aria-label="Dismiss preview indicator">&times;</span>
 </button>
 <script src="assets/js/nav.js"></script>
-</body>
+{extra_scripts}</body>
 </html>
 """
 
@@ -533,11 +542,13 @@ def ticket(href, tag, title, detail, variant):
 
 
 _ONE_TICKET = C.TICKET_TIERS[0]  # (tickets, free, sweepstakes $, raffle plus $, popular)
+# Used on Previous Winners, whose section heading already gives the drawing
+# date, so the tickets leave it out (CJ, 2026-10-19).
 SWEEPS_CTA = f"""    <div class="cta-pair">
     {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000",
-            f"Tickets from ${_ONE_TICKET[3]} · Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-stacked")}
+            f"Tickets from ${_ONE_TICKET[3]}", "ticket-yellow ticket-stacked")}
     {ticket("sweepstakes.html", "Sweepstakes", "Win one car or $50,000",
-            f"Tickets from ${_ONE_TICKET[2]} · Drawing {C.DRAWING_DATE}", "ticket-navy ticket-stacked")}
+            f"Tickets from ${_ONE_TICKET[2]}", "ticket-navy ticket-stacked")}
     </div>"""
 
 # Prize pages list Sweepstakes before Raffle Plus everywhere (hero buttons,
@@ -560,19 +571,28 @@ PRIZE_PAGE_TICKET_PAIR = f"""    <div style="margin-top:var(--space-7)">
     </div>"""
 
 
-def winners_grid(photos_only=False, limit=None):
-    cards = []
-    for name, state, image in C.WINNERS:
-        if photos_only and not image:
-            continue
+# Colours for winners with no photo, in turn (the Educational Messages palette)
+WINNER_TILE_COLOURS = ["navy", "coral", "teal", "blue", "orange"]
+
+
+def winners_wall(winners=None):
+    """Winner cards (the Previous Winners page, and the row on the entry, FAQ
+    and Rules pages). Winners with no photo get a colour-coded paw-print tile
+    with their initials."""
+    cards, blank = [], 0
+    for name, state, image in (C.WINNERS if winners is None else winners):
         if image:
-            pic = f'<div class="winner-photo" style="background-image:url(\'assets/img/{image}\')" role="img" aria-label="{name}, {state}"></div>'
+            pic = f"""<div class="winner-pic"><img src="assets/img/{image}" alt="{name}, {state}" loading="lazy" decoding="async"></div>"""
         else:
-            pic = '<div class="winner-photo is-empty" aria-hidden="true"></div>'
-        cards.append(f'      <div class="winner-card">{pic}<cite>{name}, {state}</cite></div>')
-        if limit and len(cards) >= limit:
-            break
-    return '    <div class="winner-grid">\n' + "\n".join(cards) + "\n    </div>"
+            initials = "".join(part[0] for part in name.split()[:2]).upper()
+            colour = WINNER_TILE_COLOURS[blank % len(WINNER_TILE_COLOURS)]
+            blank += 1
+            pic = f"""<div class="winner-pic winner-blank is-{colour}" aria-hidden="true"><span class="winner-initials">{initials}</span></div>"""
+        cards.append(f"""      <article class="winner-tile">
+        {pic}
+        <div class="winner-info"><h3>{name}</h3><span class="winner-state">{state}</span></div>
+      </article>""")
+    return '    <div class="winner-wall">\n' + "\n".join(cards) + "\n    </div>"
 
 
 def winners_strip():
@@ -583,7 +603,7 @@ def winners_strip():
       <h2>Previous Winners</h2>
       <a class="btn btn-secondary" href="previous-winners.html">See all winners →</a>
     </div>
-{winners_grid(photos_only=True, limit=8)}
+{winners_wall([w for w in C.WINNERS if w[2]][:8])}
   </div>
 </section>
 """
@@ -828,7 +848,7 @@ HOME_BODY = f"""
     <h1>Working to end suffering for all animals.</h1>
     <p class="lead">Every year, an estimated 4 to 6 million animals are euthanized. Our goals: to assist with spay/neutering and veterinary care for those in need, and to help fund local shelters.</p>
     <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:var(--space-5)">
-      <a class="btn btn-primary btn-lg" href="donate.html">Donate Today</a>
+      <a class="btn btn-primary btn-lg btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Donate Today</a>
       <a class="btn btn-ghost btn-lg" href="about.html">Our Mission</a>
     </div>
     {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000", f"Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-hero")}
@@ -1485,16 +1505,24 @@ RULES_BODY = page_hero(
 # --- PREVIOUS WINNERS -------------------------------------------------------
 WINNERS_BODY = page_hero(
     "Previous Winners",
-    "",
+    "Congratulations to the past winners of our Sweepstakes and Raffle Plus drawings.",
     "Previous Winners",
     parent=("Sweepstakes", "sweepstakes.html"),
 ) + f"""
+<section class="section section-soft">
+  <div class="container">
+    <p class="eyebrow winners-count">{len(C.WINNERS)} winners and counting</p>
+{winners_wall()}
+  </div>
+</section>
+
 <section class="section">
   <div class="container">
-{winners_grid()}
-    <div style="margin-top:var(--space-7)">
-{SWEEPS_CTA}
+    <div class="text-center" style="max-width:640px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Next drawing · {C.DRAWING_DATE}</p>
+      <h2>Could you be next?</h2>
     </div>
+{SWEEPS_CTA}
   </div>
 </section>
 """
