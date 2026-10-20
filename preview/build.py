@@ -196,10 +196,19 @@ def review_note(html):
     return f'<aside class="review-note"><strong>For client review</strong>{html}</aside>'
 
 
+# Section backgrounds that are not white (see styles.css)
+COLOURED_SECTIONS = {"section-soft", "section-cream", "section-navy"}
+
+
 def page(title, slug, body, status="live", description=None):
     """Returns the full html string for a single page."""
     desc = description or f"{title} — National Humane Society"
     body_class = "is-home" if slug == "index.html" else "is-interior"
+    # A page that ends on a coloured section runs straight into the footer,
+    # with no white gap between them.
+    last_section = re.findall(r'<section class="([^"]*)"', body)
+    if last_section and set(last_section[-1].split()) & COLOURED_SECTIONS:
+        body_class += " ends-on-colour"
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -539,6 +548,15 @@ SWEEPS_CTA_SWEEPS_FIRST = f"""    <div class="cta-pair">
             f"Tickets from ${_ONE_TICKET[2]} · Drawing {C.DRAWING_DATE}", "ticket-navy ticket-stacked")}
     {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000",
             f"Tickets from ${_ONE_TICKET[3]} · Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-stacked")}
+    </div>"""
+
+# Hidden on 2026-10-19 at CJ's request: the Enter now ticket pair at the bottom
+# of the car pages. The hero and every car already link to both entry forms,
+# so it was one set of buttons too many. The ticket switch and price cards
+# above it stay. Set this to True to bring the pair back.
+SHOW_PRIZE_PAGE_TICKET_PAIR = False
+PRIZE_PAGE_TICKET_PAIR = f"""    <div style="margin-top:var(--space-7)">
+{SWEEPS_CTA_SWEEPS_FIRST}
     </div>"""
 
 
@@ -1324,9 +1342,7 @@ def prize_body(prize):
 {ticket_tiers("raffle-plus")}
       </div>
     </div>
-    <div style="margin-top:var(--space-7)">
-{SWEEPS_CTA_SWEEPS_FIRST}
-    </div>
+{PRIZE_PAGE_TICKET_PAIR if SHOW_PRIZE_PAGE_TICKET_PAIR else ""}
   </div>
 </section>
 """

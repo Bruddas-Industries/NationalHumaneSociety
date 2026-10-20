@@ -1871,7 +1871,8 @@ a.short-card:hover .short-play { transform: translate(-50%, -50%) scale(1.1); }
   .covid-photo { max-width: 320px; margin: 0 auto var(--space-5); }
 }
 /* The home page ends on a coloured section, so no white gap above the footer */
-body.is-home .site-footer { margin-top: 0; }
+/* Pages that end on a coloured section (build.py adds the class) */
+body.ends-on-colour .site-footer { margin-top: 0; }
 
 /* ==========================================================================
    Most popular ticket bundle (entry forms + prize pages): an inverted navy
