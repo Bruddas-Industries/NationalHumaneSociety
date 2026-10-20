@@ -533,11 +533,13 @@ def ticket(href, tag, title, detail, variant):
 
 
 _ONE_TICKET = C.TICKET_TIERS[0]  # (tickets, free, sweepstakes $, raffle plus $, popular)
+# Used on Previous Winners, whose section heading already gives the drawing
+# date, so the tickets leave it out (CJ, 2026-10-19).
 SWEEPS_CTA = f"""    <div class="cta-pair">
     {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000",
-            f"Tickets from ${_ONE_TICKET[3]} · Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-stacked")}
+            f"Tickets from ${_ONE_TICKET[3]}", "ticket-yellow ticket-stacked")}
     {ticket("sweepstakes.html", "Sweepstakes", "Win one car or $50,000",
-            f"Tickets from ${_ONE_TICKET[2]} · Drawing {C.DRAWING_DATE}", "ticket-navy ticket-stacked")}
+            f"Tickets from ${_ONE_TICKET[2]}", "ticket-navy ticket-stacked")}
     </div>"""
 
 # Prize pages list Sweepstakes before Raffle Plus everywhere (hero buttons,
