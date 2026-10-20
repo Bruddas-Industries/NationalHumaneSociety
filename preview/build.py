@@ -541,6 +541,15 @@ SWEEPS_CTA_SWEEPS_FIRST = f"""    <div class="cta-pair">
             f"Tickets from ${_ONE_TICKET[3]} · Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-stacked")}
     </div>"""
 
+# Hidden on 2026-10-19 at CJ's request: the Enter now ticket pair at the bottom
+# of the car pages. The hero and every car already link to both entry forms,
+# so it was one set of buttons too many. The ticket switch and price cards
+# above it stay. Set this to True to bring the pair back.
+SHOW_PRIZE_PAGE_TICKET_PAIR = False
+PRIZE_PAGE_TICKET_PAIR = f"""    <div style="margin-top:var(--space-7)">
+{SWEEPS_CTA_SWEEPS_FIRST}
+    </div>"""
+
 
 def winners_grid(photos_only=False, limit=None):
     cards = []
@@ -1324,9 +1333,7 @@ def prize_body(prize):
 {ticket_tiers("raffle-plus")}
       </div>
     </div>
-    <div style="margin-top:var(--space-7)">
-{SWEEPS_CTA_SWEEPS_FIRST}
-    </div>
+{PRIZE_PAGE_TICKET_PAIR if SHOW_PRIZE_PAGE_TICKET_PAIR else ""}
   </div>
 </section>
 """
