@@ -564,11 +564,12 @@ PRIZE_PAGE_TICKET_PAIR = f"""    <div style="margin-top:var(--space-7)">
 WINNER_TILE_COLOURS = ["navy", "coral", "teal", "blue", "orange"]
 
 
-def winners_wall():
-    """Previous Winners page: every winner as a card. Winners with no photo get
-    a colour-coded paw-print tile with their initials."""
+def winners_wall(winners=None):
+    """Winner cards (the Previous Winners page, and the row on the entry, FAQ
+    and Rules pages). Winners with no photo get a colour-coded paw-print tile
+    with their initials."""
     cards, blank = [], 0
-    for name, state, image in C.WINNERS:
+    for name, state, image in (C.WINNERS if winners is None else winners):
         if image:
             pic = f"""<div class="winner-pic"><img src="assets/img/{image}" alt="{name}, {state}" loading="lazy"></div>"""
         else:
@@ -583,21 +584,6 @@ def winners_wall():
     return '    <div class="winner-wall">\n' + "\n".join(cards) + "\n    </div>"
 
 
-def winners_grid(photos_only=False, limit=None):
-    cards = []
-    for name, state, image in C.WINNERS:
-        if photos_only and not image:
-            continue
-        if image:
-            pic = f'<div class="winner-photo" style="background-image:url(\'assets/img/{image}\')" role="img" aria-label="{name}, {state}"></div>'
-        else:
-            pic = '<div class="winner-photo is-empty" aria-hidden="true"></div>'
-        cards.append(f'      <div class="winner-card">{pic}<cite>{name}, {state}</cite></div>')
-        if limit and len(cards) >= limit:
-            break
-    return '    <div class="winner-grid">\n' + "\n".join(cards) + "\n    </div>"
-
-
 def winners_strip():
     return f"""
 <section class="section section-soft">
@@ -606,7 +592,7 @@ def winners_strip():
       <h2>Previous Winners</h2>
       <a class="btn btn-secondary" href="previous-winners.html">See all winners →</a>
     </div>
-{winners_grid(photos_only=True, limit=8)}
+{winners_wall([w for w in C.WINNERS if w[2]][:8])}
   </div>
 </section>
 """

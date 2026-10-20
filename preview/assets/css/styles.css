@@ -1308,19 +1308,6 @@ body.is-home .site-header.at-top .brand-logo {
 .payment-placeholder p { margin: 0; color: var(--color-text-muted); }
 
 /* Winners */
-.winner-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5); }
-.winner-card { text-align: center; }
-.winner-photo {
-  aspect-ratio: 4/3;
-  border-radius: var(--radius-lg);
-  background: var(--color-mist) center/cover no-repeat;
-  margin-bottom: var(--space-3);
-}
-.winner-photo.is-empty { background: var(--color-navy) url("../img/logo.png") center/55% no-repeat; }
-.winner-card cite {
-  font-style: normal; font-family: var(--font-eyebrow); font-size: .78rem;
-  letter-spacing: .14em; text-transform: uppercase; color: var(--color-text-muted);
-}
 
 /* Donations helping animals */
 .logo-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--space-7); }
@@ -1400,7 +1387,6 @@ body.is-home .site-header.at-top .brand-logo {
 
 @media (max-width: 900px) {
   .cta-pair, .tier-grid, .video-grid { grid-template-columns: 1fr; }
-  .winner-grid { grid-template-columns: repeat(2, 1fr); }
   .check-grid { grid-template-columns: 1fr 1fr; }
   .dir-states { columns: 1; }
   .story-photo { float: none; width: 100%; margin: 0 0 var(--space-4); }
