@@ -1079,7 +1079,7 @@ ABOUT_BODY = page_hero(
       <article class="give-card">
         <span class="give-icon" aria-hidden="true">✉</span>
         <h3>Contribute by mail</h3>
-        <p>To contribute by mail, please send a personal check or money order made payable to the National Humane Society to:</p>
+        <p>To contribute by mail, please send a personal check or money order made payable to the National Humane Society at:</p>
         <div class="envelope">
           <span class="envelope-stamp" aria-hidden="true">{PAW_ICON}</span>
           <span class="envelope-to">Mail to</span>
