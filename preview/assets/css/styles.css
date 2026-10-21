@@ -2610,7 +2610,8 @@ body:has(.articles-section) .edu-videos { padding-bottom: var(--space-7); }
   position: relative;
   overflow: hidden;
   color: #fff;
-  background: linear-gradient(45deg, #f9ce34 0%, #ee2a7b 45%, #6228d7 100%);
+  border-color: transparent;
+  background: linear-gradient(45deg, #f9ce34 0%, #ee2a7b 45%, #6228d7 100%) border-box;
   box-shadow: 0 8px 22px rgba(238,42,123,.35);
 }
 .btn-instagram:hover { color: #fff; box-shadow: 0 12px 28px rgba(238,42,123,.45); }
@@ -2664,16 +2665,17 @@ body:has(.articles-section) .edu-videos { padding-bottom: var(--space-7); }
 }
 .ig-profile h2 { margin: 0; }
 .ig-profile .eyebrow { margin-bottom: var(--space-1); }
+/* @nationalhumane's profile picture in Instagram's gradient story ring */
 .ig-avatar {
   flex: 0 0 auto;
-  width: 84px; height: 84px;
+  width: 88px; height: 88px;
   border-radius: 50%;
   padding: 3px;
   background: linear-gradient(45deg, #f9ce34 0%, #ee2a7b 45%, #6228d7 100%);
+  transition: transform .2s ease;
 }
-.ig-avatar { position: relative; display: grid; place-items: center; }
-.ig-avatar::before { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--color-navy); border: 3px solid #fff; }
-.ig-avatar .paw-icon { position: relative; width: 46%; height: 46%; fill: var(--color-yellow); }
+.ig-avatar:hover { transform: scale(1.05); }
+.ig-avatar img { width: 100%; height: 100%; display: block; border-radius: 50%; border: 3px solid var(--color-mist); object-fit: cover; }
 .ig-profile-btn { margin-left: auto; }
 .ig-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-3); }
 .ig-tile {
@@ -2710,7 +2712,7 @@ body:has(.articles-section) .edu-videos { padding-bottom: var(--space-7); }
 }
 @media (max-width: 600px) {
   .more-wall { columns: 1; }
-  .ig-avatar { width: 64px; height: 64px; }
+  .ig-avatar { width: 66px; height: 66px; }
 }
 
 /* ==========================================================================
@@ -2759,7 +2761,12 @@ body:has(.articles-section) .edu-videos { padding-bottom: var(--space-7); }
 .is-slow > .embed-loader .embed-loader-fallback { display: block; }
 .is-slow > .embed-loader .embed-loader-text { animation: none; }
 
-/* Carousel cards: the loader sits behind the thumbnail, which covers it */
+/* Carousel cards: the loader sits behind the thumbnail, which covers it;
+   the play button and title wait until the thumbnail has loaded */
+a.short-card:not(.thumb-ready) .short-play,
+a.short-card:not(.thumb-ready) .short-title,
+a.short-card:not(.thumb-ready)::after { opacity: 0; }
+.short-play, .short-title, a.short-card::after { transition: opacity .3s ease; }
 .short-card .embed-loader { z-index: 0; }
 .short-card img { z-index: 1; }
 .short-card.is-playing .embed-loader { z-index: 0; }
@@ -2767,6 +2774,7 @@ body:has(.articles-section) .edu-videos { padding-bottom: var(--space-7); }
 
 /* Featured post: hide Instagram's placeholder card while loading; light theme */
 .featured-post-embed .embed-loader { color: var(--color-navy); }
+.featured-post-embed .embed-loader .paw-icon:nth-child(2) { fill: var(--color-navy); }
 .featured-post-embed .embed-loader-fallback { color: var(--color-coral-dark); }
 .featured-post-embed:not(.is-slow) blockquote.instagram-media { visibility: hidden; }
 .featured-post-embed { min-height: 520px; }
@@ -2774,3 +2782,58 @@ body:has(.articles-section) .edu-videos { padding-bottom: var(--space-7); }
 @media (prefers-reduced-motion: reduce) {
   .embed-loader .paw-icon, .embed-loader-text { animation: none; opacity: 1; }
 }
+
+/* Instagram snapshot posts and the pop-up player */
+.ig-grid-posts { grid-template-columns: repeat(6, 1fr); }
+.ig-post {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--color-navy);
+  color: #fff;
+}
+.ig-post img { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+.ig-post:hover img { transform: scale(1.06); }
+.ig-badge {
+  position: absolute; top: 8px; right: 8px; z-index: 2;
+  background: rgba(0,0,0,.6); color: #fff;
+  font-size: .72rem; font-weight: 700;
+  padding: 3px 8px; border-radius: var(--radius-pill);
+}
+.ig-caption {
+  position: absolute; inset: auto 0 0 0; z-index: 2;
+  padding: var(--space-5) var(--space-3) var(--space-3);
+  font-size: .78rem; line-height: 1.35;
+  background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.75));
+  opacity: 0; transition: opacity .2s ease;
+}
+.ig-post:hover .ig-caption, .ig-post:focus-visible .ig-caption { opacity: 1; }
+.ig-post .embed-loader-text { display: none; }
+.ig-modal {
+  position: fixed; inset: 0; z-index: 300;
+  display: grid; place-items: center;
+  padding: var(--space-5);
+  background: rgba(24,23,51,.82);
+}
+.ig-modal[hidden] { display: none; }
+.ig-modal-box { position: relative; width: min(440px, 100%); }
+.ig-modal-frame {
+  position: relative;
+  height: min(720px, calc(100vh - 120px));
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #fff;
+}
+.ig-modal-frame iframe { position: relative; z-index: 1; width: 100%; height: 100%; border: 0; }
+.ig-modal-frame .embed-loader { color: var(--color-navy); }
+.ig-modal-frame .embed-loader .paw-icon:nth-child(2) { fill: var(--color-navy); }
+.ig-modal-close {
+  position: absolute; top: -14px; right: -14px; z-index: 2;
+  width: 40px; height: 40px; border-radius: 50%; border: 0;
+  background: #fff; color: var(--color-navy);
+  font-size: 1.6rem; line-height: 1;
+  box-shadow: var(--shadow-md);
+}
+@media (max-width: 900px) { .ig-grid-posts { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px) { .ig-modal-close { top: 6px; right: 6px; } }

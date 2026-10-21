@@ -16,6 +16,7 @@ footer templates, and each PAGE entry becomes a page template.
 """
 
 import html
+import json
 import re
 import sys
 from pathlib import Path
@@ -1819,11 +1820,30 @@ def more_wall():
     return '    <div class="more-wall">\n' + "\n".join(items) + "\n    </div>"
 
 
-# "Our Instagram" placeholders: the live feed can't be reproduced in the
-# prototype (see the review note), so these hold its place.
-IG_FEED_TILES = "\n".join(
-    f'      <div class="ig-tile" aria-hidden="true">{INSTAGRAM_ICON}</div>' for _ in range(6)
-)
+# "Our Instagram": a snapshot from fetch_instagram.py when there is one
+# (instagram_feed.json), otherwise six placeholder tiles.
+def instagram_feed():
+    path = OUT_DIR / "instagram_feed.json"
+    posts = json.loads(path.read_text(encoding="utf-8"))["posts"] if path.exists() else []
+    if not posts:
+        tiles = "\n".join(f'      <div class="ig-tile" aria-hidden="true">{INSTAGRAM_ICON}</div>' for _ in range(6))
+        note = review_note("<p>The current site fills this section with the 12 latest Instagram posts. It does that from the browser using an access token written into the page, which anyone can copy, so the prototype does not reproduce it. In the WordPress build the posts are fetched on the server, with the token kept private; the tiles below only hold their place. To see real posts here, run <code>fetch_instagram.py</code> with a token (instructions at the top of that file).</p>")
+        return note, f'    <div class="ig-grid">\n{tiles}\n    </div>'
+    tiles = []
+    for p in posts:
+        caption = html.escape(" ".join(p["caption"].split())[:110] + ("…" if len(p["caption"]) > 110 else ""))
+        badge = '<span class="ig-badge">▶ Video</span>' if p["media_type"] == "VIDEO" else ""
+        tiles.append(f"""      <a class="ig-post" href="{html.escape(p['permalink'])}" target="_blank" rel="noopener" data-ig="{p['kind']}/{p['shortcode']}">
+        {embed_loader("Loading…")}
+        <img src="{p['image']}" alt="Instagram post: {caption}" loading="lazy" decoding="async">
+        {badge}
+        <span class="ig-caption">{caption}</span>
+      </a>""")
+    note = review_note("<p>A snapshot of the latest posts, taken with <code>fetch_instagram.py</code>, which does what the WordPress site will do on its server. Click a post to play it here.</p>")
+    return note, '    <div class="ig-grid ig-grid-posts">\n' + "\n".join(tiles) + "\n    </div>"
+
+
+IG_FEED_NOTE, IG_FEED_GRID = instagram_feed()
 
 VIDEOS_BODY = page_hero(
     "Videos and More",
@@ -1850,17 +1870,15 @@ VIDEOS_BODY = page_hero(
 <section class="section section-soft ig-feed-section">
   <div class="container">
     <div class="ig-profile">
-      <div class="ig-avatar" aria-hidden="true">{PAW_ICON}</div>
+      <a class="ig-avatar" href="{C.SOCIAL[0][1]}" target="_blank" rel="noopener"><img src="assets/img/ig-profile.jpg" alt="@{C.INSTAGRAM_HANDLE} on Instagram" width="100" height="100"></a>
       <div>
         <p class="eyebrow">Our Instagram</p>
         <h2>@{C.INSTAGRAM_HANDLE}</h2>
       </div>
       {instagram_button("Follow on Instagram", "ig-profile-btn")}
     </div>
-    {review_note("<p>The current site fills this section with the 12 latest Instagram posts. It does that from the browser using an access token written into the page, which anyone can copy, so the prototype does not reproduce it. In the WordPress build the posts are fetched on the server, with the token kept private; the tiles below only hold their place.</p>")}
-    <div class="ig-grid">
-{IG_FEED_TILES}
-    </div>
+    {IG_FEED_NOTE}
+{IG_FEED_GRID}
   </div>
 </section>
 
