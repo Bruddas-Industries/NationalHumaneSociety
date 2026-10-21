@@ -2864,30 +2864,26 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
   position: relative;
   margin-top: var(--space-4);
   padding: 8px;
-}
-/* Only the paper and its striped airmail edge tilt (and straighten on
-   hover); the address text stays upright, so it is always crisp. */
-.envelope::before,
-.envelope::after {
-  content: "";
-  position: absolute;
-  transform: rotate(-1deg);
-  transition: transform .25s ease;
-}
-.envelope::before {
-  inset: 0;
   border-radius: var(--radius);
   background: repeating-linear-gradient(135deg,
     var(--color-coral) 0 14px, #fff 14px 22px, var(--color-navy) 22px 36px, #fff 36px 44px);
   box-shadow: 0 10px 24px rgba(24,23,51,.12);
+  transform: rotate(-1deg) translateZ(0);
+  transition: transform .25s ease;
+  /* keep the envelope on its own layer at all times, so the text isn't
+     redrawn (and doesn't appear to shift or thicken) when the hover ends */
+  will-change: transform;
+  backface-visibility: hidden;
 }
-.envelope::after {
+.envelope:hover { transform: rotate(0deg) translateY(-2px) translateZ(0); }
+.envelope::before {
+  content: "";
+  position: absolute;
   inset: 8px;
   border-radius: 4px;
   background: #fff;
 }
-.envelope:hover::before, .envelope:hover::after { transform: rotate(0deg) translateY(-2px); }
-.envelope > * { position: relative; z-index: 1; }
+.envelope > * { position: relative; }
 .envelope-to {
   display: block;
   padding: var(--space-5) var(--space-5) 0;
