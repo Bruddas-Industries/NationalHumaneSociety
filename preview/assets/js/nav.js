@@ -222,6 +222,42 @@
     });
   });
 
+  // Educational Messages: filter the article cards by category and show
+  // them a page at a time ("Show more").
+  document.querySelectorAll('[data-post-filter]').forEach((box) => {
+    const cards = [...box.querySelectorAll('[data-post-grid] .post-card')];
+    const chips = [...box.querySelectorAll('.filter-chip')];
+    const more = box.querySelector('[data-show-more]');
+    const pageSize = Number(box.dataset.pageSize) || 12;
+    let filter = 'all';
+    let shown = pageSize;
+    const render = () => {
+      const matching = cards.filter((c) => filter === 'all' || c.dataset.category === filter);
+      cards.forEach((c) => { c.hidden = true; });
+      matching.slice(0, shown).forEach((c) => { c.hidden = false; });
+      if (more) {
+        const left = Math.max(0, matching.length - shown);
+        more.hidden = left === 0;
+        more.textContent = `Show more articles (${left} more)`;
+      }
+    };
+    chips.forEach((chip) => chip.addEventListener('click', () => {
+      filter = chip.dataset.filter;
+      shown = pageSize;
+      chips.forEach((c) => {
+        c.classList.toggle('is-active', c === chip);
+        c.setAttribute('aria-pressed', String(c === chip));
+      });
+      render();
+    }));
+    if (more) more.addEventListener('click', () => {
+      const total = cards.filter((c) => filter === 'all' || c.dataset.category === filter).length;
+      shown = Math.min(shown + pageSize, total);
+      render();
+    });
+    render();
+  });
+
   // Prize pages: switch the ticket bundles between Sweepstakes and Raffle Plus
   document.querySelectorAll('[data-tier-switch]').forEach((box) => {
     const tabs = [...box.querySelectorAll('[data-tier]')];

@@ -15,6 +15,7 @@ When we port to a production stack, the LAYOUT here becomes the header and
 footer templates, and each PAGE entry becomes a page template.
 """
 
+import html
 import re
 import sys
 from pathlib import Path
@@ -630,46 +631,43 @@ DONATE_TOGGLE = """      <div class="donate-toggle">
 
 
 # The live blog posts have no cover images, so each card gets a colour-coded
-# topic header instead. First keyword found in the title wins.
-BLOG_TOPICS = [
-    (("spay", "neuter"), "Spay &amp; Neuter", "teal"),
-    (("abuse", "cruelty"), "Animal Welfare", "coral"),
-    (("volunteer",), "Volunteering", "blue"),
-    (("foster",), "Fostering", "orange"),
-    (("donation", "donate"), "Giving", "coral"),
-    (("summer", "winter", "holiday", "safe "), "Pet Safety", "blue"),
-    (("stories", "transformation"), "Rescue Stories", "orange"),
-    (("adopt", "myth"), "Adoption", "navy"),
-    (("shelter",), "Shelters", "teal"),
-]
+# header naming its category (C.BLOG_CATEGORIES).
+BLOG_COLOUR = dict(C.BLOG_CATEGORIES)
+CATEGORY_KEY = {name: name.lower().replace(" & ", "-").replace(" ", "-") for name, _c in C.BLOG_CATEGORIES}
 
 
-def blog_topic(title):
-    lowered = title.lower()
-    for keywords, topic, colour in BLOG_TOPICS:
-        if any(k in lowered for k in keywords):
-            return topic, colour
-    return "Animal Care", "navy"
-
-
-def blog_cards(posts):
+def blog_cards(posts, filterable=False):
+    """Article cards. filterable: tag each card with its category for the
+    filter bar on the Educational Messages page."""
     cards = []
-    for title, slug in posts:
+    for title, slug, category in posts:
         if slug == C.BLOG_SAMPLE_SLUG:
             href, target = "blog-post.html", ""
         else:
             href, target = f"{C.LIVE_SITE}/post/{slug}", ' target="_blank" rel="noopener"'
-        topic, colour = blog_topic(title)
-        cards.append(f"""      <article class="post-card">
-        <div class="post-cover is-{colour}" aria-hidden="true">
-          <span class="post-cover-topic">{topic}</span>
+        tag = f' data-category="{CATEGORY_KEY[category]}"' if filterable else ""
+        cards.append(f"""      <article class="post-card"{tag}>
+        <div class="post-cover is-{BLOG_COLOUR[category]}" aria-hidden="true">
+          <span class="post-cover-topic">{html.escape(category)}</span>
         </div>
         <div class="post-body">
-          <h3><a href="{href}"{target}>{title}</a></h3>
+          <h3><a href="{href}"{target}>{html.escape(title, quote=False)}</a></h3>
           <span class="post-more">Read article →</span>
         </div>
       </article>""")
-    return '    <div class="grid grid-3">\n' + "\n".join(cards) + "\n    </div>"
+    grid = ' data-post-grid' if filterable else ""
+    return f'    <div class="grid grid-3"{grid}>\n' + "\n".join(cards) + "\n    </div>"
+
+
+def blog_filter_bar():
+    """Category chips with counts; nav.js filters the cards and pages them."""
+    counts = {}
+    for _t, _s, cat in C.BLOG_POSTS:
+        counts[cat] = counts.get(cat, 0) + 1
+    chips = [f'<button type="button" class="filter-chip is-active" data-filter="all" aria-pressed="true">All <span>{len(C.BLOG_POSTS)}</span></button>']
+    for name, _colour in C.BLOG_CATEGORIES:
+        chips.append(f'<button type="button" class="filter-chip" data-filter="{CATEGORY_KEY[name]}" aria-pressed="false">{html.escape(name)} <span>{counts.get(name, 0)}</span></button>')
+    return '    <div class="filter-bar" role="toolbar" aria-label="Filter articles by category">\n      ' + "\n      ".join(chips) + "\n    </div>"
 
 
 def story_excerpt(index, words=38):
@@ -1626,53 +1624,105 @@ WILLS_BODY = page_hero(
 # --- EDUCATIONAL MESSAGES (blog index) --------------------------------------
 BLOG_BODY = page_hero(
     "Educational Messages",
-    "Articles on adoption, pet care, shelters and animal welfare.",
+    "Videos and articles on adoption, pet care, shelters, animal welfare, and more.",
     "Educational Messages",
-) + f"""
-<section class="section">
+) + edu_video_carousel() + f"""
+<section class="section section-soft articles-section" id="articles" data-post-filter data-page-size="12">
   <div class="container">
-    {review_note("<p>The twelve most recent titles from the current site are shown. Only <em>How Your $10 Monthly Donation Really Helps Shelter Animals</em> opens inside the preview, as the article template; the others open the current site. All of the roughly 100 posts move across when the site is built.</p>")}
-{blog_cards(C.BLOG_POSTS)}
-    <p class="text-center" style="margin-top:var(--space-6)"><a class="btn btn-secondary" href="{C.LIVE_SITE}/blog" target="_blank" rel="noopener">View every article on the current site →</a></p>
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Articles</p>
+        <h2>Browse by topic</h2>
+      </div>
+    </div>
+{blog_filter_bar()}
+    {review_note("<p>All 81 articles from the current site are listed. Only <em>How Your $10 Monthly Donation Really Helps Shelter Animals</em> opens inside the preview, as the article template; the others open the current site until the posts are migrated in the WordPress build.</p>")}
+{blog_cards(C.BLOG_POSTS, filterable=True)}
+    <div class="text-center" style="margin-top:var(--space-6)">
+      <button type="button" class="btn btn-secondary" data-show-more>Show more articles</button>
+    </div>
   </div>
 </section>
 """
 
+_SAMPLE_CATEGORY = next(cat for _t, slug, cat in C.BLOG_POSTS if slug == C.BLOG_SAMPLE_SLUG)
+RELATED_POSTS = [p for p in C.BLOG_POSTS if p[2] == _SAMPLE_CATEGORY and p[1] != C.BLOG_SAMPLE_SLUG][:3]
+
 # --- BLOG POST (article template, using a real post) -----------------------
+# The sample article, laid out with the styles every migrated post will get:
+# a header in its category's colour, a larger opening paragraph, a "by the
+# numbers" strip and pull quote (both taken from the article's own text), and
+# the bold-led paragraphs as breakdown cards. The wording is unchanged.
 BLOG_POST_BODY = f"""
-<section class="page-hero">
+<section class="article-hero post-cover is-{BLOG_COLOUR[_SAMPLE_CATEGORY]}">
   <div class="container-narrow">
     <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="blog.html">Educational Messages</a></div>
+    <span class="article-chip">{html.escape(_SAMPLE_CATEGORY)}</span>
     <h1>How Your $10 Monthly Donation Really Helps Shelter Animals</h1>
+    <p class="article-meta">National Humane Society &nbsp;·&nbsp; Educational Message</p>
   </div>
 </section>
 
-<section class="section">
-  <div class="container-narrow prose">
+<section class="section article-section">
+  <div class="container-narrow prose article">
     {review_note("<p>This article is copied from the current site as far as the first section, to show the article layout. Further down, the published post promises annual impact reports, personalized updates for monthly donors and the option to designate a gift to a specific fund — none of which the current site offers. Worth confirming before it is carried over.</p>")}
-    <p>In 2025, an estimated 5.8 million dogs and cats entered U.S. shelters and rescues—a 2% decrease from the previous year, according to Shelter Animals Count's 2025 Annual Data Report. While that's encouraging progress, the numbers remain staggering: about 4.2 million animals were adopted (a modest 0.7% increase), but roughly 597,000 were euthanized, and 757,000 experienced non-live outcomes overall (a slight 1% decline). The national save rate holds steady at around 82%, with two out of three shelters achieving no-kill status (90%+ live release rate). These figures represent real animals facing uncertainty due to overcrowding, medical emergencies, economic surrenders, and limited shelter resources.</p>
+    <p class="article-lead">In 2025, an estimated 5.8 million dogs and cats entered U.S. shelters and rescues—a 2% decrease from the previous year, according to Shelter Animals Count's 2025 Annual Data Report. While that's encouraging progress, the numbers remain staggering: about 4.2 million animals were adopted (a modest 0.7% increase), but roughly 597,000 were euthanized, and 757,000 experienced non-live outcomes overall (a slight 1% decline). The national save rate holds steady at around 82%, with two out of three shelters achieving no-kill status (90%+ live release rate). These figures represent real animals facing uncertainty due to overcrowding, medical emergencies, economic surrenders, and limited shelter resources.</p>
+
+    <div class="article-stats" aria-label="2025 shelter figures from the article">
+      <div><strong>5.8M</strong><span>dogs and cats entered U.S. shelters</span></div>
+      <div><strong>4.2M</strong><span>animals adopted</span></div>
+      <div><strong>82%</strong><span>national save rate</span></div>
+    </div>
+    <p class="article-source">Source: Shelter Animals Count, 2025 Annual Data Report</p>
+
     <p>At the National Humane Society, we exist to change that trajectory. We raise donations to directly support animals in crisis—providing food, medical care, transport, and foster resources—while also assisting partner shelters nationwide with funding for supplies, low-cost clinics, emergency responses, and capacity-building programs. In an era of rising veterinary costs and ongoing intake pressures, consistent support makes the biggest difference.</p>
+
+    <blockquote class="article-quote">Less than the cost of a streaming subscription or a couple of coffees, this amount delivers reliable funding that shelters can count on month after month.</blockquote>
+
     <p>That's why a small, recurring gift—like $10 per month—packs such powerful impact. Less than the cost of a streaming subscription or a couple of coffees, this amount delivers reliable funding that shelters can count on month after month. Below, we break it down transparently: where the money goes, real stories of animals helped, why monthly giving outperforms one-time donations in tough times, and how you can get involved.</p>
 
     <h2>Where Exactly Does Your $10 Monthly Donation Go? A Detailed Breakdown</h2>
     <p>Shelters face a wide range of expenses, from daily basics to life-saving interventions. The National Humane Society stretches every dollar through bulk purchasing, volunteer coordination, and partnerships with local rescues. Here's how a modest $10 monthly gift contributes in practical terms (based on national averages and our program data):</p>
-    <p><strong>Nutrition and Daily Care.</strong> A medium-sized dog requires about 2–3 cups of quality dry food per day, costing roughly $10–$20 per week (depending on brand and portion). Your $10 covers a full week's worth of nutritious food for one medium dog or several cats/kittens. This prevents malnutrition, supports immune health during stressful shelter stays, and keeps animals adoptable longer.</p>
-    <p><strong>Preventive Veterinary Care.</strong> Core vaccines, deworming, flea/tick prevention, and initial exams are essential to stop outbreaks and prepare animals for adoption. These basics cost $50–$150 per animal. Your recurring gift contributes toward preventive packages, reducing the risk of illness spreading in crowded facilities and lowering long-term medical burdens.</p>
-
-    <p><a href="{C.LIVE_SITE}/post/{C.BLOG_SAMPLE_SLUG}" target="_blank" rel="noopener">Continue reading on the current site →</a></p>
-
-    <div class="proceeds-panel" style="margin-top:var(--space-7)">
-      <h4>Ready to make a reliable difference?</h4>
-      <p style="margin:0 0 var(--space-3)">Your $10 monthly gift is a commitment to consistent hope for animals and shelters nationwide.</p>
-      <a class="btn btn-primary btn-sm" href="donate.html">Donate today →</a>
+    <div class="article-points">
+      <div class="article-point">
+        <span class="article-point-num" aria-hidden="true">01</span>
+        <div>
+          <h3>Nutrition and Daily Care</h3>
+          <p>A medium-sized dog requires about 2–3 cups of quality dry food per day, costing roughly $10–$20 per week (depending on brand and portion). Your $10 covers a full week's worth of nutritious food for one medium dog or several cats/kittens. This prevents malnutrition, supports immune health during stressful shelter stays, and keeps animals adoptable longer.</p>
+        </div>
+      </div>
+      <div class="article-point">
+        <span class="article-point-num" aria-hidden="true">02</span>
+        <div>
+          <h3>Preventive Veterinary Care</h3>
+          <p>Core vaccines, deworming, flea/tick prevention, and initial exams are essential to stop outbreaks and prepare animals for adoption. These basics cost $50–$150 per animal. Your recurring gift contributes toward preventive packages, reducing the risk of illness spreading in crowded facilities and lowering long-term medical burdens.</p>
+        </div>
+      </div>
     </div>
+
+    <p class="article-continue"><a class="btn btn-secondary" href="{C.LIVE_SITE}/post/{C.BLOG_SAMPLE_SLUG}" target="_blank" rel="noopener">Continue reading on the current site →</a></p>
+
+    <aside class="article-cta">
+      <div>
+        <p class="eyebrow">Monthly giving</p>
+        <h3>Ready to make a reliable difference?</h3>
+        <p>Your $10 monthly gift is a commitment to consistent hope for animals and shelters nationwide.</p>
+      </div>
+      <a class="btn btn-primary btn-lg btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Donate today</a>
+    </aside>
   </div>
 </section>
 
 <section class="section section-soft">
   <div class="container">
-    <h2 class="text-center" style="margin-bottom:var(--space-6)">More educational messages.</h2>
-{blog_cards(C.BLOG_POSTS[9:12])}
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Keep reading</p>
+        <h2>More on {html.escape(_SAMPLE_CATEGORY)}</h2>
+      </div>
+      <a class="btn btn-secondary" href="blog.html#articles">All articles →</a>
+    </div>
+{blog_cards(RELATED_POSTS)}
   </div>
 </section>
 """
