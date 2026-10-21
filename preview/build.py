@@ -254,11 +254,44 @@ def page(title, slug, body, status="live", description=None):
 # ---------------------------------------------------------------------------
 # Reusable content blocks
 # ---------------------------------------------------------------------------
+# Header photos carried over from the current site (2026-10-20), keyed by
+# the page's breadcrumb label. Each page uses the photo the current site uses
+# for it. Pages not listed keep the plain header. The Sweepstakes, Raffle Plus
+# and car pages have their own navy header and are not affected.
+# (file, alt text, crop position)
+PAGE_HEADER_IMAGES = {
+    "About": ("header-dog-goggles.jpg", "A dog in goggles and a Hawaiian shirt", "30% 60%"),
+    "Educational Messages": ("header-dog-goggles.jpg", "A dog in goggles and a Hawaiian shirt", "30% 60%"),
+    "Videos &amp; More": ("header-dog-goggles.jpg", "A dog in goggles and a Hawaiian shirt", "30% 60%"),
+    "Animal Programs": ("header-cats-leaping.jpg", "Two cats leaping for a feather toy", "50% 50%"),
+    "Contact": ("header-cat-glasses.jpg", "A cat wearing glasses being petted", "20% 75%"),
+    "Previous Winners": ("header-cat-glasses.jpg", "A cat wearing glasses being petted", "20% 75%"),
+    "Donations Helping Animals": ("header-puppy-kennel.jpg", "A puppy with an orange bow being petted at a kennel", "40% 60%"),
+    "FAQ": ("header-puppy-kennel.jpg", "A puppy with an orange bow being petted at a kennel", "40% 60%"),
+    "Rules": ("header-puppy-kennel.jpg", "A puppy with an orange bow being petted at a kennel", "40% 60%"),
+    "Wills &amp; Estates": ("header-dogs-kennel.jpg", "Dogs looking out from behind a kennel gate", "50% 40%"),
+}
+
+
 def page_hero(title, lead, breadcrumb_label, parent=None):
     crumb = '<a href="index.html">Home</a> &nbsp;/&nbsp; '
     if parent:
         crumb += f'<a href="{parent[1]}">{parent[0]}</a> &nbsp;/&nbsp; '
     lead_html = f'\n    <p class="lead">{lead}</p>' if lead else ""
+    photo = PAGE_HEADER_IMAGES.get(breadcrumb_label)
+    if photo:
+        src, alt, focus = photo
+        return f"""
+<section class="page-hero has-photo">
+  <div class="container page-hero-grid">
+    <div>
+      <div class="breadcrumb">{crumb}{breadcrumb_label}</div>
+      <h1>{title}</h1>{lead_html}
+    </div>
+    <div class="page-hero-photo"><img src="assets/img/{src}" alt="{alt}" style="object-position:{focus}" width="1200" height="800"></div>
+  </div>
+</section>
+"""
     return f"""
 <section class="page-hero">
   <div class="container">
