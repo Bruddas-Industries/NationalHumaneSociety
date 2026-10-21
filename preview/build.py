@@ -16,6 +16,7 @@ footer templates, and each PAGE entry becomes a page template.
 """
 
 import html
+import json
 import re
 import sys
 from pathlib import Path
@@ -203,6 +204,8 @@ def review_note(html):
 SHOW_WINNERS_CONFETTI = True
 PAGE_SCRIPTS = {
     "previous-winners.html": ["assets/js/confetti.js"] if SHOW_WINNERS_CONFETTI else [],
+    # turns the featured-post blockquote into Instagram's own post embed
+    "videos-and-more.html": ["https://www.instagram.com/embed.js"],
 }
 
 # Section backgrounds that are not white (see styles.css)
@@ -213,7 +216,8 @@ def page(title, slug, body, status="live", description=None):
     """Returns the full html string for a single page."""
     desc = description or f"{title} — National Humane Society"
     body_class = "is-home" if slug == "index.html" else "is-interior"
-    extra_scripts = "".join(f'<script src="{src}"></script>\n' for src in PAGE_SCRIPTS.get(slug, []))
+    extra_scripts = "".join(f'<script src="{src}" async></script>\n' if src.startswith("http") else f'<script src="{src}"></script>\n'
+                            for src in PAGE_SCRIPTS.get(slug, []))
     # A page that ends on a coloured section runs straight into the footer,
     # with no white gap between them.
     last_section = re.findall(r'<section class="([^"]*)"', body)
@@ -254,11 +258,46 @@ def page(title, slug, body, status="live", description=None):
 # ---------------------------------------------------------------------------
 # Reusable content blocks
 # ---------------------------------------------------------------------------
+# Header photos carried over from the current site (2026-10-20). Off for now:
+# CJ preferred the plain headers. Set SHOW_PAGE_HEADER_IMAGES to True to put
+# the photos back. Keyed by the page's breadcrumb label. Each page uses the photo the current site uses
+# for it. Pages not listed keep the plain header. The Sweepstakes, Raffle Plus
+# and car pages have their own navy header and are not affected.
+# (file, alt text, crop position)
+SHOW_PAGE_HEADER_IMAGES = False
+PAGE_HEADER_IMAGES = {
+    "About": ("header-dog-goggles.jpg", "A dog in goggles and a Hawaiian shirt", "30% 60%"),
+    "Educational Messages": ("header-dog-goggles.jpg", "A dog in goggles and a Hawaiian shirt", "30% 60%"),
+    "Videos &amp; More": ("header-dog-goggles.jpg", "A dog in goggles and a Hawaiian shirt", "30% 60%"),
+    "Animal Programs": ("header-cats-leaping.jpg", "Two cats leaping for a feather toy", "50% 50%"),
+    "Contact": ("header-cat-glasses.jpg", "A cat wearing glasses being petted", "20% 75%"),
+    "Previous Winners": ("header-cat-glasses.jpg", "A cat wearing glasses being petted", "20% 75%"),
+    "Donations Helping Animals": ("header-puppy-kennel.jpg", "A puppy with an orange bow being petted at a kennel", "40% 60%"),
+    "FAQ": ("header-puppy-kennel.jpg", "A puppy with an orange bow being petted at a kennel", "40% 60%"),
+    "Rules": ("header-puppy-kennel.jpg", "A puppy with an orange bow being petted at a kennel", "40% 60%"),
+    "Wills &amp; Estates": ("header-dogs-kennel.jpg", "Dogs looking out from behind a kennel gate", "50% 40%"),
+}
+
+
 def page_hero(title, lead, breadcrumb_label, parent=None):
     crumb = '<a href="index.html">Home</a> &nbsp;/&nbsp; '
     if parent:
         crumb += f'<a href="{parent[1]}">{parent[0]}</a> &nbsp;/&nbsp; '
     lead_html = f'\n    <p class="lead">{lead}</p>' if lead else ""
+    photo = PAGE_HEADER_IMAGES.get(breadcrumb_label) if SHOW_PAGE_HEADER_IMAGES else None
+    if photo:
+        src, alt, focus = photo
+        return f"""
+<section class="page-hero has-photo">
+  <div class="container page-hero-grid">
+    <div>
+      <div class="breadcrumb">{crumb}{breadcrumb_label}</div>
+      <h1>{title}</h1>{lead_html}
+    </div>
+    <div class="page-hero-photo"><img src="assets/img/{src}" alt="{alt}" style="object-position:{focus}" width="1200" height="800"></div>
+  </div>
+</section>
+"""
     return f"""
 <section class="page-hero">
   <div class="container">
@@ -770,10 +809,32 @@ LEARN_HOW_TO_HELP = f"""<!-- Learn How To Help (cards from the current homepage;
 """
 
 
+PAW_ICON = (
+    '<svg class="paw-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+    '<ellipse cx="12" cy="15.6" rx="5.2" ry="4.4"/>'
+    '<ellipse cx="5.2" cy="9.6" rx="2.1" ry="2.7"/><ellipse cx="9.1" cy="5.8" rx="2.2" ry="2.9"/>'
+    '<ellipse cx="14.9" cy="5.8" rx="2.2" ry="2.9"/><ellipse cx="18.8" cy="9.6" rx="2.1" ry="2.7"/></svg>'
+)
+
+
+def embed_loader(label="Loading video…", fallback=None):
+    """Shown while a video or post loads: three paw prints bouncing in turn.
+    nav.js fades it out when the embed is ready; if it takes over ~10 s the
+    fallback link (href, text) appears. In a card it just sits behind the
+    thumbnail, which covers it once loaded."""
+    link = ""
+    if fallback:
+        href, text = fallback
+        link = f'<a class="embed-loader-fallback" href="{href}" target="_blank" rel="noopener">{text}</a>'
+    return (f'<div class="embed-loader" role="status"><span class="embed-loader-paws">{PAW_ICON * 3}</span>'
+            f'<span class="embed-loader-text">{label}</span>{link}</div>')
+
+
 def edu_video_carousel():
     """YouTube Shorts from the educational playlist. Each card links to the
     video and plays it in place when JavaScript is on (see nav.js)."""
     cards = "\n".join(f"""      <a class="short-card" href="https://www.youtube.com/shorts/{vid}" data-video="{vid}" target="_blank" rel="noopener">
+        {embed_loader("Loading…")}
         <img src="https://i.ytimg.com/vi/{vid}/oar2.jpg" alt="" loading="lazy">
         <span class="short-play" aria-hidden="true"></span>
         <span class="short-title">{title}</span>
@@ -1008,17 +1069,32 @@ ABOUT_BODY = page_hero(
   </div>
 </section>
 
-<section class="section">
-  <div class="container grid grid-2">
-    <div>
-      <h2>Contribute by mail.</h2>
-      <p>To contribute by mail, please send a personal check or money order made payable to the National Humane Society to:</p>
-      <p><strong>{MAIL_ADDRESS}</strong></p>
+<section class="section section-cream">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:var(--space-7)">
+      <p class="eyebrow">Support our work</p>
+      <h2>Ways to give</h2>
     </div>
-    <aside class="proceeds-panel">
-      <h4>A 501(c)(3) tax-exempt charity</h4>
-      <p style="margin:0"><a href="donate.html">Donate online →</a></p>
-    </aside>
+    <div class="give-grid">
+      <article class="give-card">
+        <span class="give-icon" aria-hidden="true">✉</span>
+        <h3>Contribute by mail</h3>
+        <p>To contribute by mail, please send a personal check or money order made payable to the National Humane Society at:</p>
+        <div class="envelope">
+          <span class="envelope-stamp" aria-hidden="true">{PAW_ICON}</span>
+          <span class="envelope-to">Mail to</span>
+          <address>{MAIL_ADDRESS}</address>
+        </div>
+      </article>
+      <article class="give-card give-card-online">
+        <span class="give-icon" aria-hidden="true">♥</span>
+        <p class="eyebrow">A 501(c)(3) tax-exempt charity</p>
+        <h3>Donate online</h3>
+        <p>Give once or monthly in a few minutes. Donations are <span class="nowrap">tax-deductible</span>.</p>
+        <a class="btn btn-primary btn-lg btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Donate online</a>
+        <p class="give-more">Planning a gift in your will? <a href="wills-estates.html">Wills &amp; Estates →</a></p>
+      </article>
+    </div>
   </div>
 </section>
 """
@@ -1728,32 +1804,111 @@ BLOG_POST_BODY = f"""
 """
 
 # --- VIDEOS & MORE ----------------------------------------------------------
-VIDEO_EMBEDS = "\n".join(
-    f'      <div class="video-embed"><iframe src="https://player.vimeo.com/video/{vid}" title="National Humane Society video" loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div>'
-    for vid in C.VIDEO_IDS
+# The Instagram glyph (simple outline version), used on the follow buttons
+INSTAGRAM_ICON = (
+    '<svg class="ig-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+    '<rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="none" stroke="currentColor" stroke-width="2"/>'
+    '<circle cx="12" cy="12" r="4.3" fill="none" stroke="currentColor" stroke-width="2"/>'
+    '<circle cx="17.4" cy="6.6" r="1.3" fill="currentColor"/></svg>'
 )
+
+
+def instagram_button(label=None, cls=""):
+    """Follow button in Instagram's gradient with the Instagram glyph."""
+    label = label or f"Follow @{C.INSTAGRAM_HANDLE}"
+    return (f'<a class="btn btn-instagram {cls}" href="{C.SOCIAL[0][1]}" target="_blank" rel="noopener">'
+            f'{INSTAGRAM_ICON}<span>{label}</span></a>')
+
+
+def more_wall():
+    """The "And More" wall: photos and vertical Vimeo videos in a masonry
+    layout (CSS columns), in the live page's order."""
+    items = []
+    n_photo = n_video = 0
+    for kind, value in C.VIDEOS_AND_MORE:
+        if kind == "photo":
+            n_photo += 1
+            items.append(f"""      <figure class="more-item more-photo"><img src="assets/img/{value}" alt="National Humane Society on Instagram, photo {n_photo}" loading="lazy" decoding="async"></figure>""")
+        else:
+            n_video += 1
+            items.append(f"""      <figure class="more-item more-video"><div class="more-video-frame" data-embed>{embed_loader(fallback=(f"https://vimeo.com/{value}", "Taking a while? Watch on Vimeo →"))}<iframe src="https://player.vimeo.com/video/{value}?title=0&amp;byline=0&amp;portrait=0" title="National Humane Society video {n_video}" loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div></figure>""")
+    return '    <div class="more-wall">\n' + "\n".join(items) + "\n    </div>"
+
+
+# "Our Instagram": a snapshot from fetch_instagram.py when there is one
+# (instagram_feed.json), otherwise six placeholder tiles.
+def instagram_feed():
+    path = OUT_DIR / "instagram_feed.json"
+    posts = json.loads(path.read_text(encoding="utf-8"))["posts"] if path.exists() else []
+    if not posts:
+        tiles = "\n".join(f'      <div class="ig-tile" aria-hidden="true">{INSTAGRAM_ICON}</div>' for _ in range(6))
+        note = review_note("<p>The current site fills this section with the 12 latest Instagram posts. It does that from the browser using an access token written into the page, which anyone can copy, so the prototype does not reproduce it. In the WordPress build the posts are fetched on the server, with the token kept private; the tiles below only hold their place. To see real posts here, run <code>fetch_instagram.py</code> with a token (instructions at the top of that file).</p>")
+        return note, f'    <div class="ig-grid">\n{tiles}\n    </div>'
+    tiles = []
+    for p in posts:
+        caption = html.escape(" ".join(p["caption"].split())[:110] + ("…" if len(p["caption"]) > 110 else ""))
+        badge = '<span class="ig-badge">▶ Video</span>' if p["media_type"] == "VIDEO" else ""
+        tiles.append(f"""      <a class="ig-post" href="{html.escape(p['permalink'])}" target="_blank" rel="noopener" data-ig="{p['kind']}/{p['shortcode']}">
+        {embed_loader("Loading…")}
+        <img src="{p['image']}" alt="Instagram post: {caption}" loading="lazy" decoding="async">
+        {badge}
+        <span class="ig-caption">{caption}</span>
+      </a>""")
+    note = review_note("<p>A snapshot of the latest posts, taken with <code>fetch_instagram.py</code>, which does what the WordPress site will do on its server. Click a post to play it here.</p>")
+    return note, '    <div class="ig-grid ig-grid-posts">\n' + "\n".join(tiles) + "\n    </div>"
+
+
+IG_FEED_NOTE, IG_FEED_GRID = instagram_feed()
 
 VIDEOS_BODY = page_hero(
     "Videos and More",
-    "",
+    "Videos, photos and stories from our work, our shelter partners and our Instagram.",
     "Videos &amp; More",
 ) + f"""
-<section class="section">
-  <div class="container">
-    {review_note("<p>The current page shows these eight videos without titles, surrounded by leftover template filler text (“Heading 1… Lorem ipsum”). The filler is dropped here; titles for each video would help.</p>")}
-    <div class="video-grid">
-{VIDEO_EMBEDS}
+<section class="section featured-post">
+  <div class="container featured-post-grid">
+    <div>
+      <p class="eyebrow">Featured post</p>
+      <h2>Featured on Instagram</h2>
+      <p class="lead">Our latest featured Instagram collaboration. Follow along for rescue stories, sweepstakes news and animal welfare updates.</p>
+    </div>
+    <div class="featured-post-embed" data-embed data-embed-instagram>
+      {embed_loader("Loading post…", (C.INSTAGRAM_FEATURED, "Taking a while? View it on Instagram →"))}
+      <blockquote class="instagram-media" data-instgrm-permalink="{C.INSTAGRAM_FEATURED}" data-instgrm-version="14">
+        <a href="{C.INSTAGRAM_FEATURED}" target="_blank" rel="noopener">{INSTAGRAM_ICON}<span>View this post on Instagram</span></a>
+      </blockquote>
     </div>
   </div>
 </section>
 
-<section class="section section-soft">
-  <div class="container-narrow text-center">
-    <p class="eyebrow">Our Instagram</p>
-    <h2>Follow @nationalhumane.</h2>
-    <p class="lead" style="margin:0 auto var(--space-5)">Rescue stories, sweepstakes news and animal welfare updates.</p>
-    <a class="btn btn-primary" href="{C.INSTAGRAM_FEATURED}" target="_blank" rel="noopener">View our featured post →</a>
-    <a class="btn btn-secondary" href="{C.SOCIAL[0][1]}" target="_blank" rel="noopener">Follow on Instagram</a>
+<section class="section section-soft ig-feed-section">
+  <div class="container">
+    <div class="ig-profile">
+      <a class="ig-avatar" href="{C.SOCIAL[0][1]}" target="_blank" rel="noopener"><img src="assets/img/ig-profile.jpg" alt="@{C.INSTAGRAM_HANDLE} on Instagram" width="100" height="100"></a>
+      <div>
+        <p class="eyebrow">Our Instagram</p>
+        <h2>@{C.INSTAGRAM_HANDLE}</h2>
+      </div>
+      {instagram_button("Follow on Instagram", "ig-profile-btn")}
+    </div>
+    {IG_FEED_NOTE}
+{IG_FEED_GRID}
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">And more</p>
+        <h2>Photos and videos</h2>
+      </div>
+    </div>
+    {review_note("<p>The current page shows these photos and videos with no titles or captions; a short caption for each would help visitors and search engines.</p>")}
+{more_wall()}
+    <div class="text-center" style="margin-top:var(--space-7)">
+      {instagram_button("See more on Instagram")}
+    </div>
   </div>
 </section>
 """

@@ -2578,3 +2578,365 @@ body:has(.articles-section) .edu-videos { padding-bottom: var(--space-7); }
 }
 /* .btn sets display, which would otherwise override the hidden attribute */
 .btn[hidden] { display: none; }
+
+/* Page headers with a photo carried over from the current site */
+.page-hero.has-photo { padding: var(--space-7) 0; }
+.page-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: var(--space-7);
+  align-items: center;
+}
+.page-hero.has-photo .lead { max-width: 52ch; }
+.page-hero-photo {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  aspect-ratio: 3 / 2;
+  background: var(--color-navy-50);
+}
+.page-hero-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (max-width: 900px) {
+  .page-hero-grid { grid-template-columns: 1fr; gap: var(--space-5); }
+  .page-hero-photo { aspect-ratio: 16 / 9; }
+}
+
+/* ==========================================================================
+   Videos & More: featured Instagram post, Instagram section, photo and
+   video wall, Instagram follow buttons
+   ========================================================================== */
+.ig-icon { width: 1.25em; height: 1.25em; flex: 0 0 auto; }
+.btn-instagram {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(45deg, #f9ce34 0%, #ee2a7b 45%, #6228d7 100%) border-box;
+  box-shadow: 0 8px 22px rgba(238,42,123,.35);
+}
+.btn-instagram:hover { color: #fff; box-shadow: 0 12px 28px rgba(238,42,123,.45); }
+.btn-instagram .ig-icon { transition: transform .3s ease; }
+.btn-instagram:hover .ig-icon { transform: rotate(-10deg) scale(1.12); }
+/* light sweep on hover, like the ticket buttons */
+.btn-instagram::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: -60%;
+  width: 40%;
+  background: linear-gradient(100deg, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0));
+  transform: skewX(-20deg);
+  transition: left .6s ease;
+}
+.btn-instagram:hover::after { left: 130%; }
+
+.featured-post-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+  gap: var(--space-8);
+  align-items: center;
+}
+.featured-post .lead { margin-bottom: 0; }
+.featured-post-embed {
+  background: var(--color-mist);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-md);
+}
+.featured-post-embed .instagram-media { margin: 0 !important; min-width: 0 !important; width: 100% !important; border-radius: 12px !important; }
+/* Before Instagram's script runs (or if it can't), the blockquote is a link card */
+.featured-post-embed blockquote.instagram-media {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 5;
+  background: linear-gradient(45deg, #f9ce34 0%, #ee2a7b 45%, #6228d7 100%);
+  border: 0;
+}
+.featured-post-embed blockquote.instagram-media a {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-3);
+  color: #fff; font-weight: 700; text-decoration: none;
+}
+.featured-post-embed blockquote.instagram-media .ig-icon { width: 64px; height: 64px; }
+
+.ig-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+.ig-profile h2 { margin: 0; }
+.ig-profile .eyebrow { margin-bottom: var(--space-1); }
+/* @nationalhumane's profile picture in Instagram's gradient story ring */
+.ig-avatar {
+  flex: 0 0 auto;
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(45deg, #f9ce34 0%, #ee2a7b 45%, #6228d7 100%);
+  transition: transform .2s ease;
+}
+.ig-avatar:hover { transform: scale(1.05); }
+.ig-avatar img { width: 100%; height: 100%; display: block; border-radius: 50%; border: 3px solid var(--color-mist); object-fit: cover; }
+.ig-profile-btn { margin-left: auto; }
+.ig-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-3); }
+.ig-tile {
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  display: grid;
+  place-items: center;
+  color: rgba(255,255,255,.85);
+  background: linear-gradient(45deg, rgba(249,206,52,.85) 0%, rgba(238,42,123,.85) 45%, rgba(98,40,215,.85) 100%);
+}
+.ig-tile .ig-icon { width: 34px; height: 34px; }
+.ig-tile:nth-child(even) { opacity: .75; }
+
+.more-wall { columns: 3 280px; column-gap: var(--space-5); }
+.more-item {
+  break-inside: avoid;
+  margin: 0 0 var(--space-5);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-navy);
+  box-shadow: var(--shadow-md);
+}
+.more-photo img { width: 100%; height: auto; display: block; transition: transform .5s ease; }
+.more-photo:hover img { transform: scale(1.03); }
+.more-video-frame { position: relative; aspect-ratio: 9 / 16; }
+.more-video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+@media (max-width: 900px) {
+  .featured-post-grid { grid-template-columns: 1fr; gap: var(--space-6); }
+  .featured-post-embed { max-width: 440px; }
+  .ig-grid { grid-template-columns: repeat(3, 1fr); }
+  .ig-profile { flex-wrap: wrap; }
+  .ig-profile-btn { margin-left: 0; }
+}
+@media (max-width: 600px) {
+  .more-wall { columns: 1; }
+  .ig-avatar { width: 66px; height: 66px; }
+}
+
+/* ==========================================================================
+   Loading state for videos and posts: three paw prints bouncing in turn
+   ========================================================================== */
+.embed-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  text-align: center;
+  color: rgba(255,255,255,.85);
+  pointer-events: none;
+  transition: opacity .4s ease;
+}
+.embed-loader-paws { display: flex; gap: 10px; }
+.embed-loader .paw-icon { width: 26px; height: 26px; animation: paw-hop 1.2s ease-in-out infinite; }
+.embed-loader .paw-icon:nth-child(1) { fill: var(--color-coral); }
+.embed-loader .paw-icon:nth-child(2) { fill: var(--color-yellow); animation-delay: .15s; }
+.embed-loader .paw-icon:nth-child(3) { fill: var(--color-teal); animation-delay: .3s; }
+.embed-loader-text {
+  font-family: var(--font-eyebrow);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  animation: loader-pulse 1.6s ease-in-out infinite;
+}
+.embed-loader-fallback { display: none; font-weight: 700; color: var(--color-yellow); pointer-events: auto; }
+@keyframes paw-hop {
+  0%, 60%, 100% { transform: translateY(0) rotate(0deg); opacity: .55; }
+  30% { transform: translateY(-10px) rotate(-12deg); opacity: 1; }
+}
+@keyframes loader-pulse { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+
+/* Embeds sit above the loader; it fades once they report loaded */
+[data-embed] { position: relative; }
+[data-embed] > iframe, [data-embed] > .instagram-media { position: relative; z-index: 1; }
+.more-video-frame > iframe { position: absolute; }
+.is-loaded > .embed-loader { opacity: 0; visibility: hidden; transition: opacity .4s ease, visibility 0s .4s; }
+.is-slow > .embed-loader .embed-loader-fallback { display: block; }
+.is-slow > .embed-loader .embed-loader-text { animation: none; }
+
+/* Carousel cards: the loader sits behind the thumbnail, which covers it;
+   the play button and title wait until the thumbnail has loaded */
+a.short-card:not(.thumb-ready) .short-play,
+a.short-card:not(.thumb-ready) .short-title,
+a.short-card:not(.thumb-ready)::after { opacity: 0; }
+.short-play, .short-title, a.short-card::after { transition: opacity .3s ease; }
+.short-card .embed-loader { z-index: 0; }
+.short-card img { z-index: 1; }
+.short-card.is-playing .embed-loader { z-index: 0; }
+.short-card.is-playing iframe { z-index: 1; }
+
+/* Featured post: hide Instagram's placeholder card while loading; light theme */
+.featured-post-embed .embed-loader { color: var(--color-navy); }
+.featured-post-embed .embed-loader .paw-icon:nth-child(2) { fill: var(--color-navy); }
+.featured-post-embed .embed-loader-fallback { color: var(--color-coral-dark); }
+.featured-post-embed:not(.is-slow) blockquote.instagram-media { visibility: hidden; }
+.featured-post-embed { min-height: 520px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .embed-loader .paw-icon, .embed-loader-text { animation: none; opacity: 1; }
+}
+
+/* Instagram snapshot posts and the pop-up player */
+.ig-grid-posts { grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+.ig-post {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--color-navy);
+  color: #fff;
+}
+.ig-post img { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+.ig-post:hover img { transform: scale(1.06); }
+.ig-badge {
+  position: absolute; top: 8px; right: 8px; z-index: 2;
+  background: rgba(0,0,0,.6); color: #fff;
+  font-size: .72rem; font-weight: 700;
+  padding: 3px 8px; border-radius: var(--radius-pill);
+}
+.ig-caption {
+  position: absolute; inset: auto 0 0 0; z-index: 2;
+  padding: var(--space-5) var(--space-3) var(--space-3);
+  font-size: .78rem; line-height: 1.35;
+  background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.75));
+  opacity: 0; transition: opacity .2s ease;
+}
+.ig-post:hover .ig-caption, .ig-post:focus-visible .ig-caption { opacity: 1; }
+.ig-post .embed-loader-text { display: none; }
+.ig-modal {
+  position: fixed; inset: 0; z-index: 300;
+  display: grid; place-items: center;
+  padding: var(--space-5);
+  background: rgba(24,23,51,.82);
+}
+.ig-modal[hidden] { display: none; }
+.ig-modal-box { position: relative; width: min(440px, 100%); }
+.ig-modal-frame {
+  position: relative;
+  height: min(720px, calc(100vh - 120px));
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #fff;
+}
+.ig-modal-frame iframe { position: relative; z-index: 1; width: 100%; height: 100%; border: 0; }
+.ig-modal-frame .embed-loader { color: var(--color-navy); }
+.ig-modal-frame .embed-loader .paw-icon:nth-child(2) { fill: var(--color-navy); }
+.ig-modal-close {
+  position: absolute; top: -14px; right: -14px; z-index: 2;
+  width: 40px; height: 40px; border-radius: 50%; border: 0;
+  background: #fff; color: var(--color-navy);
+  font-size: 1.6rem; line-height: 1;
+  box-shadow: var(--shadow-md);
+}
+@media (max-width: 900px) { .ig-grid-posts { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); } }
+@media (max-width: 600px) { .ig-modal-close { top: 6px; right: 6px; } }
+
+/* About: "Ways to give" cards */
+.give-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+.give-card {
+  position: relative;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: var(--space-7) var(--space-6) var(--space-6);
+  box-shadow: var(--shadow-md);
+}
+.give-card h3 { font-size: 1.6rem; margin-bottom: var(--space-3); }
+.give-icon {
+  position: absolute;
+  top: calc(-1 * var(--space-5)); left: var(--space-6);
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 1.5rem; line-height: 1;
+  background: var(--color-coral); color: #fff;
+  box-shadow: 0 8px 18px rgba(250,88,83,.35);
+}
+/* The mailing address as an airmail envelope: striped coral/navy edge,
+   a paw-print stamp in the corner */
+.envelope {
+  position: relative;
+  margin-top: var(--space-4);
+  padding: 8px;
+  border-radius: var(--radius);
+  background: repeating-linear-gradient(135deg,
+    var(--color-coral) 0 14px, #fff 14px 22px, var(--color-navy) 22px 36px, #fff 36px 44px);
+  box-shadow: 0 10px 24px rgba(24,23,51,.12);
+  transform: rotate(-1deg) translateZ(0);
+  transition: transform .25s ease;
+  /* keep the envelope on its own layer at all times, so the text isn't
+     redrawn (and doesn't appear to shift or thicken) when the hover ends */
+  will-change: transform;
+  backface-visibility: hidden;
+}
+.envelope:hover { transform: rotate(0deg) translateY(-2px) translateZ(0); }
+.envelope::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 4px;
+  background: #fff;
+}
+.envelope > * { position: relative; }
+.envelope-to {
+  display: block;
+  padding: var(--space-5) var(--space-5) 0;
+  font-family: var(--font-eyebrow);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--color-coral-dark);
+}
+.envelope address {
+  padding: var(--space-2) 96px var(--space-5) var(--space-5);
+  font-style: normal;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  line-height: 1.45;
+  color: var(--color-navy);
+}
+.envelope-stamp {
+  position: absolute;
+  top: 20px; right: 20px;
+  width: 54px; height: 62px;
+  display: grid; place-items: center;
+  background: var(--color-yellow);
+  border-radius: 3px;
+  /* a dashed inner border reads as the stamp's frame */
+  outline: 2px dashed var(--color-navy);
+  outline-offset: -6px;
+  transform: rotate(4deg);
+  box-shadow: 0 2px 6px rgba(24,23,51,.18);
+}
+.envelope-stamp .paw-icon { width: 26px; height: 26px; fill: var(--color-navy); }
+@media (max-width: 600px) {
+  .envelope-stamp { top: 18px; right: 18px; width: 42px; height: 48px; }
+  .envelope-stamp .paw-icon { width: 20px; height: 20px; }
+  .envelope address { padding-right: var(--space-5); font-size: 1.05rem; }
+  .envelope-to { padding-right: 72px; }
+  .envelope address { margin-top: var(--space-3); }
+}
+.give-card-online { background: var(--color-navy); color: rgba(255,255,255,.85); display: flex; flex-direction: column; align-items: flex-start; }
+.give-card-online h3 { color: #fff; }
+.give-card-online .eyebrow { color: var(--color-yellow); }
+.give-card-online .give-icon { background: var(--color-yellow); color: var(--color-navy); box-shadow: 0 8px 18px rgba(251,255,0,.3); }
+.give-card-online .btn { margin-top: var(--space-2); }
+/* Sits at the bottom of the card, whatever its height */
+.give-more {
+  align-self: stretch;
+  margin: auto 0 0;
+  padding-top: var(--space-5);
+  border-top: 1px solid rgba(255,255,255,.15);
+  font-size: .95rem;
+}
+.give-card-online .btn { margin-bottom: var(--space-6); }
+.give-more a { color: var(--color-yellow); font-weight: 700; white-space: nowrap; margin-left: var(--space-2); }
+.nowrap { white-space: nowrap; }
+@media (max-width: 900px) { .give-grid { grid-template-columns: 1fr; gap: var(--space-8); } }

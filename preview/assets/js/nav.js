@@ -98,6 +98,37 @@
     });
   });
 
+  // Loading states for embedded videos and posts: the paw loader fades out
+  // when the iframe has loaded; after 10 s without that, it offers a link.
+  // Instagram's script swaps its blockquote for an iframe later, so watch for it.
+  function watchEmbed(box) {
+    const done = () => { box.classList.add('is-loaded'); box.classList.remove('is-slow'); };
+    const hook = (frame) => {
+      frame.addEventListener('load', done, { once: true });
+    };
+    const frame = box.querySelector('iframe');
+    if (frame) hook(frame);
+    else {
+      const mo = new MutationObserver(() => {
+        const f = box.querySelector('iframe');
+        if (f) { mo.disconnect(); hook(f); }
+      });
+      mo.observe(box, { childList: true, subtree: true });
+    }
+    // Start the 10 s clock only once the embed is on screen: lazy iframes
+    // further down the page don't begin loading until they're scrolled to.
+    const startClock = () => setTimeout(() => {
+      if (!box.classList.contains('is-loaded')) box.classList.add('is-slow');
+    }, 10000);
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) { io.disconnect(); startClock(); }
+      });
+      io.observe(box);
+    } else startClock();
+  }
+  document.querySelectorAll('[data-embed]').forEach(watchEmbed);
+
   // Educational video carousel: arrows page through the cards, and a card
   // plays its video in place (one at a time) instead of opening YouTube.
   document.querySelectorAll('[data-carousel]').forEach((carousel) => {
@@ -119,6 +150,14 @@
     window.addEventListener('resize', updateArrows);
     updateArrows();
 
+    // Thumbnails: show the play button and title once the image is in
+    track.querySelectorAll('a.short-card').forEach((card) => {
+      const img = card.querySelector('img');
+      const ready = () => card.classList.add('thumb-ready');
+      if (!img || (img.complete && img.naturalWidth)) ready();
+      else { img.addEventListener('load', ready, { once: true }); img.addEventListener('error', ready, { once: true }); }
+    });
+
     let playing = null; // { player, card }: the card goes back when another video starts
     track.querySelectorAll('a.short-card').forEach((card) => {
       card.addEventListener('click', (e) => {
@@ -133,8 +172,11 @@
         iframe.allowFullscreen = true;
         // YouTube refuses to play embeds that arrive without a referrer (error 153).
         iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+        const loader = card.querySelector('.embed-loader');
+        if (loader) player.appendChild(loader.cloneNode(true));
         player.appendChild(iframe);
         card.replaceWith(player);
+        watchEmbed(player);
         playing = { player, card };
       });
     });
@@ -257,6 +299,47 @@
     });
     render();
   });
+
+  // Instagram posts (Videos & More): open Instagram's own embed in a pop-up,
+  // so videos play without leaving the page. Esc, the close button or a click
+  // outside closes it.
+  const igPosts = document.querySelectorAll('a.ig-post[data-ig]');
+  if (igPosts.length) {
+    const modal = document.createElement('div');
+    modal.className = 'ig-modal';
+    modal.hidden = true;
+    modal.innerHTML = '<div class="ig-modal-box" role="dialog" aria-modal="true" aria-label="Instagram post">' +
+      '<button type="button" class="ig-modal-close" aria-label="Close">×</button><div class="ig-modal-frame" data-embed></div></div>';
+    document.body.appendChild(modal);
+    const frameBox = modal.querySelector('.ig-modal-frame');
+    let lastFocus = null;
+    const close = () => {
+      modal.hidden = true;
+      frameBox.innerHTML = '';
+      frameBox.classList.remove('is-loaded', 'is-slow');
+      document.documentElement.classList.remove('menu-open');
+      if (lastFocus) lastFocus.focus();
+    };
+    igPosts.forEach((post) => post.addEventListener('click', (e) => {
+      e.preventDefault();
+      lastFocus = post;
+      const loader = post.querySelector('.embed-loader');
+      frameBox.innerHTML = '';
+      if (loader) frameBox.appendChild(loader.cloneNode(true));
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.instagram.com/${post.dataset.ig}/embed/captioned/`;
+      iframe.title = 'Instagram post';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      iframe.allowFullscreen = true;
+      frameBox.appendChild(iframe);
+      watchEmbed(frameBox);
+      modal.hidden = false;
+      document.documentElement.classList.add('menu-open');
+      modal.querySelector('.ig-modal-close').focus();
+    }));
+    modal.addEventListener('click', (e) => { if (e.target === modal || e.target.closest('.ig-modal-close')) close(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) close(); });
+  }
 
   // Prize pages: switch the ticket bundles between Sweepstakes and Raffle Plus
   document.querySelectorAll('[data-tier-switch]').forEach((box) => {
