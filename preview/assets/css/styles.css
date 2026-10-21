@@ -2635,7 +2635,7 @@ body:has(.articles-section) .edu-videos { padding-bottom: var(--space-7); }
   gap: var(--space-8);
   align-items: center;
 }
-.featured-post .lead { margin-bottom: var(--space-5); }
+.featured-post .lead { margin-bottom: 0; }
 .featured-post-embed {
   background: var(--color-mist);
   border-radius: var(--radius-lg);
@@ -2784,7 +2784,7 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
 }
 
 /* Instagram snapshot posts and the pop-up player */
-.ig-grid-posts { grid-template-columns: repeat(6, 1fr); }
+.ig-grid-posts { grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
 .ig-post {
   position: relative;
   aspect-ratio: 1;
@@ -2835,5 +2835,5 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
   font-size: 1.6rem; line-height: 1;
   box-shadow: var(--shadow-md);
 }
-@media (max-width: 900px) { .ig-grid-posts { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 900px) { .ig-grid-posts { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); } }
 @media (max-width: 600px) { .ig-modal-close { top: 6px; right: 6px; } }

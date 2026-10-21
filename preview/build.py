@@ -1856,7 +1856,6 @@ VIDEOS_BODY = page_hero(
       <p class="eyebrow">Featured post</p>
       <h2>Featured on Instagram</h2>
       <p class="lead">Our latest featured Instagram collaboration. Follow along for rescue stories, sweepstakes news and animal welfare updates.</p>
-      {instagram_button()}
     </div>
     <div class="featured-post-embed" data-embed data-embed-instagram>
       {embed_loader("Loading post…", (C.INSTAGRAM_FEATURED, "Taking a while? View it on Instagram →"))}
