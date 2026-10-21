@@ -38,6 +38,21 @@ def fail(message, token=""):
     sys.exit("fetch_instagram: " + message)
 
 
+def shrink(path, width=640):
+    """Instagram serves full-resolution images (~750 KB each); the tiles show
+    them under 300px wide. Resize to 640px if Pillow is installed
+    (pip install pillow); otherwise keep the original."""
+    try:
+        from PIL import Image
+    except ImportError:
+        return
+    with Image.open(path) as im:
+        if im.width <= width:
+            return
+        im = im.convert("RGB").resize((width, round(im.height * width / im.width)), Image.LANCZOS)
+        im.save(path, "JPEG", quality=80, optimize=True)
+
+
 def main():
     token = os.environ.get("NHS_IG_TOKEN", "").strip()
     if not token:
@@ -87,6 +102,7 @@ def main():
         req = urllib.request.Request(post.pop("image_url"), headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req, timeout=30) as resp:
             (IMG_DIR / name).write_bytes(resp.read())
+        shrink(IMG_DIR / name)
         post["image"] = f"assets/img/ig/{name}"
     for old in IMG_DIR.glob("*.jpg"):
         if old.name not in keep:
