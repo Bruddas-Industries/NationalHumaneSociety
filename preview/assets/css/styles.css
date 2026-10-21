@@ -2858,17 +2858,66 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
   background: var(--color-coral); color: #fff;
   box-shadow: 0 8px 18px rgba(250,88,83,.35);
 }
-.mail-label {
-  display: inline-block;
-  margin-top: var(--space-2);
-  padding: var(--space-4) var(--space-5);
-  border: 2px dashed var(--color-border);
+/* The mailing address as an airmail envelope: striped coral/navy edge,
+   a paw-print stamp in the corner */
+.envelope {
+  position: relative;
+  margin-top: var(--space-4);
+  padding: 8px;
   border-radius: var(--radius);
-  background: var(--color-mist);
-  font-style: normal;
+  background: repeating-linear-gradient(135deg,
+    var(--color-coral) 0 14px, #fff 14px 22px, var(--color-navy) 22px 36px, #fff 36px 44px);
+  box-shadow: 0 10px 24px rgba(24,23,51,.12);
+  transform: rotate(-1deg);
+  transition: transform .25s ease;
+}
+.envelope:hover { transform: rotate(0deg) translateY(-2px); }
+.envelope::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 4px;
+  background: #fff;
+}
+.envelope > * { position: relative; }
+.envelope-to {
+  display: block;
+  padding: var(--space-5) var(--space-5) 0;
+  font-family: var(--font-eyebrow);
+  font-size: .7rem;
   font-weight: 700;
-  line-height: 1.6;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--color-coral-dark);
+}
+.envelope address {
+  padding: var(--space-2) 96px var(--space-5) var(--space-5);
+  font-style: normal;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  line-height: 1.45;
   color: var(--color-navy);
+}
+.envelope-stamp {
+  position: absolute;
+  top: 20px; right: 20px;
+  width: 54px; height: 62px;
+  display: grid; place-items: center;
+  background: var(--color-yellow);
+  border-radius: 3px;
+  /* a dashed inner border reads as the stamp's frame */
+  outline: 2px dashed var(--color-navy);
+  outline-offset: -6px;
+  transform: rotate(4deg);
+  box-shadow: 0 2px 6px rgba(24,23,51,.18);
+}
+.envelope-stamp .paw-icon { width: 26px; height: 26px; fill: var(--color-navy); }
+@media (max-width: 600px) {
+  .envelope-stamp { top: 18px; right: 18px; width: 42px; height: 48px; }
+  .envelope-stamp .paw-icon { width: 20px; height: 20px; }
+  .envelope address { padding-right: var(--space-5); font-size: 1.05rem; }
+  .envelope-to { padding-right: 72px; }
+  .envelope address { margin-top: var(--space-3); }
 }
 .give-card-online { background: var(--color-navy); color: rgba(255,255,255,.85); }
 .give-card-online h3 { color: #fff; }
@@ -2876,6 +2925,6 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
 .give-card-online .give-icon { background: var(--color-yellow); color: var(--color-navy); box-shadow: 0 8px 18px rgba(251,255,0,.3); }
 .give-card-online .btn { margin-top: var(--space-2); }
 .give-more { margin: var(--space-5) 0 0; font-size: .95rem; }
-.give-more a { color: var(--color-yellow); font-weight: 700; white-space: nowrap; }
+.give-more a { color: var(--color-yellow); font-weight: 700; white-space: nowrap; margin-left: var(--space-2); }
 .nowrap { white-space: nowrap; }
 @media (max-width: 900px) { .give-grid { grid-template-columns: 1fr; gap: var(--space-8); } }
