@@ -488,21 +488,109 @@ HURRICANE_MUST_HAVES = [
 ]
 
 # ---------------------------------------------------------------------------
-# Educational Messages (/blog) — the twelve most recent titles and live slugs
+# Educational Messages (/blog) — every post on the live site (81 on
+# 2026-10-20), newest first, with the live slug and a category. The categories
+# were assigned for the prototype from each title (one per post) and drive the
+# card headers and the filters; adjust them freely. They become WordPress post
+# categories when the posts are migrated.
+# Note: the live site has "Meatless Mondays Matter" twice, as two posts.
 # ---------------------------------------------------------------------------
+# (title, live slug, category)
 BLOG_POSTS = [
-    ("Adopt, Don't Shop: A Heartfelt Plea for the Millions of Homeless Animals", "adopt-dont-shop-a-heartfelt-plea-for-the-millions-of-homeless-animals"),
-    ("How to Keep Your Pets Safe During the Summer Months", "how-to-keep-your-pets-safe-during-the-summer-months"),
-    ("Before &amp; After: Heartwarming Shelter Animal Transformation Stories – Real Rescues That Prove Hope Wins in 2026", "before-after-heartwarming-shelter-animal-transformation-stories---real-rescues-that-prove-hope-wins-in-2026"),
-    ("How to Spot Animal Abuse &amp; Report It Safely – A Guide to Protecting Animals Nationwide in 2026", "how-to-spot-animal-abuse-report-it-safely---a-guide-to-protecting-animals-nationwide-in-2026"),
-    ("Volunteer Heroes: Real Stories from the Front Lines of National Animal Rescue – Why Your Time Matters in 2026", "volunteer-heroes-real-stories-from-the-front-lines-of-national-animal-rescue---why-your-time-matters-in-2026"),
-    ("Spay &amp; Neuter: The Simple Surgery Stopping Shelter Overcrowding Nationwide – Why It Matters in 2026", "spay-neuter-the-simple-surgery-stopping-shelter-overcrowding-nationwide---why-it-matters-in-2026"),
-    ("Fostering 101: How You Can Save a Shelter Animal Without Permanent Adoption - A Complete Guide for 2026", "fostering-101-how-you-can-save-a-shelter-animal-without-permanent-adoption---a-complete-guide-for-2026"),
-    ("7 Common Myths About Shelter Animals Debunked - Facts to Help You Adopt Confidently in 2026", "7-common-myths-about-shelter-animals-debunked---facts-to-help-you-adopt-confidently-in-2026"),
-    ("How Your $10 Monthly Donation Really Helps Shelter Animals", "how-your-10-monthly-donation-really-helps-shelter-animals"),
-    ("Why Adopting a Shelter Animal Saves More Lives Than You Think", "why-adopting-a-shelter-animal-saves-more-lives-than-you-think"),
-    ("Animal Shelters vs. Rescue Organizations: What’s the Difference?", "animal-shelters-vs-rescue-organizations-whats-the-difference"),
-    ("How to Find the Best Animal Shelter Near You", "how-to-find-the-best-animal-shelter-near-you"),
+    ("How to Support Shelter Pets with Time, Space, and Money", "how-to-support-shelter-pets-with-time-space-and-money", "Giving"),
+    ("Adopt, Don't Shop: A Heartfelt Plea for the Millions of Homeless Animals", "adopt-dont-shop-a-heartfelt-plea-for-the-millions-of-homeless-animals", "Adoption"),
+    ("Senior Shelter Pets Deserve Golden Years Too - Why Adopting an Older Dog or Cat Is Incredibly Rewarding in 2026", "senior-shelter-pets-deserve-golden-years-too---why-adopting-an-older-dog-or-cat-is-incredibly-rewarding-in-2026", "Senior Pets"),
+    ("Before & After: Heartwarming Shelter Animal Transformation Stories – Real Rescues That Prove Hope Wins in 2026", "before-after-heartwarming-shelter-animal-transformation-stories---real-rescues-that-prove-hope-wins-in-2026", "Adoption"),
+    ("How to Spot Animal Abuse & Report It Safely – A Guide to Protecting Animals Nationwide in 2026", "how-to-spot-animal-abuse-report-it-safely---a-guide-to-protecting-animals-nationwide-in-2026", "Animal Welfare"),
+    ("Volunteer Heroes: Real Stories from the Front Lines of National Animal Rescue – Why Your Time Matters in 2026", "volunteer-heroes-real-stories-from-the-front-lines-of-national-animal-rescue---why-your-time-matters-in-2026", "Fostering & Volunteering"),
+    ("Spay & Neuter: The Simple Surgery Stopping Shelter Overcrowding Nationwide – Why It Matters in 2026", "spay-neuter-the-simple-surgery-stopping-shelter-overcrowding-nationwide---why-it-matters-in-2026", "Spay & Neuter"),
+    ("Fostering 101: How You Can Save a Shelter Animal Without Permanent Adoption - A Complete Guide for 2026", "fostering-101-how-you-can-save-a-shelter-animal-without-permanent-adoption---a-complete-guide-for-2026", "Fostering & Volunteering"),
+    ("7 Common Myths About Shelter Animals Debunked - Facts to Help You Adopt Confidently in 2026", "7-common-myths-about-shelter-animals-debunked---facts-to-help-you-adopt-confidently-in-2026", "Adoption"),
+    ("How Your $10 Monthly Donation Really Helps Shelter Animals", "how-your-10-monthly-donation-really-helps-shelter-animals", "Giving"),
+    ("Why Adopting a Shelter Animal Saves More Lives Than You Think", "why-adopting-a-shelter-animal-saves-more-lives-than-you-think", "Adoption"),
+    ("Animal Shelters vs. Rescue Organizations: What’s the Difference?", "animal-shelters-vs-rescue-organizations-whats-the-difference", "Adoption"),
+    ("How to Find the Best Animal Shelter Near You", "how-to-find-the-best-animal-shelter-near-you", "Adoption"),
+    ("How to Volunteer at a Local Animal Shelter", "how-to-volunteer-at-a-local-animal-shelter", "Fostering & Volunteering"),
+    ("Pet Training 101: Essential Tips for a Well-Behaved Companion", "pet-training-101-essential-tips-for-a-well-behaved-companion", "Pet Care"),
+    ("Pet Influencers: Animals Who Inspire and Make a Difference", "pet-influencers-animals-who-inspire-and-make-a-difference", "Pet Care"),
+    ("Fostering Pets: How You Can Make a Difference", "fostering-pets-how-you-can-make-a-difference", "Fostering & Volunteering"),
+    ("The Healing Power of Pets: How Animals Improve Mental Health", "the-healing-power-of-pets-how-animals-improve-mental-health", "Pet Care"),
+    ("Matching Pet Names for Pairs: The Perfect Duo Names for Your Furry Friends", "matching-pet-names-for-pairs-the-perfect-duo-names-for-your-furry-friends", "Pet Care"),
+    ("Unmasking Pet Myths: Separating Fact from Fiction", "unmasking-pet-myths-separating-fact-from-fiction", "Adoption"),
+    ("Celebrity Pets & Their Unique Names: What Your Favorite Stars Call Their Furry Friends", "celebrity-pets-their-unique-names-what-your-favorite-stars-call-their-furry-friends", "Pet Care"),
+    ("Understanding Pet Body Language: What Your Pet is Trying to Tell You", "understanding-pet-body-language-what-your-pet-is-trying-to-tell-you", "Pet Care"),
+    ("The Coolest Cat Names: 100+ Unique, Classic, and Quirky Ideas", "the-coolest-cat-names-100-unique-classic-and-quirky-ideas", "Pet Care"),
+    ("The Truth About Puppy Mills: Why Adoption is Always Better", "the-truth-about-puppy-mills-why-adoption-is-always-better", "Animal Welfare"),
+    ("A Win-Win Opportunity: Drive Home a Dream Car While Helping Pets", "a-win-win-opportunity-drive-home-a-dream-car-while-helping-pets", "Giving"),
+    ("Top 100 Coolest Dog Names: Unique, Trendy, and Classic Picks", "top-100-coolest-dog-names-unique-trendy-and-classic-picks", "Pet Care"),
+    ("Understanding Pet Insurance: Is It Worth It?", "understanding-pet-insurance-is-it-worth-it", "Pet Care"),
+    ("Drive Your Dream Car While Helping Animals in Need", "drive-your-dream-car-while-helping-animals-in-need", "Giving"),
+    ("Showing Your Pets Some Love This Valentine’s Day", "showing-your-pets-some-love-this-valentines-day", "Pet Care"),
+    ("Honoring Peanut: A Squirrel’s Legacy and the Fight for Compassionate Wildlife Care", "honoring-peanut-a-squirrels-legacy-and-the-fight-for-compassionate-wildlife-care", "Animal Welfare"),
+    ("Building a Kinder World: How the National Humane Society Protects Animals in Need", "building-a-kinder-world-how-the-national-humane-society-protects-animals-in-need", "Giving"),
+    ("New Year’s Resolutions for You and Your Pet", "new-years-resolutions-for-you-and-your-pet", "Pet Care"),
+    ("Keeping Your Pets Safe During the Holiday Season", "keeping-your-pets-safe-during-the-holiday-season", "Pet Care"),
+    ("The Importance of Spaying and Neutering Your Pets", "the-importance-of-spaying-and-neutering-your-pets", "Spay & Neuter"),
+    ("The Benefits of Adopting Senior Pets", "the-benefits-of-adopting-senior-pets", "Senior Pets"),
+    ("How to Prepare Your Home for a Rescue Pet", "how-to-prepare-your-home-for-a-rescue-pet", "Adoption"),
+    ("Animal Cruelty: The Silent Crisis We Can No Longer Ignore", "animal-cruelty-the-silent-crisis-we-can-no-longer-ignore", "Animal Welfare"),
+    ("How To Spot Animal Abuse", "how-to-spot-animal-abuse", "Animal Welfare"),
+    ("Take A Stand Against Animal Cruelty", "take-a-stand-against-animal-cruelty", "Animal Welfare"),
+    ("Things to Know Before You Start Volunteering With Dogs", "things-to-know-before-you-start-volunteering-with-dogs", "Fostering & Volunteering"),
+    ("Pricing Equality: The Case for Ending Upcharges on Vegan Alternatives", "pricing-equality-the-case-for-ending-upcharges-on-vegan-alternatives", "Plant-Based Living"),
+    ("How We Transform Lives", "how-we-transform-lives", "Giving"),
+    ("Healing Paws: Navigating the Timeline for Adopting a New Pet After Loss", "healing-paws-navigating-the-timeline-for-adopting-a-new-pet-after-loss", "Adoption"),
+    ("Adopt, Don't Shop: Choosing Compassion Over Convenience", "adopt-dont-shop-choosing-compassion-over-convenience", "Adoption"),
+    ("Freedom Beyond Glass Walls: Why Ocean Animals Should Thrive in the Wild", "freedom-beyond-glass-walls-why-ocean-animals-should-thrive-in-the-wild", "Animal Welfare"),
+    ("The Dangers of Exotic Pets: Why It's Best to Leave Them in the Wild", "the-dangers-of-exotic-pets-why-its-best-to-leave-them-in-the-wild", "Animal Welfare"),
+    ("Why Horse-Drawn Carriages Belong in the Past", "why-horse-drawn-carriages-belong-in-the-past", "Animal Welfare"),
+    ("Behind the Curtain: Examining the Reality of Animals in the Circus", "behind-the-curtain-examining-the-reality-of-animals-in-the-circus", "Animal Welfare"),
+    ("Unveiling the Down Feather Industry: Ethical Concerns and Compassionate Alternatives", "unveiling-the-down-feather-industry-ethical-concerns-and-compassionate-alternatives", "Animal Welfare"),
+    ("Compassion and Fashion: Why We Shouldn't Use Animals for Clothing", "compassion-and-fashion-why-we-shouldnt-use-animals-for-clothing", "Animal Welfare"),
+    ("Making a Difference: How to Help Shelter Pets Find Their Forever Homes", "making-a-difference-how-to-help-shelter-pets-find-their-forever-homes", "Adoption"),
+    ("Keeping Your Pets Cool in Summer: Essential Tips for a Happy and Healthy Companion", "keeping-your-pets-cool-in-summer-essential-tips-for-a-happy-and-healthy-companion", "Pet Care"),
+    ("May Meatless Mondays Week 5: Create a Routine", "may-meatless-mondays-week-5-create-a-routine", "Plant-Based Living"),
+    ("Senior Pet Saturdays: A Heartwarming Final Act", "senior-pet-saturdays-a-heartwarming-final-act", "Senior Pets"),
+    ("May Meatless Monday Week 4: Helping the Environment", "may-meatless-monday-week-4-helping-the-environment", "Plant-Based Living"),
+    ("Senior Pet Saturdays: Senior Pets for Seniors", "senior-pet-saturdays-senior-pets-for-seniors", "Senior Pets"),
+    ("May Meatless Mondays Week 3: How to Make Meatless Monday a Success", "may-meatless-mondays-week-3-how-to-make-meatless-monday-a-success", "Plant-Based Living"),
+    ("Senior Pet Saturdays: What You Need to Know", "senior-pet-saturdays-what-you-need-to-know", "Senior Pets"),
+    ("May Meatless Mondays Week 2: But What Will I Eat?", "may-meatless-mondays-week-2-but-what-will-i-eat", "Plant-Based Living"),
+    ("Senior Pet Saturdays: Be a Life-Changer", "senior-pet-saturdays-be-a-life-changer", "Senior Pets"),
+    ("Using Animals for Human Gain", "using-animals-for-human-gain", "Animal Welfare"),
+    ("May Meatless Mondays Week 1: An Introduction", "may-meatless-mondays-week-1-an-introduction", "Plant-Based Living"),
+    ("Senior Pet Saturday: Older Pets Need You", "senior-pet-saturday-older-pets-need-you", "Senior Pets"),
+    ("The Endangered Species List Continues to Grow", "the-endangered-species-list-continues-to-grow", "Animal Welfare"),
+    ("Why You Should Join the Vegan Clothing Movement", "why-you-should-join-the-vegan-clothing-movement", "Plant-Based Living"),
+    ("Puppy Protection Act", "puppy-protection-act", "Animal Welfare"),
+    ("Cruelty-Free Makeup - The Way of the Future", "cruelty-free-makeup-the-way-of-the-future", "Plant-Based Living"),
+    ("Overcrowding Kills", "overcrowding-kills", "Spay & Neuter"),
+    ("How to Help the Helpless Animals", "how-to-help-the-helpless-animals", "Animal Welfare"),
+    ("Senior Pet Saturday: Even More Love to Give", "senior-pet-saturday-even-more-love-to-give", "Senior Pets"),
+    ("Mississippi Tornadoes: The Aftermath for Animal Shelters", "mississippi-tornadoes-the-aftermath-for-animal-shelters", "Animal Welfare"),
+    ("Wildlife Sanctuary in Your Backyard for Spring", "wildlife-sanctuary-in-your-backyard-for-spring", "Animal Welfare"),
+    ("Pot & Pets: is it safe?", "pot-pets-is-it-safe", "Pet Care"),
+    ("Meatless Mondays Matter", "meatless-mondays-matter-2", "Plant-Based Living"),
+    ("Meatless Mondays Matter", "meatless-mondays-matter", "Plant-Based Living"),
+    ("Senior Pet Saturday: Why a Senior Pet May Be Right For You", "senior-pet-saturday-why-a-senior-pet-may-be-right-for-you", "Senior Pets"),
+    ("Animals Deserve a More Humane World: You Can Help", "animals-deserve-a-more-humane-world-you-can-help", "Animal Welfare"),
+    ("Second Winter is Here. Protect Your Pet's Paws", "second-winter-is-here-protect-your-pets-paws", "Pet Care"),
+    ("How to Help the Animals in Turkey", "how-to-help-the-animals-in-turkey", "Animal Welfare"),
+    ("The Importance of Spay and Neuter", "the-importance-of-spay-and-neuter", "Spay & Neuter"),
+    ("Pet Adoption: A Journey of Love and Responsibility", "pet-adoption-a-journey-of-love-and-responsibility", "Adoption"),
+]
+# Category order on the filter bar, and each one's card colour. Eight
+# categories, five brand colours: the "-deep" variants are darker shades so no
+# two categories look the same.
+BLOG_CATEGORIES = [
+    ("Adoption", "coral"),
+    ("Senior Pets", "orange"),
+    ("Fostering & Volunteering", "blue"),
+    ("Spay & Neuter", "teal"),
+    ("Pet Care", "blue-deep"),
+    ("Animal Welfare", "navy"),
+    ("Plant-Based Living", "teal-deep"),
+    ("Giving", "coral-deep"),
 ]
 # The post reproduced on blog-post.html as the article template.
 BLOG_SAMPLE_SLUG = "how-your-10-monthly-donation-really-helps-shelter-animals"
@@ -517,7 +605,7 @@ INSTAGRAM_FEATURED = "https://www.instagram.com/p/DX8EX5HvPh_/"
 # ---------------------------------------------------------------------------
 # The live home page fetches this playlist in the browser through the YouTube
 # Data API, so new videos show up on their own. The prototype uses a snapshot
-# of the playlist taken on 2026-10-13 (7 videos, newest first); the WordPress
+# of the playlist, refreshed 2026-10-20 (9 videos, newest first); the WordPress
 # build should pull the playlist itself.
 EDU_PLAYLIST_ID = "PLsIcOzw_C46xsdSpdIaopLjzA4n2hSebh"
 EDU_PLAYLIST_URL = "https://www.youtube.com/playlist?list=" + EDU_PLAYLIST_ID
@@ -529,6 +617,8 @@ EDU_PLAYLIST_INTRO = ("An animal advocate with years of experience in shelter vo
                       "in every video.")
 # (YouTube video id, title) — titles as published, minus the all-caps and emoji.
 EDU_VIDEOS = [
+    ("OXtJ0dgRhHw", "We need your help to keep saving animals in need"),
+    ("qTSJEdN_TYg", "Enter to win while saving animals in need"),
     ("vsFYHhMeMpo", "We donated a $1K shopping spree"),
     ("-l9j1tZLAjc", "The most emotional animal rescues have one thing in common"),
     ("2APCMlkKzIA", "Why can't you volunteer or foster?"),

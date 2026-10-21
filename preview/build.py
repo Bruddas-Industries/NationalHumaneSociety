@@ -15,6 +15,7 @@ When we port to a production stack, the LAYOUT here becomes the header and
 footer templates, and each PAGE entry becomes a page template.
 """
 
+import html
 import re
 import sys
 from pathlib import Path
@@ -630,46 +631,43 @@ DONATE_TOGGLE = """      <div class="donate-toggle">
 
 
 # The live blog posts have no cover images, so each card gets a colour-coded
-# topic header instead. First keyword found in the title wins.
-BLOG_TOPICS = [
-    (("spay", "neuter"), "Spay &amp; Neuter", "teal"),
-    (("abuse", "cruelty"), "Animal Welfare", "coral"),
-    (("volunteer",), "Volunteering", "blue"),
-    (("foster",), "Fostering", "orange"),
-    (("donation", "donate"), "Giving", "coral"),
-    (("summer", "winter", "holiday", "safe "), "Pet Safety", "blue"),
-    (("stories", "transformation"), "Rescue Stories", "orange"),
-    (("adopt", "myth"), "Adoption", "navy"),
-    (("shelter",), "Shelters", "teal"),
-]
+# header naming its category (C.BLOG_CATEGORIES).
+BLOG_COLOUR = dict(C.BLOG_CATEGORIES)
+CATEGORY_KEY = {name: name.lower().replace(" & ", "-").replace(" ", "-") for name, _c in C.BLOG_CATEGORIES}
 
 
-def blog_topic(title):
-    lowered = title.lower()
-    for keywords, topic, colour in BLOG_TOPICS:
-        if any(k in lowered for k in keywords):
-            return topic, colour
-    return "Animal Care", "navy"
-
-
-def blog_cards(posts):
+def blog_cards(posts, filterable=False):
+    """Article cards. filterable: tag each card with its category for the
+    filter bar on the Educational Messages page."""
     cards = []
-    for title, slug in posts:
+    for title, slug, category in posts:
         if slug == C.BLOG_SAMPLE_SLUG:
             href, target = "blog-post.html", ""
         else:
             href, target = f"{C.LIVE_SITE}/post/{slug}", ' target="_blank" rel="noopener"'
-        topic, colour = blog_topic(title)
-        cards.append(f"""      <article class="post-card">
-        <div class="post-cover is-{colour}" aria-hidden="true">
-          <span class="post-cover-topic">{topic}</span>
+        tag = f' data-category="{CATEGORY_KEY[category]}"' if filterable else ""
+        cards.append(f"""      <article class="post-card"{tag}>
+        <div class="post-cover is-{BLOG_COLOUR[category]}" aria-hidden="true">
+          <span class="post-cover-topic">{html.escape(category)}</span>
         </div>
         <div class="post-body">
-          <h3><a href="{href}"{target}>{title}</a></h3>
+          <h3><a href="{href}"{target}>{html.escape(title, quote=False)}</a></h3>
           <span class="post-more">Read article →</span>
         </div>
       </article>""")
-    return '    <div class="grid grid-3">\n' + "\n".join(cards) + "\n    </div>"
+    grid = ' data-post-grid' if filterable else ""
+    return f'    <div class="grid grid-3"{grid}>\n' + "\n".join(cards) + "\n    </div>"
+
+
+def blog_filter_bar():
+    """Category chips with counts; nav.js filters the cards and pages them."""
+    counts = {}
+    for _t, _s, cat in C.BLOG_POSTS:
+        counts[cat] = counts.get(cat, 0) + 1
+    chips = [f'<button type="button" class="filter-chip is-active" data-filter="all" aria-pressed="true">All <span>{len(C.BLOG_POSTS)}</span></button>']
+    for name, _colour in C.BLOG_CATEGORIES:
+        chips.append(f'<button type="button" class="filter-chip" data-filter="{CATEGORY_KEY[name]}" aria-pressed="false">{html.escape(name)} <span>{counts.get(name, 0)}</span></button>')
+    return '    <div class="filter-bar" role="toolbar" aria-label="Filter articles by category">\n      ' + "\n      ".join(chips) + "\n    </div>"
 
 
 def story_excerpt(index, words=38):
@@ -1628,15 +1626,27 @@ BLOG_BODY = page_hero(
     "Educational Messages",
     "Articles on adoption, pet care, shelters and animal welfare.",
     "Educational Messages",
-) + f"""
-<section class="section">
+) + edu_video_carousel() + f"""
+<section class="section" id="articles" data-post-filter data-page-size="12">
   <div class="container">
-    {review_note("<p>The twelve most recent titles from the current site are shown. Only <em>How Your $10 Monthly Donation Really Helps Shelter Animals</em> opens inside the preview, as the article template; the others open the current site. All of the roughly 100 posts move across when the site is built.</p>")}
-{blog_cards(C.BLOG_POSTS)}
-    <p class="text-center" style="margin-top:var(--space-6)"><a class="btn btn-secondary" href="{C.LIVE_SITE}/blog" target="_blank" rel="noopener">View every article on the current site →</a></p>
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Articles</p>
+        <h2>Browse by topic</h2>
+      </div>
+    </div>
+{blog_filter_bar()}
+    {review_note("<p>All 81 articles from the current site are listed. Only <em>How Your $10 Monthly Donation Really Helps Shelter Animals</em> opens inside the preview, as the article template; the others open the current site until the posts are migrated in the WordPress build.</p>")}
+{blog_cards(C.BLOG_POSTS, filterable=True)}
+    <div class="text-center" style="margin-top:var(--space-6)">
+      <button type="button" class="btn btn-secondary" data-show-more>Show more articles</button>
+    </div>
   </div>
 </section>
 """
+
+_SAMPLE_CATEGORY = next(cat for _t, slug, cat in C.BLOG_POSTS if slug == C.BLOG_SAMPLE_SLUG)
+RELATED_POSTS = [p for p in C.BLOG_POSTS if p[2] == _SAMPLE_CATEGORY and p[1] != C.BLOG_SAMPLE_SLUG][:3]
 
 # --- BLOG POST (article template, using a real post) -----------------------
 BLOG_POST_BODY = f"""
@@ -1672,7 +1682,7 @@ BLOG_POST_BODY = f"""
 <section class="section section-soft">
   <div class="container">
     <h2 class="text-center" style="margin-bottom:var(--space-6)">More educational messages.</h2>
-{blog_cards(C.BLOG_POSTS[9:12])}
+{blog_cards(RELATED_POSTS)}
   </div>
 </section>
 """
