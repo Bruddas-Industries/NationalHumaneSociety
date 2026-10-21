@@ -1069,17 +1069,28 @@ ABOUT_BODY = page_hero(
   </div>
 </section>
 
-<section class="section">
-  <div class="container grid grid-2">
-    <div>
-      <h2>Contribute by mail.</h2>
-      <p>To contribute by mail, please send a personal check or money order made payable to the National Humane Society to:</p>
-      <p><strong>{MAIL_ADDRESS}</strong></p>
+<section class="section section-cream">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:var(--space-7)">
+      <p class="eyebrow">Support our work</p>
+      <h2>Ways to give</h2>
     </div>
-    <aside class="proceeds-panel">
-      <h4>A 501(c)(3) tax-exempt charity</h4>
-      <p style="margin:0"><a href="donate.html">Donate online →</a></p>
-    </aside>
+    <div class="give-grid">
+      <article class="give-card">
+        <span class="give-icon" aria-hidden="true">✉</span>
+        <h3>Contribute by mail</h3>
+        <p>To contribute by mail, please send a personal check or money order made payable to the National Humane Society to:</p>
+        <address class="mail-label">{MAIL_ADDRESS}</address>
+      </article>
+      <article class="give-card give-card-online">
+        <span class="give-icon" aria-hidden="true">♥</span>
+        <p class="eyebrow">A 501(c)(3) tax-exempt charity</p>
+        <h3>Donate online</h3>
+        <p>Give once or monthly in a few minutes. Donations are <span class="nowrap">tax-deductible</span>.</p>
+        <a class="btn btn-primary btn-lg btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Donate online</a>
+        <p class="give-more">Planning a gift in your will? <a href="wills-estates.html">Wills &amp; Estates →</a></p>
+      </article>
+    </div>
   </div>
 </section>
 """

@@ -2837,3 +2837,45 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
 }
 @media (max-width: 900px) { .ig-grid-posts { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); } }
 @media (max-width: 600px) { .ig-modal-close { top: 6px; right: 6px; } }
+
+/* About: "Ways to give" cards */
+.give-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+.give-card {
+  position: relative;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: var(--space-7) var(--space-6) var(--space-6);
+  box-shadow: var(--shadow-md);
+}
+.give-card h3 { font-size: 1.6rem; margin-bottom: var(--space-3); }
+.give-icon {
+  position: absolute;
+  top: calc(-1 * var(--space-5)); left: var(--space-6);
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 1.5rem; line-height: 1;
+  background: var(--color-coral); color: #fff;
+  box-shadow: 0 8px 18px rgba(250,88,83,.35);
+}
+.mail-label {
+  display: inline-block;
+  margin-top: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-mist);
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--color-navy);
+}
+.give-card-online { background: var(--color-navy); color: rgba(255,255,255,.85); }
+.give-card-online h3 { color: #fff; }
+.give-card-online .eyebrow { color: var(--color-yellow); }
+.give-card-online .give-icon { background: var(--color-yellow); color: var(--color-navy); box-shadow: 0 8px 18px rgba(251,255,0,.3); }
+.give-card-online .btn { margin-top: var(--space-2); }
+.give-more { margin: var(--space-5) 0 0; font-size: .95rem; }
+.give-more a { color: var(--color-yellow); font-weight: 700; white-space: nowrap; }
+.nowrap { white-space: nowrap; }
+@media (max-width: 900px) { .give-grid { grid-template-columns: 1fr; gap: var(--space-8); } }
