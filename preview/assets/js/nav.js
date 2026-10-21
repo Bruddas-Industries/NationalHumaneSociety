@@ -236,8 +236,8 @@
       cards.forEach((c) => { c.hidden = true; });
       matching.slice(0, shown).forEach((c) => { c.hidden = false; });
       if (more) {
-        const left = matching.length - shown;
-        more.hidden = left <= 0;
+        const left = Math.max(0, matching.length - shown);
+        more.hidden = left === 0;
         more.textContent = `Show more articles (${left} more)`;
       }
     };
@@ -250,7 +250,11 @@
       });
       render();
     }));
-    if (more) more.addEventListener('click', () => { shown += pageSize; render(); });
+    if (more) more.addEventListener('click', () => {
+      const total = cards.filter((c) => filter === 'all' || c.dataset.category === filter).length;
+      shown = Math.min(shown + pageSize, total);
+      render();
+    });
     render();
   });
 
