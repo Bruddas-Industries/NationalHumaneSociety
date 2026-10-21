@@ -1717,8 +1717,8 @@ BLOG_POST_BODY = f"""
   <div class="container">
     <div class="section-head">
       <div>
-        <p class="eyebrow">More on {html.escape(_SAMPLE_CATEGORY)}</p>
-        <h2>More educational messages</h2>
+        <p class="eyebrow">Keep reading</p>
+        <h2>More on {html.escape(_SAMPLE_CATEGORY)}</h2>
       </div>
       <a class="btn btn-secondary" href="blog.html#articles">All articles →</a>
     </div>
