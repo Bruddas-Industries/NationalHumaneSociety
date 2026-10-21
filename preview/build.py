@@ -1624,7 +1624,7 @@ WILLS_BODY = page_hero(
 # --- EDUCATIONAL MESSAGES (blog index) --------------------------------------
 BLOG_BODY = page_hero(
     "Educational Messages",
-    "Articles on adoption, pet care, shelters and animal welfare.",
+    "Videos and articles on adoption, pet care, shelters, animal welfare, and more.",
     "Educational Messages",
 ) + edu_video_carousel() + f"""
 <section class="section section-soft articles-section" id="articles" data-post-filter data-page-size="12">
