@@ -595,10 +595,33 @@ BLOG_CATEGORIES = [
 # The post reproduced on blog-post.html as the article template.
 BLOG_SAMPLE_SLUG = "how-your-10-monthly-donation-really-helps-shelter-animals"
 
-# Vimeo ids embedded on /videos-and-more. The live page gives them no titles.
-VIDEO_IDS = ["1121408406", "1121408501", "1121408389", "1121408444",
-             "1121408417", "1121408461", "1121408484", "1121408430"]
+# /videos-and-more: the featured Instagram post, and the "And More..!" wall
+# of photos and videos in the live page's order (2026-10-20). The photos are
+# images from the NHS Instagram, re-hosted in assets/img; the videos are Vimeo
+# (vertical, 9:16). The live page gives none of them titles.
+INSTAGRAM_HANDLE = "nationalhumane"
 INSTAGRAM_FEATURED = "https://www.instagram.com/p/DX8EX5HvPh_/"
+# ("photo", image file) or ("vimeo", video id)
+VIDEOS_AND_MORE = [
+    ("photo", "videos-more-01.jpg"),
+    ("vimeo", "1121408430"),
+    ("photo", "videos-more-02.jpg"),
+    ("vimeo", "1121408406"),
+    ("vimeo", "1121408389"),
+    ("vimeo", "1121408461"),
+    ("vimeo", "1121408444"),
+    ("photo", "videos-more-03.jpg"),
+    ("photo", "videos-more-04.jpg"),
+    ("vimeo", "1121408417"),
+    ("photo", "videos-more-05.jpg"),
+    ("photo", "videos-more-06.jpg"),
+    ("vimeo", "1121408484"),
+    ("photo", "videos-more-07.jpg"),
+    ("photo", "videos-more-08.jpg"),
+    ("vimeo", "1121408501"),
+    ("photo", "videos-more-09.jpg"),
+    ("photo", "videos-more-10.jpg"),
+]
 
 # ---------------------------------------------------------------------------
 # Educational videos — the YouTube Shorts carousel under the home page hero

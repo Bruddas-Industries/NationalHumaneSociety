@@ -98,6 +98,37 @@
     });
   });
 
+  // Loading states for embedded videos and posts: the paw loader fades out
+  // when the iframe has loaded; after 10 s without that, it offers a link.
+  // Instagram's script swaps its blockquote for an iframe later, so watch for it.
+  function watchEmbed(box) {
+    const done = () => { box.classList.add('is-loaded'); box.classList.remove('is-slow'); };
+    const hook = (frame) => {
+      frame.addEventListener('load', done, { once: true });
+    };
+    const frame = box.querySelector('iframe');
+    if (frame) hook(frame);
+    else {
+      const mo = new MutationObserver(() => {
+        const f = box.querySelector('iframe');
+        if (f) { mo.disconnect(); hook(f); }
+      });
+      mo.observe(box, { childList: true, subtree: true });
+    }
+    // Start the 10 s clock only once the embed is on screen: lazy iframes
+    // further down the page don't begin loading until they're scrolled to.
+    const startClock = () => setTimeout(() => {
+      if (!box.classList.contains('is-loaded')) box.classList.add('is-slow');
+    }, 10000);
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) { io.disconnect(); startClock(); }
+      });
+      io.observe(box);
+    } else startClock();
+  }
+  document.querySelectorAll('[data-embed]').forEach(watchEmbed);
+
   // Educational video carousel: arrows page through the cards, and a card
   // plays its video in place (one at a time) instead of opening YouTube.
   document.querySelectorAll('[data-carousel]').forEach((carousel) => {
@@ -133,8 +164,11 @@
         iframe.allowFullscreen = true;
         // YouTube refuses to play embeds that arrive without a referrer (error 153).
         iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+        const loader = card.querySelector('.embed-loader');
+        if (loader) player.appendChild(loader.cloneNode(true));
         player.appendChild(iframe);
         card.replaceWith(player);
+        watchEmbed(player);
         playing = { player, card };
       });
     });
