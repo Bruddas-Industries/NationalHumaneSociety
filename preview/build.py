@@ -254,11 +254,13 @@ def page(title, slug, body, status="live", description=None):
 # ---------------------------------------------------------------------------
 # Reusable content blocks
 # ---------------------------------------------------------------------------
-# Header photos carried over from the current site (2026-10-20), keyed by
-# the page's breadcrumb label. Each page uses the photo the current site uses
+# Header photos carried over from the current site (2026-10-20). Off for now:
+# CJ preferred the plain headers. Set SHOW_PAGE_HEADER_IMAGES to True to put
+# the photos back. Keyed by the page's breadcrumb label. Each page uses the photo the current site uses
 # for it. Pages not listed keep the plain header. The Sweepstakes, Raffle Plus
 # and car pages have their own navy header and are not affected.
 # (file, alt text, crop position)
+SHOW_PAGE_HEADER_IMAGES = False
 PAGE_HEADER_IMAGES = {
     "About": ("header-dog-goggles.jpg", "A dog in goggles and a Hawaiian shirt", "30% 60%"),
     "Educational Messages": ("header-dog-goggles.jpg", "A dog in goggles and a Hawaiian shirt", "30% 60%"),
@@ -278,7 +280,7 @@ def page_hero(title, lead, breadcrumb_label, parent=None):
     if parent:
         crumb += f'<a href="{parent[1]}">{parent[0]}</a> &nbsp;/&nbsp; '
     lead_html = f'\n    <p class="lead">{lead}</p>' if lead else ""
-    photo = PAGE_HEADER_IMAGES.get(breadcrumb_label)
+    photo = PAGE_HEADER_IMAGES.get(breadcrumb_label) if SHOW_PAGE_HEADER_IMAGES else None
     if photo:
         src, alt, focus = photo
         return f"""
