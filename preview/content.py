@@ -376,6 +376,122 @@ STORIES = [
 ]
 
 # ---------------------------------------------------------------------------
+# Pet Tips (/animal-info, "Pet Tips" tab) — the full article from the current
+# site (2026-10-21). Wording is the current site's, with obvious spacing and
+# split-word typos fixed ("in corporation", "as mall", "bottle necked",
+# missing spaces after commas, "pick update" -> "pickup date"). The six links
+# to outside sites are left out (review note on the page).
+# ---------------------------------------------------------------------------
+PET_TIPS_INTRO_TITLE = "How to Support Shelter Pets with Time, Space, and Money"
+PET_TIPS_INTRO = (
+    "Busy parents juggling work and family, apartment renters with pet limits, and animal lovers on tight "
+    "budgets often carry the same quiet worry: caring about shelter and rescue pets feels meaningful, but the "
+    "“right” way to help can feel out of reach. That tension is real, community support for animals is built "
+    "by many people doing what they can, not a few people doing everything. Volunteering for animal shelters, "
+    "pet fostering programs, and animal welfare advocacy aren’t reserved for experts or people with perfect "
+    "circumstances. With a clear sense of what fits a real life, small commitments can ripple into lifesaving impact."
+)
+PET_TIPS_THREE_WAYS_TITLE = "Understanding the Three Ways to Help Shelter Pets"
+# (way, the article's own sentence for it)
+PET_TIPS_THREE_WAYS = [
+    ("Time", "Hands-on volunteering roles that keep daily care running."),
+    ("Space", "Fostering, even short term, so an animal can rest outside the kennel."),
+    ("Money", "Donations, supplies, or sponsor style gifts that fill the gaps."),
+]
+PET_TIPS_THREE_WAYS_TEXT = [
+    "Helping shelter and rescue pets usually falls into three lanes: giving time, giving space, or giving money. "
+    "Time means hands-on volunteering roles that keep daily care running; engaging with local communities captures "
+    "the spirit of showing up where help is needed. Space means fostering, even short term, so an animal can rest "
+    "outside the kennel. Money means donations, supplies, or sponsor style gifts that fill the gaps.",
+    "This matters because shelters need a mix of support to stay steady when life gets expensive. When pet products "
+    "increased, even small donations can stretch further than you think. Choosing one lane keeps you consistent "
+    "instead of burnt out.",
+    "Picture a week where your schedule is packed and your lease is strict. You might donate a bag of food or cover "
+    "one vaccination instead of fostering. A friend with more flexibility might walk dogs on Saturdays, while someone "
+    "else fosters a shy cat for two weeks. When support gets organized, nonprofit structure can protect the work and "
+    "unlock bigger funding.",
+]
+PET_TIPS_NONPROFIT_TITLE = "Build a Bigger Rescue Mission with Nonprofit Basics"
+PET_TIPS_NONPROFIT = [
+    "Once you know whether your best “give” is time, space, or money, you may realize you want to pull those pieces "
+    "together into something more sustained. Some people take that next step by starting a grassroots rescue "
+    "initiative or a small foster network, coordinating a few homes, sharing transport runs, and helping pets move "
+    "out of the shelter and into stability. When those efforts begin to grow, founders sometimes choose to "
+    "incorporate as a nonprofit organization so they can raise funds more reliably, accept donations, and expand "
+    "what they’re able to offer. Because incorporation comes with real paperwork and requirements, it can help to "
+    "lean on nonprofit formation support to navigate the process without losing momentum on the work that matters "
+    "most: helping animals.",
+    "If a full nonprofit isn’t your path (yet), the next section offers ten high-impact ways to make a difference "
+    "this month, starting right where you are.",
+]
+PET_TIPS_ACTIONS_TITLE = "High-Impact Ways to Help This Month"
+PET_TIPS_ACTIONS_INTRO = (
+    "If you’ve ever wished you could do <em>something</em> for shelter pets but didn’t know what would matter most, "
+    "this is your menu. Pick one or two actions for this month, then build a rhythm you can actually sustain."
+)
+PET_TIPS_ACTIONS = [
+    ("Try fostering with a clear, short plan",
+     "Ask a rescue for a “two-week decompression” or “weekend break” foster, short stays still create real animal "
+     "fostering benefits by freeing kennel space and giving pets a calmer environment to show their true personality. "
+     "Get specifics up front: who covers vet care, what food is provided, and what happens if the match isn’t right. "
+     "If you bring a dog home, set them up for success with gradual introductions so the transition doesn’t "
+     "overwhelm them, or you."),
+    ("Volunteer where the shelter is actually bottlenecked",
+     "Don’t just ask “Do you need help?” Ask, “What task would reduce staff load the most this week?” Many shelters "
+     "need dog walkers who can follow handling notes, cat enrichment teams, laundry and dish crews, adoption-day "
+     "greeters, and photo/video helpers. Commit to a realistic schedule like one 2-hour shift weekly for a month so "
+     "staff can plan around you."),
+    ("Make one strategic, boring donation that keeps doors open",
+     "Flashy items are fun, but predictable operating support is often what stabilizes care. Because nearly 80% of "
+     "shelters report that they are underfunded, consider setting up a modest recurring gift and earmarking it for "
+     "medical funds, spay/neuter, behavior support, or transport. If you’re plugged into a small community rescue "
+     "working toward nonprofit status, this is also where good bookkeeping and restricted funds can protect trust."),
+    ("Run a “wish-list only” pet supply drive in a tight time box",
+     "Choose one location (workplace, gym, school pickup line) and one week. Ask the shelter for its current top 5 "
+     "items and post them clearly, then add a drop-off bin and a pickup date so it doesn’t drag on. Offer to sort and "
+     "label donations by category (food, cleaning, enrichment) so staff can use them immediately."),
+    ("Be the admin support rescues rarely have",
+     "A few hours of behind-the-scenes help can unlock adoptions and donations. Offer to write two pet bios, respond "
+     "to messages for a set time window, update a spreadsheet of supplies, or organize foster paperwork. If a rescue "
+     "is formalizing into a nonprofit, your consistency here, clean records, receipts, simple budgets, directly "
+     "supports long-term legitimacy."),
+    ("Show up for one rescue event and bring a plan, not just enthusiasm",
+     "Pick a single adoption event or fundraiser and ask what would increase conversions: setting up crates, managing "
+     "a meet-and-greet flow, taking quick photos, or collecting adoption applications. Bring simple supplies like "
+     "clipboards, pens, and water bowls, and volunteer to do a 30-minute “closing shift” so staff isn’t packing alone. "
+     "One well-run event can mean multiple animals placed, and fewer returns."),
+]
+PET_TIPS_FAQ_TITLE = "Shelter Pet Support: Common Questions Answered"
+PET_TIPS_FAQ = [
+    ("What if I foster and the pet doesn’t fit my home or schedule?",
+     "That happens, and a good rescue expects it. Ask about a trial period, backup fosters, and what “returning” "
+     "looks like before you say yes. Set a simple reset plan for yourself too: quiet space, predictable routine, and "
+     "one point of contact for questions."),
+    ("How much time do I need to volunteer without burning out?",
+     "Consistency matters more than big hours. Offer one shift you can repeat for 3 to 4 weeks and pick a task with "
+     "clear start and stop times, like laundry, kennel prep, or adoption event check-in. If your life gets hectic, "
+     "give early notice so staff can adjust."),
+    ("Can I help if I can’t handle big dogs or I have mobility limits?",
+     "Yes. Many shelters need photo sorting, bio writing, supply inventory, transport coordination, and front-desk "
+     "support. Tell them what you can do safely and ask for the most urgent behind-the-scenes job."),
+    ("Why do small monthly donations matter more than one big drop-off?",
+     "Predictable gifts help shelters plan meds, food orders, and staffing. Since 3% of all donations go to animal "
+     "and environment causes, even a modest recurring amount can fill a real gap."),
+    ("What should I know about shelter policies before I foster or volunteer?",
+     "Expect rules about ID, age limits, closed-toe shoes, and training for handling or bite-risk notes. Ask what "
+     "expenses are covered, when you should call for medical concerns, and what steps are required for "
+     "meet-and-greets."),
+]
+PET_TIPS_CLOSING_TITLE = "Build Lasting Support Habits That Strengthen Shelter Pet Outcomes"
+PET_TIPS_CLOSING = (
+    "Caring about shelter pets is easy; sustaining help through busy weeks, limited space, and tight budgets is the "
+    "hard part. The steadier path is the mindset this guide has emphasized: choose realistic, repeatable support that "
+    "fits life, and let that consistency become ongoing animal advocacy through simple community engagement for pets. "
+    "Over time, those long-term support strategies ease pressure on shelters, reduce burnout, and create more stable "
+    "placements, real, sustained rescue impact. Consistency, not perfection, is what keeps shelter pets supported."
+)
+
+# ---------------------------------------------------------------------------
 # Animal programs — veterinary care assistance directory (/animal-programs)
 # ---------------------------------------------------------------------------
 VET_GENERAL = [

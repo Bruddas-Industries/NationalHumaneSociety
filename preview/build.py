@@ -1978,30 +1978,104 @@ VIDEOS_BODY = page_hero(
 """
 
 # --- ANIMAL INFO: PET TIPS --------------------------------------------------
+# Pet Tips: the full article, laid out as sections (photo intro, three ways,
+# numbered actions, Q&A cards, closing panel). Copy lives in content.py.
+PET_TIPS_WAY_ICONS = {"Time": "⏱", "Space": "⌂", "Money": "♥"}
+
+
+def pet_tips_faq():
+    items = []
+    for n, (q, a) in enumerate(C.PET_TIPS_FAQ, 1):
+        opened = " open" if n == 1 else ""
+        items.append(f"""        <details class="faq-card"{opened}>
+          <summary><span class="faq-num">{n:02d}</span><span class="faq-q">{q}</span><span class="faq-icon" aria-hidden="true"></span></summary>
+          <div class="faq-a"><div class="faq-a-inner"><p>{a}</p></div></div>
+        </details>""")
+    return "\n".join(items)
+
+
+PET_TIPS_WAY_CARDS = "\n".join(
+    f'      <div class="way-card"><span class="way-icon" aria-hidden="true">{PET_TIPS_WAY_ICONS[w]}</span><h3>{w}</h3><p>{t}</p></div>'
+    for w, t in C.PET_TIPS_THREE_WAYS)
+PET_TIPS_ACTION_CARDS = "\n".join(
+    f'      <article class="action-card"><span class="action-num" aria-hidden="true">{n}</span><h3>{t}</h3><p>{d}</p></article>'
+    for n, (t, d) in enumerate(C.PET_TIPS_ACTIONS, 1))
+
+
 PET_TIPS_BODY = page_hero(
     "Pet Tips",
-    "How to Support Shelter Pets with Time, Space, and Money",
+    "Simple, practical ways anyone can help shelter pets, whatever your schedule, space or budget.",
     "Pet Tips",
 ) + f"""
 <section class="section">
-  <div class="container-narrow prose">
-    {review_note("<p>On the current site this tab is headed “Help keep your pet safe during the colder months by following these simple guidelines”, but the article beneath it is about supporting shelter pets and contains several links to unrelated third-party sites. The opening and the list of ideas are shown here; the links are left out. Should this article stay, or should the cold-weather tips come back?</p>")}
-    <p>Busy parents juggling work and family, apartment renters with pet limits, and animal lovers on tight budgets often carry the same quiet worry: caring about shelter and rescue pets feels meaningful, but the “right” way to help can feel out of reach. That tension is real, community support for animals is built by many people doing what they can, not a few people doing everything. Volunteering for animal shelters, pet fostering programs, and animal welfare advocacy aren’t reserved for experts or people with perfect circumstances. With a clear sense of what fits a real life, small commitments can ripple into lifesaving impact.</p>
+  <div class="container tips-intro">
+    <div>
+      <p class="eyebrow">Getting started</p>
+      <h2>{C.PET_TIPS_INTRO_TITLE}</h2>
+      <p class="tips-lead">{C.PET_TIPS_INTRO}</p>
+      {review_note("<p>The current article links to six outside websites (including a Portugal volunteering blog and a coffee company). The links are left out here; the wording is unchanged apart from obvious typo fixes. It also promises “ten high-impact ways” but lists six.</p>")}
+    </div>
+    <div class="tips-photo">
+      <span class="tips-blob" aria-hidden="true"><img src="assets/img/help-icon-bone.png" alt="" width="64" height="64"></span>
+      <img src="assets/img/animal-winterpup.jpg" alt="A dog wearing a fuzzy bear-ears hood" width="570" height="618">
+    </div>
+  </div>
+</section>
 
-    <h2>Understanding the Three Ways to Help Shelter Pets</h2>
-    <p>Helping shelter and rescue pets usually falls into three lanes: giving time, giving space, or giving money. Time means hands-on volunteering roles that keep daily care running. Space means fostering, even short term, so an animal can rest outside the kennel. Money means donations, supplies, or sponsor style gifts that fill the gaps.</p>
+<section class="section section-soft">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Find your lane</p>
+      <h2>{C.PET_TIPS_THREE_WAYS_TITLE}</h2>
+    </div>
+    <div class="ways-grid">
+{PET_TIPS_WAY_CARDS}
+    </div>
+    <div class="container-narrow tips-prose" style="padding:0; margin-top:var(--space-7)">
+{paragraphs(C.PET_TIPS_THREE_WAYS_TEXT)}
+    </div>
+  </div>
+</section>
 
-    <h2>High-Impact Ways to Help This Month</h2>
-    <p>If you’ve ever wished you could do something for shelter pets but didn’t know what would matter most, this is your menu. Pick one or two actions for this month, then build a rhythm you can actually sustain.</p>
-    <ol>
-      <li>Try fostering with a clear, short plan</li>
-      <li>Volunteer where the shelter is actually bottlenecked</li>
-      <li>Make one strategic, boring donation that keeps doors open</li>
-      <li>Run a “wish-list only” pet supply drive in a tight time box</li>
-      <li>Be the admin support rescues rarely have</li>
-      <li>Show up for one rescue event and bring a plan, not just enthusiasm</li>
-    </ol>
-    <p><a href="{C.LIVE_SITE}/animal-info" target="_blank" rel="noopener">Read the full article on the current site →</a></p>
+<section class="section">
+  <div class="container-narrow tips-prose">
+    <p class="eyebrow">Going further</p>
+    <h2>{C.PET_TIPS_NONPROFIT_TITLE}</h2>
+{paragraphs(C.PET_TIPS_NONPROFIT)}
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Your menu</p>
+      <h2>{C.PET_TIPS_ACTIONS_TITLE}</h2>
+      <p class="lead" style="margin:0 auto">{C.PET_TIPS_ACTIONS_INTRO}</p>
+    </div>
+    <div class="action-grid">
+{PET_TIPS_ACTION_CARDS}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-narrow">
+    <div class="text-center" style="margin-bottom:var(--space-6)">
+      <p class="eyebrow">Q&amp;A</p>
+      <h2>{C.PET_TIPS_FAQ_TITLE}</h2>
+    </div>
+    <div class="faq-group">
+{pet_tips_faq()}
+    </div>
+  </div>
+</section>
+
+<section class="section section-navy tips-closing">
+  <div class="container-narrow text-center">
+    <p class="eyebrow">Keep it going</p>
+    <h2>{C.PET_TIPS_CLOSING_TITLE}</h2>
+    <p class="tips-closing-text">{C.PET_TIPS_CLOSING}</p>
+    <a class="btn btn-primary btn-lg btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Give monthly</a>
   </div>
 </section>
 """
