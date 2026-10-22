@@ -1173,6 +1173,11 @@ PROGRAMS_BODY = page_hero(
 """
 
 # --- DONATIONS HELPING ANIMALS ----------------------------------------------
+GLOBE_ICON = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">'
+    '<circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5c2.6 2.6 3.9 5.8 3.9 9.5s-1.3 6.9-3.9 9.5c-2.6-2.6-3.9-5.8-3.9-9.5s1.3-6.9 3.9-9.5z"/></svg>'
+)
+
 # Stories longer than this many characters start collapsed with a
 # "Read the full story" button (nav.js).
 STORY_COLLAPSE_AT = 1200
@@ -1217,8 +1222,11 @@ def story_long(story, i=0):
     website = ""
     if "website" in extras:
         url, label = extras["website"]
-        website = (f'\n        <a class="btn btn-secondary story-site" href="{url}" target="_blank" rel="noopener">'
-                   f'{label} <span aria-hidden="true">↗</span></a>')
+        domain = url.split("//", 1)[-1].removeprefix("www.").rstrip("/")
+        website = (f'\n        <a class="story-site" href="{url}" target="_blank" rel="noopener">'
+                   f'<span class="story-site-icon" aria-hidden="true">{GLOBE_ICON}</span>'
+                   f'<span class="story-site-text"><strong>{label}</strong><small>{domain}</small></span>'
+                   f'<span class="story-site-arrow" aria-hidden="true">→</span></a>')
     return f"""    <article class="story-card-long{flipped}">
       <div class="story-media">{pic}</div>
       <div class="story-content">

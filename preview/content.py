@@ -354,7 +354,8 @@ STORIES = [
         "Last month we rescued five dogs who were living under the Sardou Bridge in Topeka, Ks. It is a rough area of town, and dogs roam the banks in search of food. We were able to catch five and they have been here for a month. Two are larger brown pit bull mixes and have gained 20 lbs each. Two are smaller and have gained 10 lbs each. The last was a 3 month of fawn brindle female pittie who was riddled with a variety of worms. It took several weeks of parasite treatment from our vet to bring these under control but Baby is gaining weight and now happy and healthy.",
         "These are a small sampling of the dogs who will receive full medical care due to the support by the National Humane Society....our heroes.",
     ]),
-    ("Hank", "story-hank.jpg", "Second Chance Animal Refuge Society", [
+    # The current site gives no author for Hank's story (CJ, 2026-10-21)
+    ("Hank", "story-hank.jpg", "Anonymous", [
         "Saturday morn rolled around, we were all busy as bees, when the car pulled up the driveway and the couple got out, holding a stuffed bag full of towels to donate. I immediately recognized them as people who had volunteered a few years back.",
         "They came through the gate and we began chatting as the husband reached down petting every dog. He happened to glance up and I noticed something held his attention and I looked over to where he was staring. \"Is that a Great Dane\" he asked me looking at Hank who was in the big kennel having his breakfast.",
         "My mind went back to the day two years ago when my phone rang. \"There is a purebred Great Dane being starved and beaten and owner is willing to surrender if I can find a place for a giant breed.\" How could I say no? I told her to bring him over and I would figure it out.",
