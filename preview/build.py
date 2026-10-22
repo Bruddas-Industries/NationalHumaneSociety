@@ -2123,11 +2123,14 @@ PET_TIPS_BODY = page_hero(
 """
 
 # --- ANIMAL INFO: CATS & DOGS -----------------------------------------------
-def article_cards():
+def article_cards(exclude=None):
     """Cats & Dogs article cards. Scanned articles open in the page viewer
-    (nav.js, [data-doc]); without JavaScript the link opens the first page."""
+    (nav.js, [data-doc]); without JavaScript the link opens the first page.
+    `exclude` drops the card that links to that page."""
     cards = []
     for title, topic, colour, pages, href in C.CATS_DOGS_ARTICLES:
+        if exclude and href == exclude:
+            continue
         safe = html.escape(title)
         if pages:
             count = f"{len(pages)} page{'s' if len(pages) > 1 else ''}"
@@ -2186,20 +2189,83 @@ CATS_DOGS_BODY = page_hero(
 """
 
 # --- ANIMAL INFO: FOODS TO AVOID --------------------------------------------
-FOODS_ITEMS = "\n".join(f"""    <div class="faq-item">
-      <h3>{name}</h3>
-      <p>{text}</p>
-    </div>""" for name, text in C.FOODS_TO_AVOID)
+PHONE_ICON = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>'
+)
+FOOD_COLOURS = ["coral", "teal", "orange", "blue"]
+
+
+def food_slug(name):
+    return "food-" + "".join(ch if ch.isalnum() else "-" for ch in name.lower().replace("&amp;", "and")).strip("-").replace("--", "-").replace("--", "-")
+
+
+FOODS_INTRO_HTML = C.FOODS_INTRO.replace(
+    C.FOODS_POISON_PHONE, f'<a class="poison-num" href="tel:{C.FOODS_POISON_PHONE}">{C.FOODS_POISON_PHONE}</a>')
+FOODS_JUMP = "\n".join(
+    f'      <a class="foods-chip" href="#{food_slug(name)}">{name}</a>' for name, _ in C.FOODS_TO_AVOID)
+FOODS_ITEMS = "\n".join(
+    f"""      <article class="food-card is-{FOOD_COLOURS[i % 4]}" id="{food_slug(name)}">
+        <span class="food-num" aria-hidden="true">{i + 1:02d}</span>
+        <h3>{name}</h3>
+        <p>{text}</p>
+      </article>""" for i, (name, text) in enumerate(C.FOODS_TO_AVOID))
 
 FOODS_BODY = page_hero(
     "ASPCA List of People Foods to Avoid Feeding Your Pets",
-    "If you suspect your pet has eaten any of the following foods, please note the amount ingested and contact your veterinarian or the ASPCA Animal Poison Control Center at (888) 426-4435.",
+    "",
     "Foods to Avoid",
     parent=("Cats &amp; Dogs", "cats-and-dogs.html"),
 ) + f"""
 <section class="section">
-  <div class="container-narrow">
+  <div class="container">
+    <div class="poison-card">
+      <span class="poison-icon" aria-hidden="true">{PHONE_ICON}</span>
+      <div class="poison-text">
+        <p class="eyebrow">Think your pet ate something?</p>
+        <h2>Act fast and call for help</h2>
+        <p>{FOODS_INTRO_HTML}</p>
+      </div>
+      <a class="btn btn-primary btn-lg poison-call" href="tel:{C.FOODS_POISON_PHONE}"><span aria-hidden="true">{PHONE_ICON}</span>Call {C.FOODS_POISON_PHONE}</a>
+    </div>
+    <nav class="foods-jump" aria-label="Jump to a food">
+      <span class="foods-jump-label">Jump to</span>
+      <div class="foods-chips">
+{FOODS_JUMP}
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">The list</p>
+      <h2>{len(C.FOODS_TO_AVOID)} people foods that can harm pets</h2>
+    </div>
+    <div class="foods-grid">
 {FOODS_ITEMS}
+    </div>
+    <a class="source-card foods-source" href="{C.FOODS_SOURCE[1]}" target="_blank" rel="noopener">
+      <span class="source-num" aria-hidden="true">{BOOK_ICON}</span>
+      <span class="source-text"><strong>Source: ASPCA, “{C.FOODS_SOURCE[0]}”</strong><small><span class="source-globe" aria-hidden="true">{GLOBE_ICON}</span>{source_domain(C.FOODS_SOURCE[1])}</small></span>
+      <span class="source-arrow" aria-hidden="true">↗</span>
+    </a>
+  </div>
+</section>
+
+<section class="section section-cream">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Keep reading</p>
+        <h2>More articles for cat and dog owners</h2>
+      </div>
+      <a class="btn btn-secondary" href="cats-and-dogs.html">All Cats &amp; Dogs articles</a>
+    </div>
+    <div class="doc-grid is-four">
+{article_cards(exclude='foods-to-avoid.html')}
+    </div>
   </div>
 </section>
 """

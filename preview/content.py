@@ -583,6 +583,14 @@ CATS_DOGS_ARTICLES = [
 CATS_DOGS_INTRO = ("Please read these very informative articles on topics ranging from the problems with the "
                    "overpopulation of dogs and cats to useful techniques for caring for your dogs and cats.")
 
+# Foods to Avoid: wording as on the current page, with the poison line's
+# number written with dashes and "recumbancy" -> "recumbency" (2026-10-21).
+FOODS_INTRO = ("If you suspect your pet has eaten any of the following foods, please note the amount "
+               "ingested and contact your veterinarian or the ASPCA Animal Poison Control Center at "
+               "888-426-4435.")
+FOODS_POISON_PHONE = "888-426-4435"
+FOODS_SOURCE = ("People Foods to Avoid Feeding Your Pets",
+                "https://www.aspca.org/pet-care/aspca-poison-control/people-foods-avoid-feeding-your-pets")
 FOODS_TO_AVOID = [
     ("Chocolate, Coffee, Caffeine", "These products all contain substances called methylxanthines, which can cause vomiting and diarrhea, panting, excessive thirst and urination, hyperactivity, abnormal heart rhythm, tremors, seizures and even death. The darker the chocolate, the more dangerous it is to your pet."),
     ("Alcohol", "Alcoholic beverages and food products containing alcohol can cause vomiting, diarrhea, decreased coordination, central nervous system depression, difficulty breathing, tremors, abnormal blood acidity, coma and death."),
@@ -593,7 +601,7 @@ FOODS_TO_AVOID = [
     ("Onions, Garlic, Chives", "These vegetables and herbs can cause gastrointestinal irritation and could lead to red blood cell damage. Although cats are more susceptible, dogs are also at risk if a large enough amount is consumed. Toxicity is normally diagnosed through history, clinical signs and microscopic confirmation of Heinz bodies. An occasional low dose, such as what might be found in pet foods or treats, likely will not cause a problem, but we recommend that you do NOT give your pets large quantities of these foods."),
     ("Raw/Undercooked Meat, Eggs and Bones", "Raw meat and raw eggs can contain bacteria such as Salmonella and E. coli that can be harmful to pets. In addition, raw eggs contain an enzyme called avidin that decreases the absorption of biotin (a B vitamin), which can lead to skin and coat problems. Feeding your pet raw bones may seem like a natural and healthy option that might occur if your pet lived in the wild. However, this can be very dangerous for a domestic pet, who might choke on bones, or sustain a grave injury should the bone splinter and become lodged in or puncture your pet’s digestive tract."),
     ("Salt", "Large amounts of salt can produce excessive thirst and urination, or even sodium ion poisoning in pets. Signs that your pet may have eaten too many salty foods include vomiting, diarrhea, depression, tremors, elevated body temperature, seizures and even death. In other words, keep those salty chips to yourself!"),
-    ("Xylitol", "Xylitol is used as a sweetener in many products, including gum, candy, baked goods and toothpaste. It can cause insulin release in most species, which can lead to liver failure. The increase in insulin leads to hypoglycemia (lowered sugar levels). Initial signs of toxicosis include vomiting, lethargy and loss of coordination. Signs can progress to recumbancy and seizures. Elevated liver enzymes and liver failure can be seen within a few days."),
+    ("Xylitol", "Xylitol is used as a sweetener in many products, including gum, candy, baked goods and toothpaste. It can cause insulin release in most species, which can lead to liver failure. The increase in insulin leads to hypoglycemia (lowered sugar levels). Initial signs of toxicosis include vomiting, lethargy and loss of coordination. Signs can progress to recumbency and seizures. Elevated liver enzymes and liver failure can be seen within a few days."),
     ("Yeast Dough", "Yeast dough can rise and cause gas to accumulate in your pet’s digestive system. This can be painful and can cause the stomach or intestines to rupture. Because the risk diminishes after the dough is cooked and the yeast has fully risen, pets can have small bits of bread as treats. However, these treats should not constitute more than 5 percent to 10 percent of your pet’s daily caloric intake."),
 ]
 
