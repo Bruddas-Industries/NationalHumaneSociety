@@ -2156,7 +2156,7 @@ def article_cards(exclude=None):
 
 CATS_DOGS_BODY = page_hero(
     "Information on Cats &amp; Dogs",
-    "Practical guides to keeping your cat or dog healthy and safe, from vet visits and first aid to finding a lost pet and the foods to keep off their plate.",
+    "A little know-how goes a long way toward a happy, healthy pet, and a safe one when the unexpected happens.",
     "Cats &amp; Dogs",
 ) + f"""
 <section class="section">
