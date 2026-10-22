@@ -1983,13 +1983,39 @@ VIDEOS_BODY = page_hero(
 PET_TIPS_WAY_ICONS = {"Time": "⏱", "Space": "⌂", "Money": "♥"}
 
 
+def source_domain(url):
+    return url.split("//", 1)[-1].split("/", 1)[0].removeprefix("www.")
+
+
+def with_refs(text):
+    """Turn the article's link texts into reference links: the words keep a
+    coral underline and a small arrow, with a numbered marker that matches the
+    Sources list at the end of the page."""
+    for n, (phrase, url) in enumerate(C.PET_TIPS_SOURCES, 1):
+        if phrase in text:
+            text = text.replace(phrase, (
+                f'<a class="ref-link" href="{url}" target="_blank" rel="noopener" '
+                f'title="{source_domain(url)}">{phrase}<span class="ref-mark" aria-hidden="true">{n}</span></a>'), 1)
+    return text
+
+
+def pet_tips_sources():
+    cards = "\n".join(
+        f"""      <a class="source-card" href="{url}" target="_blank" rel="noopener">
+        <span class="source-num">{n}</span>
+        <span class="source-text"><strong>“{phrase}”</strong><small>{source_domain(url)}</small></span>
+        <span class="source-arrow" aria-hidden="true">↗</span>
+      </a>""" for n, (phrase, url) in enumerate(C.PET_TIPS_SOURCES, 1))
+    return f'    <div class="source-grid">\n{cards}\n    </div>'
+
+
 def pet_tips_faq():
     items = []
     for n, (q, a) in enumerate(C.PET_TIPS_FAQ, 1):
         opened = " open" if n == 1 else ""
         items.append(f"""        <details class="faq-card"{opened}>
           <summary><span class="faq-num">{n:02d}</span><span class="faq-q">{q}</span><span class="faq-icon" aria-hidden="true"></span></summary>
-          <div class="faq-a"><div class="faq-a-inner"><p>{a}</p></div></div>
+          <div class="faq-a"><div class="faq-a-inner"><p>{with_refs(a)}</p></div></div>
         </details>""")
     return "\n".join(items)
 
@@ -1998,7 +2024,7 @@ PET_TIPS_WAY_CARDS = "\n".join(
     f'      <div class="way-card"><span class="way-icon" aria-hidden="true">{PET_TIPS_WAY_ICONS[w]}</span><h3>{w}</h3><p>{t}</p></div>'
     for w, t in C.PET_TIPS_THREE_WAYS)
 PET_TIPS_ACTION_CARDS = "\n".join(
-    f'      <article class="action-card"><span class="action-num" aria-hidden="true">{n}</span><h3>{t}</h3><p>{d}</p></article>'
+    f'      <article class="action-card"><span class="action-num" aria-hidden="true">{n}</span><h3>{t}</h3><p>{with_refs(d)}</p></article>'
     for n, (t, d) in enumerate(C.PET_TIPS_ACTIONS, 1))
 
 
@@ -2013,10 +2039,9 @@ PET_TIPS_BODY = page_hero(
       <p class="eyebrow">Getting started</p>
       <h2>{C.PET_TIPS_INTRO_TITLE}</h2>
       <p class="tips-lead">{C.PET_TIPS_INTRO}</p>
-      {review_note("<p>The current article links to six outside websites (including a Portugal volunteering blog and a coffee company). The links are left out here; the wording is unchanged apart from obvious typo fixes. It also promises “ten high-impact ways” but lists six.</p>")}
+      {review_note("<p>The article promises “ten high-impact ways” to help but lists six. The wording is otherwise unchanged apart from obvious typo fixes.</p>")}
     </div>
     <div class="tips-photo">
-      <span class="tips-blob" aria-hidden="true"><img src="assets/img/help-icon-bone.png" alt="" width="64" height="64"></span>
       <img src="assets/img/animal-winterpup.jpg" alt="A dog wearing a fuzzy bear-ears hood" width="570" height="618">
     </div>
   </div>
@@ -2032,7 +2057,7 @@ PET_TIPS_BODY = page_hero(
 {PET_TIPS_WAY_CARDS}
     </div>
     <div class="container-narrow tips-prose" style="padding:0; margin-top:var(--space-7)">
-{paragraphs(C.PET_TIPS_THREE_WAYS_TEXT)}
+{paragraphs([with_refs(p) for p in C.PET_TIPS_THREE_WAYS_TEXT])}
     </div>
   </div>
 </section>
@@ -2041,7 +2066,7 @@ PET_TIPS_BODY = page_hero(
   <div class="container-narrow tips-prose">
     <p class="eyebrow">Going further</p>
     <h2>{C.PET_TIPS_NONPROFIT_TITLE}</h2>
-{paragraphs(C.PET_TIPS_NONPROFIT)}
+{paragraphs([with_refs(p) for p in C.PET_TIPS_NONPROFIT])}
   </div>
 </section>
 
@@ -2070,12 +2095,18 @@ PET_TIPS_BODY = page_hero(
   </div>
 </section>
 
-<section class="section section-navy tips-closing">
-  <div class="container-narrow text-center">
-    <p class="eyebrow">Keep it going</p>
-    <h2>{C.PET_TIPS_CLOSING_TITLE}</h2>
-    <p class="tips-closing-text">{C.PET_TIPS_CLOSING}</p>
-    <a class="btn btn-primary btn-lg btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Give monthly</a>
+<section class="section section-cream tips-closing">
+  <div class="container">
+    <div class="tips-closing-card">
+      <p class="eyebrow">Keep it going</p>
+      <h2>{C.PET_TIPS_CLOSING_TITLE}</h2>
+      <p class="tips-closing-text">{C.PET_TIPS_CLOSING}</p>
+      <a class="btn btn-primary btn-lg btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Give monthly</a>
+    </div>
+    <div class="tips-sources">
+      <p class="eyebrow">Sources mentioned in this article</p>
+{pet_tips_sources()}
+    </div>
   </div>
 </section>
 """

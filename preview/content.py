@@ -380,7 +380,7 @@ STORIES = [
 # site (2026-10-21). Wording is the current site's, with obvious spacing and
 # split-word typos fixed ("in corporation", "as mall", "bottle necked",
 # missing spaces after commas, "pick update" -> "pickup date"). The six links
-# to outside sites are left out (review note on the page).
+# to outside sites are kept as references (PET_TIPS_SOURCES, CJ 2026-10-21).
 # ---------------------------------------------------------------------------
 PET_TIPS_INTRO_TITLE = "How to Support Shelter Pets with Time, Space, and Money"
 PET_TIPS_INTRO = (
@@ -481,6 +481,20 @@ PET_TIPS_FAQ = [
      "Expect rules about ID, age limits, closed-toe shoes, and training for handling or bite-risk notes. Ask what "
      "expenses are covered, when you should call for medical concerns, and what steps are required for "
      "meet-and-greets."),
+]
+# The article's links to outside sites, in the order they appear. Each link
+# text appears once in the copy above; build.py turns it into a reference.
+# (link text as in the article, url)
+PET_TIPS_SOURCES = [
+    ("engaging with local communities",
+     "https://www.edpropt.org/post/community-engagement-volunteering-ways-to-connect-with-locals-in-portugal"),
+    ("pet products increased",
+     "https://www.post-gazette.com/news/state/2022/08/14/pittsburgh-area-pet-shelters-struggling-with-higher-admissions-fewer-adoptions/stories/202208110013"),
+    ("nonprofit formation support", "https://www.zenbusiness.com/nonprofit-corp/"),
+    ("gradual introductions", "https://petfolk.com/petfolklore/bringing-shelter-dogs-home"),
+    ("nearly 80% of shelters report that they are underfunded",
+     "https://www.twitchycoffeeco.com/post/support-animal-shelters-start-making-a-positive-impact"),
+    ("3% of all donations", "https://faunalytics.org/giving-to-animals-new-data-who-how/"),
 ]
 PET_TIPS_CLOSING_TITLE = "Build Lasting Support Habits That Strengthen Shelter Pet Outcomes"
 PET_TIPS_CLOSING = (

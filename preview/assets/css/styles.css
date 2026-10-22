@@ -3132,15 +3132,6 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
   box-shadow: var(--shadow-lg);
   background: #fff;
 }
-.tips-blob {
-  position: absolute;
-  top: -28px; left: -28px;
-  width: 116px; height: 104px;
-  display: grid; place-items: center;
-  background: url("../img/blob-1.png") center/contain no-repeat;
-  z-index: 1;
-}
-.tips-blob img { width: 58px; height: 58px; }
 
 .ways-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
 .way-card {
@@ -3166,7 +3157,7 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
 .way-card:nth-child(3) .way-icon { background: var(--color-orange); }
 .way-card h3 { font-size: 1.6rem; margin-bottom: var(--space-2); }
 .way-card p { margin: 0; color: var(--color-text-muted); }
-.tips-prose p { line-height: 1.75; color: #2b2a45; }
+.tips-prose p:not(.eyebrow) { line-height: 1.75; color: #2b2a45; }
 
 .action-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5); }
 .action-card {
@@ -3192,8 +3183,81 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
 .action-card h3 { font-size: 1.2rem; line-height: 1.3; margin-bottom: var(--space-3); }
 .action-card p { margin: 0; color: var(--color-text-muted); line-height: 1.7; }
 
-.tips-closing h2 { max-width: 24ch; margin-left: auto; margin-right: auto; }
-.tips-closing-text { font-size: 1.12rem; line-height: 1.75; color: rgba(255,255,255,.85); margin-bottom: var(--space-6); }
+/* Closing: a white card on cream (not navy, so it doesn't read as footer) */
+.tips-closing-card {
+  max-width: 860px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  border-top: 6px solid var(--color-coral);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-7) var(--space-7) var(--space-6);
+  text-align: center;
+}
+.tips-closing-card h2 { max-width: 24ch; margin-left: auto; margin-right: auto; }
+.tips-closing-text { font-size: 1.1rem; line-height: 1.75; color: #2b2a45; margin-bottom: var(--space-6); }
+
+/* Article references: inline link + numbered marker, and the Sources cards */
+.ref-link {
+  color: var(--color-navy);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--color-coral);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  transition: background .15s ease, color .15s ease;
+  border-radius: 3px;
+}
+.ref-link:hover { color: var(--color-coral-dark); background: rgba(250,88,83,.08); }
+.ref-mark {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.35em;
+  height: 1.35em;
+  margin-left: 3px;
+  padding: 0 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-coral);
+  color: #fff;
+  font-size: .62em;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: super;
+  text-decoration: none;
+}
+.tips-sources { max-width: 860px; margin: var(--space-7) auto 0; }
+.source-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+.source-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-navy);
+  transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+.source-card:hover { text-decoration: none; border-color: var(--color-coral); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.source-num {
+  flex: 0 0 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--color-coral);
+  color: #fff;
+  font-weight: 700;
+  font-size: .85rem;
+}
+.source-text { flex: 1; display: grid; line-height: 1.3; min-width: 0; }
+.source-text strong { font-size: .92rem; }
+.source-text small { font-size: .78rem; color: var(--color-text-muted); }
+.source-arrow { color: var(--color-coral); font-weight: 700; transition: transform .15s ease; }
+.source-card:hover .source-arrow { transform: translate(2px, -2px); }
+@media (max-width: 700px) {
+  .source-grid { grid-template-columns: 1fr; }
+  .tips-closing-card { padding: var(--space-6) var(--space-5) var(--space-5); }
+}
 
 @media (max-width: 900px) {
   .tips-intro { grid-template-columns: 1fr; gap: var(--space-7); }
@@ -3201,8 +3265,6 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
   .ways-grid, .action-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
-  .tips-blob { top: -20px; left: -10px; width: 84px; height: 76px; }
-  .tips-blob img { width: 42px; height: 42px; }
   .action-card { padding: var(--space-5) var(--space-5) var(--space-5) calc(var(--space-5) + 48px); }
   .action-num { top: var(--space-5); left: var(--space-4); }
 }
