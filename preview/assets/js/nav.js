@@ -397,6 +397,9 @@
 
   // Scanned-article viewer (Cats & Dogs): a pop-up with the pages stacked,
   // scrollable, with a page counter. Esc / close button / click outside closes.
+  // Zoom: the - / % / + buttons (% resets), Ctrl + wheel or trackpad pinch,
+  // two-finger pinch on touch screens, double-click, and the + - 0 keys.
+  // Zooming keeps the point under the pointer (or the middle) in place.
   const docLinks = document.querySelectorAll('[data-doc]');
   if (docLinks.length) {
     const viewer = document.createElement('div');
@@ -404,13 +407,85 @@
     viewer.hidden = true;
     viewer.innerHTML = '<div class="doc-viewer-box" role="dialog" aria-modal="true">' +
       '<div class="doc-viewer-head"><h2 class="doc-viewer-title"></h2><span class="doc-viewer-count"></span>' +
+      '<div class="doc-zoom" role="group" aria-label="Zoom">' +
+      '<button type="button" class="doc-zoom-btn" data-zoom="out" aria-label="Zoom out">−</button>' +
+      '<button type="button" class="doc-zoom-level" data-zoom="reset" aria-label="Reset zoom" title="Reset zoom">100%</button>' +
+      '<button type="button" class="doc-zoom-btn" data-zoom="in" aria-label="Zoom in">+</button></div>' +
       '<button type="button" class="doc-viewer-close" aria-label="Close">×</button></div>' +
       '<div class="doc-viewer-pages"></div></div>';
     document.body.appendChild(viewer);
     const titleEl = viewer.querySelector('.doc-viewer-title');
     const countEl = viewer.querySelector('.doc-viewer-count');
     const pagesEl = viewer.querySelector('.doc-viewer-pages');
+    const levelEl = viewer.querySelector('.doc-zoom-level');
+    const outBtn = viewer.querySelector('[data-zoom="out"]');
+    const inBtn = viewer.querySelector('[data-zoom="in"]');
+    const MIN_ZOOM = 0.5, MAX_ZOOM = 3;
+    const STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3];
+    let zoom = 1;
     let lastFocus = null;
+    // Page width at 100%: fits the viewer, never wider than the scan itself
+    const baseWidth = () => {
+      const cs = getComputedStyle(pagesEl);
+      return Math.min(773, pagesEl.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight));
+    };
+    const applyZoom = () => {
+      const w = Math.round(baseWidth() * zoom);
+      pagesEl.querySelectorAll('img').forEach((img) => { img.style.width = w + 'px'; });
+      levelEl.textContent = Math.round(zoom * 100) + '%';
+      outBtn.disabled = zoom <= MIN_ZOOM + 0.001;
+      inBtn.disabled = zoom >= MAX_ZOOM - 0.001;
+      pagesEl.classList.toggle('is-zoomed', zoom > 1.001);
+    };
+    const setZoom = (next, clientX, clientY) => {
+      next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, next));
+      if (Math.abs(next - zoom) < 0.001) return;
+      const box = pagesEl.getBoundingClientRect();
+      const ax = clientX === undefined ? pagesEl.clientWidth / 2 : clientX - box.left;
+      const ay = clientY === undefined ? pagesEl.clientHeight / 2 : clientY - box.top;
+      const x = pagesEl.scrollLeft + ax, y = pagesEl.scrollTop + ay;
+      const ratio = next / zoom;
+      zoom = next;
+      applyZoom();
+      pagesEl.scrollLeft = x * ratio - ax;
+      pagesEl.scrollTop = y * ratio - ay;
+      updateCount();
+    };
+    const stepZoom = (dir) => {
+      const next = dir > 0 ? STEPS.find((s) => s > zoom + 0.001) : [...STEPS].reverse().find((s) => s < zoom - 0.001);
+      if (next !== undefined) setZoom(next);
+    };
+    viewer.querySelector('.doc-zoom').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-zoom]');
+      if (!btn) return;
+      if (btn.dataset.zoom === 'in') stepZoom(1);
+      else if (btn.dataset.zoom === 'out') stepZoom(-1);
+      else setZoom(1);
+    });
+    // Ctrl + wheel, which is also what a trackpad pinch sends
+    pagesEl.addEventListener('wheel', (e) => {
+      if (!e.ctrlKey) return;
+      e.preventDefault();
+      setZoom(zoom * Math.exp(-e.deltaY * 0.0025), e.clientX, e.clientY);
+    }, { passive: false });
+    pagesEl.addEventListener('dblclick', (e) => {
+      if (e.target.tagName !== 'IMG') return;
+      setZoom(zoom > 1.001 ? 1 : 2, e.clientX, e.clientY);
+    });
+    // Two-finger pinch on touch screens
+    let pinch = null;
+    const touchGap = (t) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+    pagesEl.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) pinch = { gap: touchGap(e.touches), zoom };
+    }, { passive: true });
+    pagesEl.addEventListener('touchmove', (e) => {
+      if (!pinch || e.touches.length !== 2) return;
+      e.preventDefault();
+      const t = e.touches;
+      setZoom(pinch.zoom * touchGap(t) / pinch.gap, (t[0].clientX + t[1].clientX) / 2, (t[0].clientY + t[1].clientY) / 2);
+    }, { passive: false });
+    pagesEl.addEventListener('touchend', (e) => { if (e.touches.length < 2) pinch = null; });
+    window.addEventListener('resize', () => { if (!viewer.hidden) applyZoom(); });
     const updateCount = () => {
       const imgs = [...pagesEl.querySelectorAll('img')];
       if (imgs.length < 2) { countEl.textContent = imgs.length ? '1 page' : ''; return; }
@@ -433,14 +508,23 @@
       pagesEl.innerHTML = pages.map((src, i) =>
         `<img src="${src}" alt="${(link.dataset.docTitle || 'Article').replace(/"/g, '&quot;')}, page ${i + 1} of ${pages.length}" width="773" height="1000">`).join('');
       pagesEl.scrollTop = 0;
+      pagesEl.scrollLeft = 0;
       viewer.hidden = false;
       document.documentElement.classList.add('menu-open');
+      zoom = 1;
+      applyZoom();
       updateCount();
       viewer.querySelector('.doc-viewer-close').focus();
     }));
     pagesEl.addEventListener('scroll', updateCount, { passive: true });
     viewer.addEventListener('click', (e) => { if (e.target === viewer || e.target.closest('.doc-viewer-close')) close(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !viewer.hidden) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (viewer.hidden) return;
+      if (e.key === 'Escape') close();
+      else if ((e.key === '+' || e.key === '=') && !e.metaKey) { e.preventDefault(); stepZoom(1); }
+      else if (e.key === '-' && !e.metaKey) { e.preventDefault(); stepZoom(-1); }
+      else if (e.key === '0' && !e.metaKey) { e.preventDefault(); setZoom(1); }
+    });
   }
 
   // Prize pages: switch the ticket bundles between Sweepstakes and Raffle Plus

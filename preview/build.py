@@ -2156,7 +2156,7 @@ def article_cards(exclude=None):
 
 CATS_DOGS_BODY = page_hero(
     "Information on Cats &amp; Dogs",
-    "",
+    "Practical guides to keeping your cat or dog healthy and safe, from vet visits and first aid to finding a lost pet and the foods to keep off their plate.",
     "Cats &amp; Dogs",
 ) + f"""
 <section class="section">
@@ -2213,7 +2213,7 @@ FOODS_ITEMS = "\n".join(
 
 FOODS_BODY = page_hero(
     "ASPCA List of People Foods to Avoid Feeding Your Pets",
-    "",
+    "Some everyday foods that are safe for people can make cats and dogs seriously ill. Here’s what to keep out of reach, and why.",
     "Foods to Avoid",
     parent=("Cats &amp; Dogs", "cats-and-dogs.html"),
 ) + f"""
@@ -2222,14 +2222,14 @@ FOODS_BODY = page_hero(
     <div class="poison-card">
       <span class="poison-icon" aria-hidden="true">{PHONE_ICON}</span>
       <div class="poison-text">
-        <p class="eyebrow">Think your pet ate something?</p>
+        <p class="eyebrow">Think your pet ate something harmful?</p>
         <h2>Act fast and call for help</h2>
         <p>{FOODS_INTRO_HTML}</p>
       </div>
       <a class="btn btn-primary btn-lg poison-call" href="tel:{C.FOODS_POISON_PHONE}"><span aria-hidden="true">{PHONE_ICON}</span>Call {C.FOODS_POISON_PHONE}</a>
     </div>
-    <nav class="foods-jump" aria-label="Jump to a food">
-      <span class="foods-jump-label">Jump to</span>
+    <nav class="foods-jump" aria-labelledby="foods-jump-title">
+      <h2 class="foods-jump-title" id="foods-jump-title">Browse by food</h2>
       <div class="foods-chips">
 {FOODS_JUMP}
       </div>
