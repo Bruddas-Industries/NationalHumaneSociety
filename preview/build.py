@@ -2124,22 +2124,61 @@ PET_TIPS_BODY = page_hero(
 
 # --- ANIMAL INFO: CATS & DOGS -----------------------------------------------
 def article_cards():
+    """Cats & Dogs article cards. Scanned articles open in the page viewer
+    (nav.js, [data-doc]); without JavaScript the link opens the first page."""
     cards = []
-    for title, href in C.CATS_DOGS_ARTICLES:
-        link = f'<a href="{href}">Read more →</a>' if href else '<span class="dir-note">No article on the current site</span>'
-        cards.append(f'      <div class="card"><h3>{title}</h3>{link}</div>')
+    for title, topic, colour, pages, href in C.CATS_DOGS_ARTICLES:
+        safe = html.escape(title)
+        if pages:
+            count = f"{len(pages)} page{'s' if len(pages) > 1 else ''}"
+            pages_attr = html.escape(json.dumps([f"assets/img/{p}" for p in pages]))
+            link = (f'<a class="doc-card-link" href="assets/img/{pages[0]}" data-doc="{pages_attr}" data-doc-title="{safe}">'
+                    f'Read article <span aria-hidden="true">→</span></a>')
+            badge = f'<span class="doc-badge">{count}</span>'
+        else:
+            link = f'<a class="doc-card-link" href="{href}">Read article <span aria-hidden="true">→</span></a>'
+            badge = '<span class="doc-badge">Full page</span>'
+        cards.append(f"""      <article class="doc-card">
+        <div class="post-cover is-{colour}" aria-hidden="true">
+          <span class="post-cover-topic">{topic}</span>
+          {badge}
+        </div>
+        <div class="doc-card-body">
+          <h3>{safe}</h3>
+          {link}
+        </div>
+      </article>""")
     return "\n".join(cards)
 
 
 CATS_DOGS_BODY = page_hero(
-    "Information on Dogs &amp; Cats",
-    "Please read these very informative articles on topics ranging from the problems with the overpopulation of dogs and cats to useful techniques for caring for your dogs and cats.",
+    "Information on Cats &amp; Dogs",
+    "",
     "Cats &amp; Dogs",
 ) + f"""
 <section class="section">
+  <div class="container tips-intro">
+    <div>
+      <p class="eyebrow">Pet care reading</p>
+      <h2>Helpful articles for cat and dog owners</h2>
+      <p class="tips-lead">{C.CATS_DOGS_INTRO}</p>
+    </div>
+    <div class="tips-photo">
+      <img src="assets/img/catsdogs-photo.jpg" alt="A woman playing with a beagle on a sunny path" width="570" height="618">
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft">
   <div class="container">
-    {review_note("<p>The current site lists these five titles, but only the last one links to an article. The other four have no content behind them — are the articles available, or should the titles be removed?</p>")}
-    <div class="grid grid-3">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Articles</p>
+        <h2>{len(C.CATS_DOGS_ARTICLES)} articles to read</h2>
+      </div>
+    </div>
+    {review_note("<p>On the current site, four of these titles open pop-ups of <strong>scanned article pages</strong> rather than real text, and the scans credit other websites as their source (e.g. vetdepot.com). They are carried over the same way here. As images they can't be searched, resized or read by screen readers, so for the WordPress site we'd suggest re-typing them as real articles, and confirming NHS has permission to republish them.</p>")}
+    <div class="doc-grid">
 {article_cards()}
     </div>
   </div>

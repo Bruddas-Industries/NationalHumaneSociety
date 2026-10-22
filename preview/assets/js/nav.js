@@ -395,6 +395,54 @@
     });
   });
 
+  // Scanned-article viewer (Cats & Dogs): a pop-up with the pages stacked,
+  // scrollable, with a page counter. Esc / close button / click outside closes.
+  const docLinks = document.querySelectorAll('[data-doc]');
+  if (docLinks.length) {
+    const viewer = document.createElement('div');
+    viewer.className = 'doc-viewer';
+    viewer.hidden = true;
+    viewer.innerHTML = '<div class="doc-viewer-box" role="dialog" aria-modal="true">' +
+      '<div class="doc-viewer-head"><h2 class="doc-viewer-title"></h2><span class="doc-viewer-count"></span>' +
+      '<button type="button" class="doc-viewer-close" aria-label="Close">×</button></div>' +
+      '<div class="doc-viewer-pages"></div></div>';
+    document.body.appendChild(viewer);
+    const titleEl = viewer.querySelector('.doc-viewer-title');
+    const countEl = viewer.querySelector('.doc-viewer-count');
+    const pagesEl = viewer.querySelector('.doc-viewer-pages');
+    let lastFocus = null;
+    const updateCount = () => {
+      const imgs = [...pagesEl.querySelectorAll('img')];
+      if (imgs.length < 2) { countEl.textContent = imgs.length ? '1 page' : ''; return; }
+      const mid = pagesEl.scrollTop + pagesEl.clientHeight / 3;
+      let current = 1;
+      imgs.forEach((img, i) => { if (img.offsetTop <= mid) current = i + 1; });
+      countEl.textContent = `Page ${current} of ${imgs.length}`;
+    };
+    const close = () => {
+      viewer.hidden = true;
+      pagesEl.innerHTML = '';
+      document.documentElement.classList.remove('menu-open');
+      if (lastFocus) lastFocus.focus();
+    };
+    docLinks.forEach((link) => link.addEventListener('click', (e) => {
+      e.preventDefault();
+      lastFocus = link;
+      const pages = JSON.parse(link.dataset.doc);
+      titleEl.textContent = link.dataset.docTitle || '';
+      pagesEl.innerHTML = pages.map((src, i) =>
+        `<img src="${src}" alt="${(link.dataset.docTitle || 'Article').replace(/"/g, '&quot;')}, page ${i + 1} of ${pages.length}" width="773" height="1000">`).join('');
+      pagesEl.scrollTop = 0;
+      viewer.hidden = false;
+      document.documentElement.classList.add('menu-open');
+      updateCount();
+      viewer.querySelector('.doc-viewer-close').focus();
+    }));
+    pagesEl.addEventListener('scroll', updateCount, { passive: true });
+    viewer.addEventListener('click', (e) => { if (e.target === viewer || e.target.closest('.doc-viewer-close')) close(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !viewer.hidden) close(); });
+  }
+
   // Prize pages: switch the ticket bundles between Sweepstakes and Raffle Plus
   document.querySelectorAll('[data-tier-switch]').forEach((box) => {
     const tabs = [...box.querySelectorAll('[data-tier]')];

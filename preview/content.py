@@ -567,13 +567,21 @@ VET_STATES = [
 # ---------------------------------------------------------------------------
 # Titles listed under "Information on Dogs & Cats". Only the last one links
 # anywhere on the live site.
+# The five articles on the current "Cats & Dogs" tab. The first four open, on
+# the current site, as pop-ups of scanned article pages (found 2026-10-21; the
+# scans credit their source sites, e.g. vetdepot.com). The fifth is a page.
+# (title, topic label, cover colour, scanned pages or None, page link or None)
 CATS_DOGS_ARTICLES = [
-    ("Annual Veterinary Exams and Preventive Care", None),
-    ("Basic Emergency First Aid for Pets", None),
-    ("Heartworm: The Quiet Killer", None),
-    ("What To Do If Your Dog Is Lost", None),
-    ("\"People Foods\" to Avoid Feeding Your Pets", "foods-to-avoid.html"),
+    ("Annual Veterinary Exams and Preventive Care", "Vet care", "teal",
+     ["article-vet-1.jpg", "article-vet-2.jpg"], None),
+    ("Basic Emergency First Aid for Pets", "First aid", "coral",
+     ["article-firstaid-1.jpg", "article-firstaid-2.jpg", "article-firstaid-3.jpg", "article-firstaid-4.jpg"], None),
+    ("Heartworm: The Quiet Killer", "Health", "orange", ["article-heartworm-1.jpg"], None),
+    ("What To Do If Your Dog Is Lost", "Lost pets", "blue", ["article-lostdog-1.jpg"], None),
+    ("\"People Foods\" to Avoid Feeding Your Pets", "Nutrition", "navy", None, "foods-to-avoid.html"),
 ]
+CATS_DOGS_INTRO = ("Please read these very informative articles on topics ranging from the problems with the "
+                   "overpopulation of dogs and cats to useful techniques for caring for your dogs and cats.")
 
 FOODS_TO_AVOID = [
     ("Chocolate, Coffee, Caffeine", "These products all contain substances called methylxanthines, which can cause vomiting and diarrhea, panting, excessive thirst and urination, hyperactivity, abnormal heart rhythm, tremors, seizures and even death. The darker the chocolate, the more dangerous it is to your pet."),
