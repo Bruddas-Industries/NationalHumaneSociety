@@ -379,7 +379,8 @@ STORIES = [
 # Pet Tips (/animal-info, "Pet Tips" tab) — the full article from the current
 # site (2026-10-21). Wording is the current site's, with obvious spacing and
 # split-word typos fixed ("in corporation", "as mall", "bottle necked",
-# missing spaces after commas, "pick update" -> "pickup date"). The six links
+# missing spaces after commas, "pick update" -> "pickup date"), and "ten
+# high-impact ways" -> "six" to match the list (CJ, 2026-10-21). The six links
 # to outside sites are kept as references (PET_TIPS_SOURCES, CJ 2026-10-21).
 # ---------------------------------------------------------------------------
 PET_TIPS_INTRO_TITLE = "How to Support Shelter Pets with Time, Space, and Money"
@@ -421,7 +422,7 @@ PET_TIPS_NONPROFIT = [
     "what they’re able to offer. Because incorporation comes with real paperwork and requirements, it can help to "
     "lean on nonprofit formation support to navigate the process without losing momentum on the work that matters "
     "most: helping animals.",
-    "If a full nonprofit isn’t your path (yet), the next section offers ten high-impact ways to make a difference "
+    "If a full nonprofit isn’t your path (yet), the next section offers six high-impact ways to make a difference "
     "this month, starting right where you are.",
 ]
 PET_TIPS_ACTIONS_TITLE = "High-Impact Ways to Help This Month"

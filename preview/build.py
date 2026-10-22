@@ -1983,6 +1983,12 @@ VIDEOS_BODY = page_hero(
 PET_TIPS_WAY_ICONS = {"Time": "⏱", "Space": "⌂", "Money": "♥"}
 
 
+BOOK_ICON = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    '<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5A2.5 2.5 0 0 1 6.5 19H20v3H6.5"/><path d="M8 7h8M8 11h6"/></svg>'
+)
+
+
 def source_domain(url):
     return url.split("//", 1)[-1].split("/", 1)[0].removeprefix("www.")
 
@@ -2003,7 +2009,7 @@ def pet_tips_sources():
     cards = "\n".join(
         f"""      <a class="source-card" href="{url}" target="_blank" rel="noopener">
         <span class="source-num">{n}</span>
-        <span class="source-text"><strong>“{phrase}”</strong><small>{source_domain(url)}</small></span>
+        <span class="source-text"><strong>“{phrase}”</strong><small><span class="source-globe" aria-hidden="true">{GLOBE_ICON}</span>{source_domain(url)}</small></span>
         <span class="source-arrow" aria-hidden="true">↗</span>
       </a>""" for n, (phrase, url) in enumerate(C.PET_TIPS_SOURCES, 1))
     return f'    <div class="source-grid">\n{cards}\n    </div>'
@@ -2039,7 +2045,6 @@ PET_TIPS_BODY = page_hero(
       <p class="eyebrow">Getting started</p>
       <h2>{C.PET_TIPS_INTRO_TITLE}</h2>
       <p class="tips-lead">{C.PET_TIPS_INTRO}</p>
-      {review_note("<p>The article promises “ten high-impact ways” to help but lists six. The wording is otherwise unchanged apart from obvious typo fixes.</p>")}
     </div>
     <div class="tips-photo">
       <img src="assets/img/animal-winterpup.jpg" alt="A dog wearing a fuzzy bear-ears hood" width="570" height="618">
@@ -2103,10 +2108,16 @@ PET_TIPS_BODY = page_hero(
       <p class="tips-closing-text">{C.PET_TIPS_CLOSING}</p>
       <a class="btn btn-primary btn-lg btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Give monthly</a>
     </div>
-    <div class="tips-sources">
-      <p class="eyebrow">Sources mentioned in this article</p>
+    <aside class="tips-sources" aria-labelledby="tips-sources-title">
+      <div class="tips-sources-head">
+        <span class="tips-sources-icon" aria-hidden="true">{BOOK_ICON}</span>
+        <div>
+          <h3 id="tips-sources-title">Sources mentioned in this article</h3>
+          <p>Outside websites referenced in the text. Each opens in a new tab.</p>
+        </div>
+      </div>
 {pet_tips_sources()}
-    </div>
+    </aside>
   </div>
 </section>
 """
