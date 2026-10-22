@@ -341,16 +341,57 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) close(); });
   }
 
-  // Long stories (Donations Helping Animals): expand / collapse
+  // Long stories (Donations Helping Animals): expand / collapse with a
+  // smooth height animation. When collapsing, the page scrolls with it so the
+  // button stays where it is under the pointer, instead of jumping.
   document.querySelectorAll('[data-story-toggle]').forEach((btn) => {
     const text = btn.parentElement.querySelector('[data-collapsible]');
     if (!text) return;
     const label = btn.innerHTML;
+    let closedHeight = text.offsetHeight;
+    let busy = false;
+    const animate = (from, to, onFrame, done) => {
+      if (reduceMotion) { done(); return; }
+      const start = performance.now();
+      const duration = 420;
+      const ease = (t) => 1 - Math.pow(1 - t, 3);
+      text.style.maxHeight = from + 'px';
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / duration);
+        text.style.maxHeight = (from + (to - from) * ease(t)) + 'px';
+        if (onFrame) onFrame();
+        if (t < 1) requestAnimationFrame(step); else done();
+      };
+      requestAnimationFrame(step);
+    };
     btn.addEventListener('click', () => {
-      const open = text.classList.toggle('is-open');
-      btn.setAttribute('aria-expanded', String(open));
-      btn.innerHTML = open ? 'Show less <span aria-hidden="true">↑</span>' : label;
-      if (!open) btn.closest('article').scrollIntoView({ block: 'start' });
+      if (busy) return;
+      busy = true;
+      const opening = !text.classList.contains('is-open');
+      if (opening) {
+        closedHeight = text.offsetHeight;
+        btn.setAttribute('aria-expanded', 'true');
+        btn.innerHTML = 'Show less <span aria-hidden="true">↑</span>';
+        animate(closedHeight, text.scrollHeight, null, () => {
+          text.classList.add('is-open');
+          text.style.maxHeight = '';
+          busy = false;
+        });
+      } else {
+        const anchor = btn.getBoundingClientRect().top;
+        const keepButtonPut = () => {
+          const drift = btn.getBoundingClientRect().top - anchor;
+          if (drift) window.scrollTo({ top: window.scrollY + drift, behavior: 'instant' });
+        };
+        btn.setAttribute('aria-expanded', 'false');
+        btn.innerHTML = label;
+        animate(text.scrollHeight, closedHeight, keepButtonPut, () => {
+          text.classList.remove('is-open');
+          text.style.maxHeight = '';
+          keepButtonPut();
+          busy = false;
+        });
+      }
     });
   });
 

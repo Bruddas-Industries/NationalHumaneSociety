@@ -1183,7 +1183,26 @@ def story_long(story, i=0):
     text, the name as a heading and the sign-off as a signature. Photo and
     text swap sides on alternate stories."""
     title, image, signature, paras = story
-    if image:
+    extras = C.STORY_EXTRAS.get(title, {})
+    photos = ([image] if image else []) + extras.get("photos", [])
+    if len(photos) > 1:
+        # several photos: a cycling photo strip (the same one the prize pages use)
+        slides = "\n".join(
+            f'          <div class="prize-slide" style="background-image:url(\'assets/img/{p}\')" role="img" aria-label="{title}, photo {n}"></div>'
+            for n, p in enumerate(photos, 1))
+        dots = "".join(f'<button type="button" aria-label="Show photo {n}"{active}></button>'
+                       for n in range(1, len(photos) + 1)
+                       for active in [' class="is-active"' if n == 1 else ""])
+        pic = f"""<div class="prize-gallery story-gallery" data-gallery data-autoplay="4000">
+        <div class="prize-slides">
+{slides}
+        </div>
+        <span class="gallery-count">{len(photos)} photos</span>
+        <button class="gallery-btn gallery-prev" type="button" aria-label="Previous photo">‹</button>
+        <button class="gallery-btn gallery-next" type="button" aria-label="Next photo">›</button>
+        <div class="gallery-dots">{dots}</div>
+      </div>"""
+    elif image:
         pic = f'<img src="assets/img/{image}" alt="{title}" loading="lazy">'
     else:
         colour = ["coral", "teal", "blue", "orange"][i % 4]
@@ -1195,19 +1214,23 @@ def story_long(story, i=0):
     toggle = (f'\n        <button type="button" class="story-toggle" data-story-toggle aria-expanded="false">'
               f'Read {title}\'s full story <span aria-hidden="true">↓</span></button>') if long else ""
     flipped = " is-flipped" if i % 2 else ""
+    website = ""
+    if "website" in extras:
+        url, label = extras["website"]
+        website = (f'\n        <a class="btn btn-secondary story-site" href="{url}" target="_blank" rel="noopener">'
+                   f'{label} <span aria-hidden="true">↗</span></a>')
     return f"""    <article class="story-card-long{flipped}">
       <div class="story-media">{pic}</div>
       <div class="story-content">
-        <p class="eyebrow">Story {i + 1:02d}</p>
         <h3>{title}</h3>
 {body}{toggle}
-        <p class="story-sign"><span aria-hidden="true">{PAW_ICON}</span>{signature}</p>
+        <p class="story-sign"><span aria-hidden="true">{PAW_ICON}</span>{signature}</p>{website}
       </div>
     </article>"""
 
 
 LOGO_ROW = "\n".join(
-    f"""      <figure class="partner-card"><div class="partner-logo"><img src="assets/img/{img}" alt="{name} logo" loading="lazy"></div><figcaption>{name}</figcaption></figure>"""
+    f"""      <figure class="partner-card"><div class="partner-logo"><img src="assets/img/{img}" alt="{name} logo" loading="lazy"></div></figure>"""
     for img, name in C.PARTNER_LOGOS
 )
 
@@ -1218,7 +1241,7 @@ DONATIONS_BODY = page_hero(
 ) + f"""
 <section class="section">
   <div class="container">
-    <p class="eyebrow text-center">Recent grants</p>
+    <p class="eyebrow text-center">Shelters &amp; rescues we've supported</p>
     <div class="partner-row">
 {LOGO_ROW}
     </div>

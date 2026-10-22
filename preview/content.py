@@ -322,8 +322,19 @@ PARTNER_LOGOS = [
 ]
 
 # (title, image or None, signature, paragraphs) from /donations-helping-animals.
+# Extra photos and a website for a story, keyed by its title. The photos are
+# the six that sat between the S.C.A.R.S. story and Hank's on the current
+# page; the story's own photo stays first.
+STORY_EXTRAS = {
+    "Second Chance Animal Refuge Society": {
+        "photos": ["story-scars-1.jpg", "story-scars-2.jpg", "story-scars-3.jpg",
+                   "story-scars-4.jpg", "story-scars-5.jpg", "story-scars-6.jpg"],
+        "website": ("https://www.scarsusa.com/", "Visit S.C.A.R.S."),
+    },
+}
+
 STORIES = [
-    ("Haven", "story-haven.png", "Eryn · with A Dozen Roses Animal Rescue", [
+    ("Haven", "story-haven.png", "Eryn", [
         "Haven had a rough start to life but it immediately improved when A Dozen Roses Animal Rescue pulled her from a bad situation. I work at a busy veterinary clinic and remember the day they walked through the door with this sad looking 7 week old puppy. It was clear from looking at her that she was going to lose her eye. It’s unclear how it happened but she sustained trauma or severe infection to the point that her eye had ruptured and it couldn’t be saved. Surgery was a success and although her eye was gone, she would be a lot less painful.",
         "Unfortunately, it was also discovered that Haven had a severe heart murmur. A murmur that is almost as bad as it gets. She was given a very short life expectancy. Days, weeks, maybe a few months if she was lucky. She wasn’t adoptable and she was going to break someone’s heart in a short amount of time and I decided it may as well be mine. Haven joined my family that day and she has made it to 7 months old. She has defied all odds so far.",
         "She recently had a cardiac work up done, which involved an ultrasound to see exactly where the problem with her heart lies. Haven has something called severe Pulmonic Stenosis. Pulmonic Stenosis is a congenital heart defect of the semilunar valve that is between the right ventricle of the heart and the pulmonary artery (the vessel that takes blood to the lungs). The leaflets of this valve are thickened and/or partially fused together and restricting blood flow. Because of this, Haven shows signs of exercise intolerance and will occasionally faint when she exerts herself.",

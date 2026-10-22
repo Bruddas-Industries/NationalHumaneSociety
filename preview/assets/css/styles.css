@@ -98,6 +98,8 @@ p  { margin: 0 0 var(--space-4); }
   font-size: 1.2rem;
   color: var(--color-text-muted);
   max-width: 60ch;
+  /* avoids a lone last word on its own line */
+  text-wrap: pretty;
 }
 
 /* ----- Layout primitives ----- */
@@ -2961,8 +2963,9 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
   transition: transform .2s ease, box-shadow .2s ease;
 }
 .partner-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
-.partner-logo { height: 110px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.partner-logo img { max-height: 110px; max-width: 100%; width: auto; height: auto; object-fit: contain; }
+.partner-card { display: flex; align-items: center; justify-content: center; padding: var(--space-6) var(--space-5); }
+.partner-logo { height: 150px; width: 100%; display: flex; align-items: center; justify-content: center; }
+.partner-logo img { max-height: 150px; max-width: 100%; width: auto; height: auto; object-fit: contain; }
 .partner-card figcaption {
   margin-top: var(--space-4);
   padding-top: var(--space-3);
@@ -3032,9 +3035,9 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
 .story-content .eyebrow { margin-bottom: var(--space-2); }
 .story-text p { color: #2b2a45; line-height: 1.75; }
 .story-text p:first-child { font-size: 1.12rem; color: var(--color-navy); }
+.story-text.is-collapsible { overflow: hidden; }
 .story-text.is-collapsible:not(.is-open) {
   max-height: 22em;
-  overflow: hidden;
   -webkit-mask: linear-gradient(180deg, #000 70%, transparent);
           mask: linear-gradient(180deg, #000 70%, transparent);
 }
@@ -3073,4 +3076,12 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
 }
 @media (max-width: 600px) {
   .story-card-long { padding: var(--space-5); }
+  .partner-row { gap: var(--space-3); }
+  .partner-card { padding: var(--space-4) var(--space-3); }
+  .partner-logo { height: 96px; }
+  .partner-logo img { max-height: 96px; }
 }
+
+/* Story photo strip (S.C.A.R.S.) and website button */
+.story-gallery { aspect-ratio: 4 / 5; border-radius: var(--radius-lg); overflow: hidden; }
+.story-site { margin-top: var(--space-4); }
