@@ -341,6 +341,19 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) close(); });
   }
 
+  // Long stories (Donations Helping Animals): expand / collapse
+  document.querySelectorAll('[data-story-toggle]').forEach((btn) => {
+    const text = btn.parentElement.querySelector('[data-collapsible]');
+    if (!text) return;
+    const label = btn.innerHTML;
+    btn.addEventListener('click', () => {
+      const open = text.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', String(open));
+      btn.innerHTML = open ? 'Show less <span aria-hidden="true">↑</span>' : label;
+      if (!open) btn.closest('article').scrollIntoView({ block: 'start' });
+    });
+  });
+
   // Prize pages: switch the ticket bundles between Sweepstakes and Raffle Plus
   document.querySelectorAll('[data-tier-switch]').forEach((box) => {
     const tabs = [...box.querySelectorAll('[data-tier]')];

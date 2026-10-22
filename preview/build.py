@@ -1173,19 +1173,42 @@ PROGRAMS_BODY = page_hero(
 """
 
 # --- DONATIONS HELPING ANIMALS ----------------------------------------------
-def story_long(story):
+# Stories longer than this many characters start collapsed with a
+# "Read the full story" button (nav.js).
+STORY_COLLAPSE_AT = 1200
+
+
+def story_long(story, i=0):
+    """A story card: photo (or a paw-print tile when there's none) beside the
+    text, the name as a heading and the sign-off as a signature. Photo and
+    text swap sides on alternate stories."""
     title, image, signature, paras = story
-    pic = f'<img class="story-photo" src="assets/img/{image}" alt="{title}" loading="lazy">' if image else ""
-    return f"""    <article class="story-long">
-      {pic}
-      <h3>{title}</h3>
+    if image:
+        pic = f'<img src="assets/img/{image}" alt="{title}" loading="lazy">'
+    else:
+        colour = ["coral", "teal", "blue", "orange"][i % 4]
+        pic = f'<div class="winner-blank is-{colour} story-blank" aria-hidden="true"><span class="winner-initials">{title}</span></div>'
+    long = sum(len(p) for p in paras) > STORY_COLLAPSE_AT
+    body = f"""        <div class="story-text{' is-collapsible' if long else ''}"{' data-collapsible' if long else ''}>
 {paragraphs(paras)}
-      <p class="story-sign">{signature}</p>
+        </div>"""
+    toggle = (f'\n        <button type="button" class="story-toggle" data-story-toggle aria-expanded="false">'
+              f'Read {title}\'s full story <span aria-hidden="true">↓</span></button>') if long else ""
+    flipped = " is-flipped" if i % 2 else ""
+    return f"""    <article class="story-card-long{flipped}">
+      <div class="story-media">{pic}</div>
+      <div class="story-content">
+        <p class="eyebrow">Story {i + 1:02d}</p>
+        <h3>{title}</h3>
+{body}{toggle}
+        <p class="story-sign"><span aria-hidden="true">{PAW_ICON}</span>{signature}</p>
+      </div>
     </article>"""
 
 
 LOGO_ROW = "\n".join(
-    f'      <img src="assets/img/{img}" alt="{name}" loading="lazy">' for img, name in C.PARTNER_LOGOS
+    f"""      <figure class="partner-card"><div class="partner-logo"><img src="assets/img/{img}" alt="{name} logo" loading="lazy"></div><figcaption>{name}</figcaption></figure>"""
+    for img, name in C.PARTNER_LOGOS
 )
 
 DONATIONS_BODY = page_hero(
@@ -1195,21 +1218,31 @@ DONATIONS_BODY = page_hero(
 ) + f"""
 <section class="section">
   <div class="container">
-    <div class="logo-row">
+    <p class="eyebrow text-center">Recent grants</p>
+    <div class="partner-row">
 {LOGO_ROW}
     </div>
-    <p class="lead text-center" style="margin:var(--space-6) auto 0">Without your help this would not be possible. These groups shelter, feed, provide veterinarian care and rescue animals from storms.</p>
+  </div>
+</section>
+
+<section class="impact-band">
+  <div class="container">
+    <p class="impact-band-head">Without your help this would not be possible.</p>
+    <p class="impact-band-text">These groups shelter, feed, provide veterinarian care and rescue animals from storms.</p>
   </div>
 </section>
 
 <section class="section section-soft">
-  <div class="container-narrow">
-    <div class="section-head">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-7)">
+      <p class="eyebrow">Their stories</p>
       <h2>Below are some of the recent animals your generous donations have helped.</h2>
-      <a class="btn btn-primary" href="donate.html">Donate Today</a>
+      <a class="btn btn-primary btn-lg btn-donate" href="donate.html" style="margin-top:var(--space-4)"><span class="donate-heart" aria-hidden="true">♥</span>Donate Today</a>
     </div>
     {review_note("<p>Cupcake's letter is published on the current site alongside a photo of the family's credit statement. The photo is left out here, and the letter itself is a request for help rather than an outcome — worth deciding whether it stays.</p>")}
-{chr(10).join(story_long(s) for s in C.STORIES)}
+    <div class="story-list">
+{chr(10).join(story_long(st, i) for i, st in enumerate(C.STORIES))}
+    </div>
   </div>
 </section>
 """
