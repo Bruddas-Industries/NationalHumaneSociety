@@ -537,20 +537,14 @@ VET_STATES = [
     ("Georgia", [("PALS - Pets Are Loving Support", "http://www.palsatlanta.org/", "")]),
     ("Massachusetts", [
         ("Massachusetts SPCA", "https://www.mspca.org/",
-         "Provides financial assistance for pet owners receiving services at one of its three medical centers: "
-         "Angell Memorial Animal Hospital-Boston, 350 South Huntington Ave., Boston, MA 02130, 617-522-7282 · "
-         "Angell Animal Medical Center-Nantucket, 21 Crooked Lane, Nantucket, MA 02554, 508-228-1491 · "
-         "Angell Animal Medical Center-Western New England, 171 Union St., Springfield, MA 01105, 413-785-1221"),
+         "Provides financial assistance for pet owners receiving services at one of its three medical centers:"),
         ("Phinney's Friends (MSPCA)", "http://www.mspca.org/site/PageServer?pagename=advo_Phinney_Friends_HIV_AIDS", ""),
         ("The Sampson Fund", "https://www.sampsonfund.org",
          "The fund is to benefit companion animals of Cape Cod and the adjacent islands of Nantucket and Martha's Vineyard."),
     ]),
     ("Michigan", [
         ("Michigan Humane Society", "http://www.michiganhumane.org/",
-         "Michigan Humane Society maintains three veterinary clinics: "
-         "MHS Detroit Center for Animal Care, 7401 Chrysler Drive, Detroit, MI 48211, 313-872-0004 · "
-         "MHS Rochester Hills Center for Animal Care, 3600 W. Auburn Road, Rochester Hills, MI 48309, 248-852-7424 · "
-         "MHS Berman Center for Animal Care, 900 N. Newburgh Road, Westland, MI 48185, 734-721-4195"),
+         "Michigan Humane Society maintains three veterinary clinics:"),
     ]),
     ("Nevada", [("Shakespeare Animal", "http://www.shakespeareanimalfund.org/", "")]),
     ("New York", [
@@ -561,6 +555,33 @@ VET_STATES = [
     ("Texas", [("SPCA of Texas", "http://www.spca.org/site/PageServer?pagename=programs_socialservices_2004#petomeals", "")]),
     ("Washington", [("Pet Project: Seattle-King County Humane Society", "https://www.seattlehumane.org/", "")]),
 ]
+
+# Clinic addresses listed under an organization on the current page.
+# organization name -> [(clinic, street, city/state/zip, phone)]
+VET_CLINICS = {
+    "Massachusetts SPCA": [
+        ("Angell Memorial Animal Hospital-Boston", "350 South Huntington Ave.", "Boston, MA 02130", "617-522-7282"),
+        ("Angell Animal Medical Center-Nantucket", "21 Crooked Lane", "Nantucket, MA 02554", "508-228-1491"),
+        ("Angell Animal Medical Center-Western New England", "171 Union St.", "Springfield, MA 01105", "413-785-1221"),
+    ],
+    "Michigan Humane Society": [
+        ("MHS Detroit Center for Animal Care", "7401 Chrysler Drive", "Detroit, MI 48211", "313-872-0004"),
+        ("MHS Rochester Hills Center for Animal Care", "3600 W. Auburn Road", "Rochester Hills, MI 48309", "248-852-7424"),
+        ("MHS Berman Center for Animal Care", "900 N. Newburgh Road", "Westland, MI 48185", "734-721-4195"),
+    ],
+}
+STATE_ABBR = {
+    "California": "CA", "Colorado": "CO", "Connecticut": "CT", "District of Columbia": "DC", "Georgia": "GA",
+    "Massachusetts": "MA", "Michigan": "MI", "Nevada": "NV", "New York": "NY", "Rhode Island": "RI",
+    "Texas": "TX", "Washington": "WA",
+}
+SPAY_LINK = ("List of animal shelters and rescue organizations by state",
+             "https://www.animalleague.org/get-involved/spay-usa/")
+CDC_LINK = ("For more information visit the CDC Healthy Pets page", "https://www.cdc.gov/healthypets/")
+VET_HELP_INTRO = ("Here is a list of organizations that provide financial assistance to pet owners who are having "
+                  "trouble affording veterinary care. Keep in mind that each organization is independent, and "
+                  "therefore, have their own set of rules and guidelines as to how they distribute assistance. This "
+                  "means you will have to look into each one individually to determine if you qualify for assistance.")
 
 # ---------------------------------------------------------------------------
 # Animal info (/animal-info and /foods-to-avoid)
