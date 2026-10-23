@@ -561,6 +561,14 @@
       (saved[card.dataset.kit] || []).forEach((i) => { if (boxes[i]) boxes[i].checked = true; });
       boxes.forEach((b) => b.addEventListener('change', () => { refresh(); save(); }));
     });
+    // Prototype only: compare tick-box styles
+    const kitGrid = document.querySelector('.kit-grid');
+    document.querySelectorAll('[data-kit-style]').forEach((btn, _, all) => {
+      btn.addEventListener('click', () => {
+        kitGrid.dataset.style = btn.dataset.kitStyle;
+        all.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      });
+    });
     if (clearBtn) {
       clearBtn.addEventListener('click', () => {
         kitCards.forEach((card) => boxesOf(card).forEach((b) => { b.checked = false; }));

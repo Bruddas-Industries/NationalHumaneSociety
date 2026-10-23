@@ -612,10 +612,11 @@ HURRICANE_INTRO = ("Stock up on nonperishables well ahead of time, add perishabl
                    "and have everything ready to go at a moment's notice. Keep everything accessible, stored "
                    "in sturdy containers (duffel bags, covered trash containers, etc.) that can be carried easily.")
 # The two websites named in the first "Major Dos" item, shown as references.
+# Written without "www." so the long name doesn't leave a gap when it wraps.
 # petsallowed-hotels.com no longer resolves (checked 2026-10-22); in the client note.
 HURRICANE_SOURCES = [
-    ("www.petswelcome.com", "https://www.petswelcome.com/"),
-    ("www.petsallowed-hotels.com", "https://www.petsallowed-hotels.com/"),
+    ("petswelcome.com", "https://www.petswelcome.com/"),
+    ("petsallowed-hotels.com", "https://www.petsallowed-hotels.com/"),
 ]
 HURRICANE_KIT_INTRO = "Place the following items in a waterproof container so you're ready to go if you need to evacuate."
 HURRICANE_AFTER = ("Planning and preparation will help you weather the disaster, but your home may be a very "
@@ -646,7 +647,7 @@ HURRICANE_DONTS = [
     "Don't leave your pet at a boarding facility in the strike zone. There's no guarantee they have an evacuation plan.",
 ]
 HURRICANE_DOS = [
-    "Choose an evacuation destination in advance of an evacuation order. Consider pet-friendly hotels, family, friends, and boarding facilities outside of the danger area. Pet friendly hotels can be found by visiting two websites www.petswelcome.com or www.petsallowed-hotels.com. If you don't have a computer, you can also visit a local library or the LA/SPCA.",
+    "Choose an evacuation destination in advance of an evacuation order. Consider pet-friendly hotels, family, friends, and boarding facilities outside of the danger area. Pet friendly hotels can be found by visiting two websites petswelcome.com or petsallowed-hotels.com. If you don't have a computer, you can also visit a local library or the LA/SPCA.",
     "Call or check the website of the Louisiana Department of Agriculture &amp; Forestry or the LA/SPCA to find out where pet-friendly shelters may be located. These should be used as a last resort; they fill quickly on a first-come, first-served basis. You will be required to care for your pet so staying close-by the pet-friendly shelter is required.",
     "Check your pet's boarding facility's evacuation plans before going on vacation. Many veterinarians were forced to leave their clients' pets behind when Hurricane Katrina threatened New Orleans. Some people who boarded their pets while on vacation were unable to get back and their pets died. Make sure your boarding facility has a plan in advance in case you are unable to come home to retrieve your pet.",
     "Keep a hurricane-ready pack for your pet so you can pick up and go without forgetting important items.",

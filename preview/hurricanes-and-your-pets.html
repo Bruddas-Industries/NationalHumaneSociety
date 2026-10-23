@@ -117,8 +117,14 @@
         <p class="kit-tip">Tap an item to tick it off as you pack. Your ticks are remembered on this device.</p>
         <button type="button" class="kit-clear" disabled><span aria-hidden="true">↺</span> Clear</button>
       </div>
+      <div class="kit-style-picker" role="group" aria-label="Compare tick box styles">
+        <span>Prototype only, compare tick styles:</span>
+        <button type="button" data-kit-style="a" aria-pressed="true">A · Soft rows</button>
+        <button type="button" data-kit-style="b" aria-pressed="false">B · Clean checklist</button>
+        <button type="button" data-kit-style="c" aria-pressed="false">C · Paw stamps</button>
+      </div>
     </div>
-    <div class="kit-grid">
+    <div class="kit-grid" data-style="a">
       <article class="kit-card is-coral is-main" data-kit="cats-and-dogs">
         <div class="post-cover is-coral">
           <span class="post-cover-topic">Cats &amp; dogs</span>
@@ -212,7 +218,7 @@
       <div class="dd-card is-do">
         <div class="dd-head"><span class="dd-head-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><h3>Major Dos</h3></div>
         <ul class="dd-list">
-          <li><span class="dd-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><span>Choose an evacuation destination in advance of an evacuation order. Consider pet-friendly hotels, family, friends, and boarding facilities outside of the danger area. Pet friendly hotels can be found by visiting two websites <a class="ref-link" href="https://www.petswelcome.com/" target="_blank" rel="noopener" title="petswelcome.com"><span class="ref-tail">www.petswelcome.com<span class="ref-mark" aria-hidden="true">1</span></span></a> or <a class="ref-link" href="https://www.petsallowed-hotels.com/" target="_blank" rel="noopener" title="petsallowed-hotels.com"><span class="ref-tail">www.petsallowed-hotels.com<span class="ref-mark" aria-hidden="true">2</span></span></a>. If you don't have a computer, you can also visit a local library or the LA/SPCA.</span></li>
+          <li><span class="dd-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><span>Choose an evacuation destination in advance of an evacuation order. Consider pet-friendly hotels, family, friends, and boarding facilities outside of the danger area. Pet friendly hotels can be found by visiting two websites <a class="ref-link" href="https://www.petswelcome.com/" target="_blank" rel="noopener" title="petswelcome.com"><span class="ref-tail">petswelcome.com<span class="ref-mark" aria-hidden="true">1</span></span></a> or <a class="ref-link" href="https://www.petsallowed-hotels.com/" target="_blank" rel="noopener" title="petsallowed-hotels.com"><span class="ref-tail">petsallowed-hotels.com<span class="ref-mark" aria-hidden="true">2</span></span></a>. If you don't have a computer, you can also visit a local library or the LA/SPCA.</span></li>
           <li><span class="dd-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><span>Call or check the website of the Louisiana Department of Agriculture &amp; Forestry or the LA/SPCA to find out where pet-friendly shelters may be located. These should be used as a last resort; they fill quickly on a first-come, first-served basis. You will be required to care for your pet so staying close-by the pet-friendly shelter is required.</span></li>
           <li><span class="dd-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><span>Check your pet's boarding facility's evacuation plans before going on vacation. Many veterinarians were forced to leave their clients' pets behind when Hurricane Katrina threatened New Orleans. Some people who boarded their pets while on vacation were unable to get back and their pets died. Make sure your boarding facility has a plan in advance in case you are unable to come home to retrieve your pet.</span></li>
           <li><span class="dd-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><span>Keep a hurricane-ready pack for your pet so you can pick up and go without forgetting important items.</span></li>
@@ -230,12 +236,12 @@
     <div class="source-grid">
       <a class="source-card" href="https://www.petswelcome.com/" target="_blank" rel="noopener">
         <span class="source-num">1</span>
-        <span class="source-text"><strong>“www.petswelcome.com”</strong><small><span class="source-globe" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5c2.6 2.6 3.9 5.8 3.9 9.5s-1.3 6.9-3.9 9.5c-2.6-2.6-3.9-5.8-3.9-9.5s1.3-6.9 3.9-9.5z"/></svg></span>petswelcome.com</small></span>
+        <span class="source-text"><strong>“petswelcome.com”</strong><small><span class="source-globe" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5c2.6 2.6 3.9 5.8 3.9 9.5s-1.3 6.9-3.9 9.5c-2.6-2.6-3.9-5.8-3.9-9.5s1.3-6.9 3.9-9.5z"/></svg></span>petswelcome.com</small></span>
         <span class="source-arrow" aria-hidden="true">↗</span>
       </a>
       <a class="source-card" href="https://www.petsallowed-hotels.com/" target="_blank" rel="noopener">
         <span class="source-num">2</span>
-        <span class="source-text"><strong>“www.petsallowed-hotels.com”</strong><small><span class="source-globe" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5c2.6 2.6 3.9 5.8 3.9 9.5s-1.3 6.9-3.9 9.5c-2.6-2.6-3.9-5.8-3.9-9.5s1.3-6.9 3.9-9.5z"/></svg></span>petsallowed-hotels.com</small></span>
+        <span class="source-text"><strong>“petsallowed-hotels.com”</strong><small><span class="source-globe" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5c2.6 2.6 3.9 5.8 3.9 9.5s-1.3 6.9-3.9 9.5c-2.6-2.6-3.9-5.8-3.9-9.5s1.3-6.9 3.9-9.5z"/></svg></span>petsallowed-hotels.com</small></span>
         <span class="source-arrow" aria-hidden="true">↗</span>
       </a>
     </div>
