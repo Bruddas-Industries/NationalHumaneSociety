@@ -1178,6 +1178,15 @@ GLOBE_ICON = (
     '<circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5c2.6 2.6 3.9 5.8 3.9 9.5s-1.3 6.9-3.9 9.5c-2.6-2.6-3.9-5.8-3.9-9.5s1.3-6.9 3.9-9.5z"/></svg>'
 )
 
+
+def site_link(url, label):
+    """An organisation's website as a small reference-style link: globe,
+    domain, arrow, coral underline. `label` is read out by screen readers."""
+    domain = url.split("//", 1)[-1].split("/", 1)[0].removeprefix("www.")
+    return (f'<a class="site-link" href="{url}" target="_blank" rel="noopener" aria-label="{label} (opens in a new tab)">'
+            f'<span class="site-link-globe" aria-hidden="true">{GLOBE_ICON}</span>{domain}'
+            f'<span class="site-link-arrow" aria-hidden="true">↗</span></a>')
+
 # Stories longer than this many characters start collapsed with a
 # "Read the full story" button (nav.js).
 STORY_COLLAPSE_AT = 1200
@@ -1221,12 +1230,7 @@ def story_long(story, i=0):
     flipped = " is-flipped" if i % 2 else ""
     website = ""
     if "website" in extras:
-        url, label = extras["website"]
-        domain = url.split("//", 1)[-1].removeprefix("www.").rstrip("/")
-        website = (f'\n        <a class="story-site" href="{url}" target="_blank" rel="noopener">'
-                   f'<span class="story-site-icon" aria-hidden="true">{GLOBE_ICON}</span>'
-                   f'<span class="story-site-text"><strong>{label}</strong><small>{domain}</small></span>'
-                   f'<span class="story-site-arrow" aria-hidden="true">→</span></a>')
+        website = "\n        <p class=\"story-site\">" + site_link(*extras["website"]) + "</p>"
     return f"""    <article class="story-card-long{flipped}">
       <div class="story-media">{pic}</div>
       <div class="story-content">
@@ -2470,12 +2474,7 @@ DE_FACT_CARDS = "\n".join(
 def de_partner(name, colour, site):
     """Horizontal partner card: a paw badge in the card's colour stands in for
     a logo; the website (if any) is a small reference-style link."""
-    link = ""
-    if site:
-        url, label = site
-        link = (f'\n          <a class="de-partner-link" href="{url}" target="_blank" rel="noopener" aria-label="{label} (opens in a new tab)">'
-                f'<span class="de-partner-globe" aria-hidden="true">{GLOBE_ICON}</span>{source_domain(url)}'
-                f'<span class="de-partner-arrow" aria-hidden="true">↗</span></a>')
+    link = "\n          " + site_link(*site) if site else ""
     return f"""      <article class="de-partner is-{colour}">
         <span class="de-partner-mark" aria-hidden="true">{PAW_ICON}</span>
         <div class="de-partner-body">

@@ -680,7 +680,9 @@ DELAWARE_FACTS = [
      "Delaware supporters will be used for the benefit of Delaware non profits whose mission is related to "
      "animal care, shelters or programs to fight animal over population."),
 ]
-DELAWARE_PARTNERS_LINE = "In the past NHS has given to Delaware Humane Society and Faithful Friends."
+# Was "In the past NHS has given to Delaware Humane Society and Faithful
+# Friends."; reworded (CJ, 2026-10-22) since the cards below name them.
+DELAWARE_PARTNERS_LINE = "Over the years, NHS has proudly given to these Delaware animal shelters."
 # (name, cover colour, website or None). "Delaware Humane Society" has no link
 # until NHS confirms the name (see the client note on the page).
 DELAWARE_PARTNERS = [

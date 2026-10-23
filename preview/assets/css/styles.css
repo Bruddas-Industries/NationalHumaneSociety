@@ -3085,35 +3085,8 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
 
 /* Story photo strip (S.C.A.R.S.) and website button */
 .story-gallery { aspect-ratio: 4 / 5; border-radius: var(--radius-lg); overflow: hidden; }
-/* Website link for a story: icon, name and domain, arrow that slides on hover */
-.story-site {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-4);
-  margin-top: var(--space-5);
-  padding: 10px 20px 10px 10px;
-  border-radius: var(--radius-pill);
-  background: var(--color-navy);
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(24,23,51,.22);
-  transition: transform .2s ease, box-shadow .2s ease;
-}
-.story-site:hover { color: #fff; text-decoration: none; transform: translateY(-2px); box-shadow: 0 12px 26px rgba(24,23,51,.3); }
-.story-site:focus-visible { outline: 3px solid var(--color-coral); outline-offset: 3px; }
-.story-site-icon {
-  width: 42px; height: 42px;
-  flex: 0 0 auto;
-  border-radius: 50%;
-  display: grid; place-items: center;
-  background: var(--color-yellow);
-  color: var(--color-navy);
-}
-.story-site-icon svg { width: 22px; height: 22px; }
-.story-site-text { display: grid; line-height: 1.25; }
-.story-site-text strong { font-size: 1rem; }
-.story-site-text small { font-size: .82rem; color: rgba(255,255,255,.7); }
-.story-site-arrow { font-size: 1.2rem; color: var(--color-yellow); transition: transform .2s ease; }
-.story-site:hover .story-site-arrow { transform: translateX(4px); }
+/* Website link under a story (site_link() in build.py) */
+.story-site { margin: var(--space-4) 0 0; }
 
 /* ==========================================================================
    Pet Tips
@@ -3809,7 +3782,8 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
   color: var(--color-coral-dark);
 }
 .de-partner-body h3 { font-size: 1.45rem; line-height: 1.2; margin: 0; }
-.de-partner-link {
+/* An organisation's website as a reference-style link (site_link() in build.py) */
+.site-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -3821,11 +3795,12 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
   font-size: .95rem;
   transition: color .15s ease;
 }
-.de-partner-link:hover { text-decoration: none; color: var(--color-coral-dark); }
-.de-partner-globe { display: inline-flex; color: var(--color-teal); }
-.de-partner-globe svg { width: 15px; height: 15px; }
-.de-partner-arrow { color: var(--color-coral); transition: transform .15s ease; }
-.de-partner-link:hover .de-partner-arrow { transform: translate(2px, -2px); }
+.site-link:hover { text-decoration: none; color: var(--color-coral-dark); }
+.site-link-globe { display: inline-flex; color: var(--color-teal); }
+.site-link-globe svg { width: 15px; height: 15px; }
+.site-link-arrow { color: var(--color-coral); transition: transform .15s ease; }
+.site-link:hover .site-link-arrow { transform: translate(2px, -2px); }
+.site-link:focus-visible { outline: 3px solid var(--color-coral); outline-offset: 3px; border-radius: 3px; }
 .de-partner-watermark {
   position: absolute;
   right: -18px;
