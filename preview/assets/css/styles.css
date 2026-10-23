@@ -3632,34 +3632,41 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
 .kit-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .kit-card.is-main .kit-list { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--space-3); }
 .kit-card.is-main .kit-card-body { padding: var(--space-4) var(--space-5) var(--space-5); }
-/* Each item is a soft row; the box and the ticked row take the card's colour */
+/* Each item is a white row; ticking stamps a paw print into a round box in
+   the card's colour, and the row gets a tint and a stripe on the left */
 .kit-item {
   height: 100%;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
-  padding: 11px 14px;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  background: var(--color-mist);
+  padding: 12px 14px;
+  border: 1px solid #e6ebf0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(24,23,51,.05);
   line-height: 1.45;
   color: #2b2a45;
   cursor: pointer;
-  transition: background .2s ease, border-color .2s ease;
+  transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
 }
-.kit-item:hover { background: #fff; border-color: color-mix(in srgb, var(--kit) 40%, #fff); }
+.kit-item:hover {
+  border-color: color-mix(in srgb, var(--kit) 45%, #fff);
+  box-shadow: 0 6px 16px rgba(24,23,51,.08);
+  transform: translateY(-1px);
+}
 .kit-item:has(input:checked) {
-  background: color-mix(in srgb, var(--kit) 9%, #fff);
-  border-color: color-mix(in srgb, var(--kit) 28%, #fff);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--kit) 13%, #fff), color-mix(in srgb, var(--kit) 5%, #fff));
+  border-color: color-mix(in srgb, var(--kit) 30%, #fff);
+  box-shadow: inset 4px 0 0 var(--kit);
 }
 .kit-item input {
   appearance: none;
   -webkit-appearance: none;
-  flex: 0 0 24px;
-  height: 24px;
-  margin: -1px 0 0;
-  border: 2px solid color-mix(in srgb, var(--kit) 50%, #fff);
-  border-radius: 8px;
+  flex: 0 0 26px;
+  height: 26px;
+  margin: 0;
+  border: 2px solid color-mix(in srgb, var(--kit) 45%, #fff);
+  border-radius: 50%;
   background: #fff;
   display: grid;
   place-items: center;
@@ -3667,92 +3674,37 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
   transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 .kit-item:hover input:not(:checked) { border-color: var(--kit); box-shadow: 0 0 0 4px color-mix(in srgb, var(--kit) 14%, transparent); }
+/* 14px paw in the 22px space inside the border: an even split, so it lands
+   on whole pixels and doesn't nudge sideways when the animation ends */
 .kit-item input::after {
   content: "";
-  width: 6px; height: 11px;
-  margin-top: -3px;
-  border: solid #fff;
-  border-width: 0 3px 3px 0;
-  border-radius: 1px;
-  transform: rotate(45deg) scale(0);
-  transition: transform .2s cubic-bezier(.34, 1.56, .64, 1);
-}
-.kit-item input:checked { background: var(--kit); border-color: var(--kit); }
-.kit-item input:checked::after { transform: rotate(45deg) scale(1); }
-.kit-item input:focus-visible { outline: 3px solid var(--color-navy); outline-offset: 2px; }
-.kit-item span { transition: color .2s ease; }
-.kit-item input:checked + span {
-  color: var(--color-text-muted);
-  text-decoration: line-through;
-  text-decoration-color: color-mix(in srgb, var(--kit) 70%, #fff);
-  text-decoration-thickness: 2px;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .kit-item input:checked { animation: kit-pop .28s ease; }
-}
-@keyframes kit-pop { 0% { transform: scale(.82); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
-.hu-sources { margin-top: var(--space-7); }
-.dd-list li > span:last-child { text-wrap: pretty; }
-
-/* Prototype only: tick-style picker (SHOW_KIT_STYLE_PICKER in build.py) */
-.kit-style-picker {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
-  gap: var(--space-2);
-  margin: var(--space-4) auto 0;
-  padding: var(--space-2) var(--space-3);
-  width: fit-content; max-width: 100%;
-  border: 2px dashed var(--color-coral);
-  border-radius: var(--radius);
-  background: #fff;
-  font-size: .85rem;
-}
-.kit-style-picker span { color: var(--color-coral-dark); font-weight: 700; }
-.kit-style-picker button {
-  padding: 6px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-pill);
-  background: #fff; color: var(--color-navy); font: inherit; font-weight: 700; cursor: pointer;
-}
-.kit-style-picker button[aria-pressed="true"] { background: var(--color-navy); border-color: var(--color-navy); color: #fff; }
-
-/* Style B: clean checklist, round ticks and thin dividers */
-.kit-grid[data-style="b"] .kit-list { gap: 0; }
-.kit-grid[data-style="b"] .kit-item,
-.kit-grid[data-style="b"] .kit-item:hover,
-.kit-grid[data-style="b"] .kit-item:has(input:checked) {
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid #edf0f3;
-  border-radius: 0;
-  padding: 13px 6px;
-}
-.kit-grid[data-style="b"] .kit-item:hover span { color: var(--color-navy); }
-.kit-grid[data-style="b"] .kit-item input { border-radius: 50%; }
-
-/* Style C: paw stamps, a paw print stamps into a round box */
-.kit-grid[data-style="c"] .kit-item {
-  background: #fff;
-  border: 1.5px dashed color-mix(in srgb, var(--kit) 40%, #fff);
-  border-radius: 14px;
-}
-.kit-grid[data-style="c"] .kit-item:hover { border-style: solid; border-color: color-mix(in srgb, var(--kit) 55%, #fff); }
-.kit-grid[data-style="c"] .kit-item:has(input:checked) {
-  border-style: solid;
-  background: color-mix(in srgb, var(--kit) 10%, #fff);
-  border-color: color-mix(in srgb, var(--kit) 35%, #fff);
-}
-.kit-grid[data-style="c"] .kit-item input { flex-basis: 26px; height: 26px; margin-top: -2px; border-radius: 50%; }
-.kit-grid[data-style="c"] .kit-item input::after {
-  width: 15px; height: 15px;
-  margin: 0;
-  border: 0;
-  border-radius: 0;
+  width: 14px; height: 14px;
   background: #fff;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cellipse cx='12' cy='15.6' rx='5.2' ry='4.4'/%3E%3Cellipse cx='5.2' cy='9.6' rx='2.1' ry='2.7'/%3E%3Cellipse cx='9.1' cy='5.8' rx='2.2' ry='2.9'/%3E%3Cellipse cx='14.9' cy='5.8' rx='2.2' ry='2.9'/%3E%3Cellipse cx='18.8' cy='9.6' rx='2.1' ry='2.7'/%3E%3C/svg%3E") center / contain no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cellipse cx='12' cy='15.6' rx='5.2' ry='4.4'/%3E%3Cellipse cx='5.2' cy='9.6' rx='2.1' ry='2.7'/%3E%3Cellipse cx='9.1' cy='5.8' rx='2.2' ry='2.9'/%3E%3Cellipse cx='14.9' cy='5.8' rx='2.2' ry='2.9'/%3E%3Cellipse cx='18.8' cy='9.6' rx='2.1' ry='2.7'/%3E%3C/svg%3E") center / contain no-repeat;
-  transform: scale(0) rotate(-30deg);
-  transition: transform .3s cubic-bezier(.34, 1.56, .64, 1);
+  opacity: 0;
+  transform: scale(.4);
+  transition: opacity .15s ease, transform .15s ease;
+  /* The boxes can sit on half pixels (centred layouts); keeping the paw on
+     its own layer stops it snapping sideways when the stamp animation ends */
+  will-change: transform;
 }
-.kit-grid[data-style="c"] .kit-item input:checked::after { transform: scale(1) rotate(0); }
-.kit-grid[data-style="c"] .kit-item input:checked + span { text-decoration: none; color: var(--color-text-muted); }
+.kit-item input:checked { background: var(--kit); border-color: var(--kit); }
+.kit-item input:checked::after { opacity: 1; transform: none; }
+.kit-item input:focus-visible { outline: 3px solid var(--color-navy); outline-offset: 2px; }
+.kit-item span { transition: color .2s ease; }
+.kit-item input:checked + span { color: var(--color-text-muted); }
+@media (prefers-reduced-motion: no-preference) {
+  .kit-item input:checked::after { animation: paw-stamp .38s cubic-bezier(.3, 1.4, .6, 1); }
+}
+@keyframes paw-stamp {
+  0% { opacity: 0; transform: scale(1.9) rotate(-24deg); }
+  55% { opacity: 1; transform: scale(.88) rotate(5deg); }
+  100% { opacity: 1; transform: none; }
+}
+.hu-sources { margin-top: var(--space-7); }
+.dd-list li > span:last-child { text-wrap: pretty; }
+
 
 .dd-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); align-items: stretch; }
 .dd-card {

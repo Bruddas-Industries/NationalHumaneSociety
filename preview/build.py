@@ -2303,16 +2303,6 @@ MUST_HAVE_ICONS = {
     "Health Records &amp; Medication": '<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 12h6M9 16h4"/>',
 }
 MUST_COLOURS = ["coral", "teal", "orange"]
-# Prototype only: buttons above the kit to compare three tick-box styles.
-# Set to False (and keep the chosen style) once CJ picks one.
-SHOW_KIT_STYLE_PICKER = True
-KIT_STYLE_PICKER = """
-      <div class="kit-style-picker" role="group" aria-label="Compare tick box styles">
-        <span>Prototype only, compare tick styles:</span>
-        <button type="button" data-kit-style="a" aria-pressed="true">A · Soft rows</button>
-        <button type="button" data-kit-style="b" aria-pressed="false">B · Clean checklist</button>
-        <button type="button" data-kit-style="c" aria-pressed="false">C · Paw stamps</button>
-      </div>""" if SHOW_KIT_STYLE_PICKER else ""
 HU_PLAN = [
     ("hu-kit", "Pack an evacuation kit", "What each kind of pet needs"),
     ("hu-dos", "Know the dos and don'ts", "Decisions to make before an order"),
@@ -2396,9 +2386,9 @@ HURRICANE_BODY = page_hero(
       <div class="kit-toolbar">
         <p class="kit-tip">Tap an item to tick it off as you pack. Your ticks are remembered on this device.</p>
         <button type="button" class="kit-clear" disabled><span aria-hidden="true">↺</span> Clear</button>
-      </div>{KIT_STYLE_PICKER}
+      </div>
     </div>
-    <div class="kit-grid" data-style="a">
+    <div class="kit-grid">
 {KIT_MAIN}
       <div class="kit-side">
 {KIT_SIDE}
