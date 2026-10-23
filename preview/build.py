@@ -2280,14 +2280,71 @@ FOODS_BODY = page_hero(
 """
 
 # --- ANIMAL INFO: HURRICANES ------------------------------------------------
-KIT_BLOCKS = "\n".join(f"""      <div>
-        <h4>{name}</h4>
-{bullet_list(items)}
-      </div>""" for name, items in C.HURRICANE_KIT)
+# Kit cards: (cover label, cover colour) for each HURRICANE_KIT group. The
+# text in brackets in the group name becomes a note under the cover.
+KIT_COVERS = {
+    "Cats and Dogs": ("Cats &amp; dogs", "coral"),
+    "Snake": ("Snakes", "teal"),
+    "Small mammals (in small carriers)": ("Small mammals", "orange"),
+    "Birds (in carrier with perch inside)": ("Birds", "blue"),
+}
+HU_X_ICON = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">'
+             '<path d="M6 6l12 12M18 6L6 18"/></svg>')
+HU_CHECK_ICON = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                 '<path d="M5 12.5l4.5 4.5L19 7"/></svg>')
+MUST_HAVE_ICONS = {
+    "Pet Travel Carrier": '<rect x="2.5" y="7" width="19" height="13.5" rx="2"/><path d="M16 20.5V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v15.5"/>',
+    "Proper Identification": '<path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><circle cx="7" cy="7" r="1.6"/>',
+    "Health Records &amp; Medication": '<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 12h6M9 16h4"/>',
+}
+MUST_COLOURS = ["coral", "teal", "orange"]
+HU_PLAN = [
+    ("hu-kit", "Pack an evacuation kit", "What each kind of pet needs"),
+    ("hu-dos", "Know the dos and don'ts", "Decisions to make before an order"),
+    ("hu-must", "Get the must-haves", "Carrier, ID and health records"),
+    ("hu-after", "Help them settle back in", "After the storm passes"),
+]
 
-MUST_HAVES = "\n".join(
-    f"    <h4>{name}</h4>\n{bullet_list(items)}" for name, items in C.HURRICANE_MUST_HAVES
-)
+
+def kit_card(name, items, main=False):
+    label, colour = KIT_COVERS[name]
+    note = name.split("(", 1)[1].rstrip(")") if "(" in name else ""
+    note_html = f'\n          <p class="kit-note">{note[0].upper() + note[1:]}</p>' if note else ""
+    rows = "\n".join(
+        f'            <li><label class="kit-item"><input type="checkbox"><span>{item}</span></label></li>'
+        for item in items)
+    return f"""      <article class="kit-card{' is-main' if main else ''}">
+        <div class="post-cover is-{colour}">
+          <span class="post-cover-topic">{label}</span>
+          <span class="doc-badge kit-count" aria-live="polite">{len(items)} items</span>
+        </div>
+        <div class="kit-card-body">{note_html}
+          <ul class="kit-list">
+{rows}
+          </ul>
+        </div>
+      </article>"""
+
+
+HU_PLAN_STEPS = "\n".join(
+    f'          <li><a href="#{anchor}"><span class="hu-plan-num">{n}</span>'
+    f'<span class="hu-plan-text"><strong>{title}</strong><small>{sub}</small></span>'
+    f'<span class="hu-plan-arrow" aria-hidden="true">↓</span></a></li>'
+    for n, (anchor, title, sub) in enumerate(HU_PLAN, 1))
+KIT_MAIN = kit_card(*C.HURRICANE_KIT[0], main=True)
+KIT_SIDE = "\n".join(kit_card(name, items) for name, items in C.HURRICANE_KIT[1:])
+HU_DONTS = "\n".join(
+    f'          <li><span class="dd-mark">{HU_X_ICON}</span><span>{t}</span></li>' for t in C.HURRICANE_DONTS)
+HU_DOS = "\n".join(
+    f'          <li><span class="dd-mark">{HU_CHECK_ICON}</span><span>{t}</span></li>' for t in C.HURRICANE_DOS)
+MUST_CARDS = "\n".join(
+    f"""      <article class="must-card is-{MUST_COLOURS[i % 3]}">
+        <span class="must-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{MUST_HAVE_ICONS[name]}</svg></span>
+        <h3>{name}</h3>
+        <ul class="must-list">
+{chr(10).join(f"          <li>{t}</li>" for t in items)}
+        </ul>
+      </article>""" for i, (name, items) in enumerate(C.HURRICANE_MUST_HAVES))
 
 HURRICANE_BODY = page_hero(
     "Hurricanes &amp; Your Pets",
@@ -2295,34 +2352,84 @@ HURRICANE_BODY = page_hero(
     "Hurricanes &amp; Your Pets",
 ) + f"""
 <section class="section">
-  <div class="container-narrow prose">
+  <div class="container">
     {review_note("<p>This guidance was written for Louisiana — it names the LA/SPCA, the Louisiana Department of Agriculture &amp; Forestry and a free-tag offer “for a limited time”. Carried over unchanged; worth generalizing for a national audience.</p>")}
-    <p>Stock up on nonperishables well ahead of time, add perishable items at the last minute, and have everything ready to go at a moment's notice. Keep everything accessible, stored in sturdy containers (duffel bags, covered trash containers, etc.) that can be carried easily.</p>
-    <p>Place the following items in a waterproof container so you're ready to go if you need to evacuate.</p>
-    <div class="grid grid-2">
-{KIT_BLOCKS}
+    <div class="tips-intro hu-intro">
+      <div>
+        <p class="eyebrow">Before the storm</p>
+        <h2>Make a plan before you need it</h2>
+        <p class="tips-lead">{C.HURRICANE_INTRO}</p>
+      </div>
+      <nav class="hu-plan" aria-labelledby="hu-plan-title">
+        <h3 id="hu-plan-title">Your storm plan, step by step</h3>
+        <ol>
+{HU_PLAN_STEPS}
+        </ol>
+      </nav>
     </div>
   </div>
 </section>
 
-<section class="section section-soft">
-  <div class="container grid grid-2">
-    <div>
-      <h2>Major Don'ts</h2>
-{bullet_list(C.HURRICANE_DONTS)}
+<section class="section section-soft" id="hu-kit">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Evacuation kit</p>
+      <h2>What to pack for each pet</h2>
+      <p class="lead" style="margin:0 auto">{C.HURRICANE_KIT_INTRO}</p>
+      <p class="kit-tip">Tap an item to tick it off as you pack.</p>
     </div>
-    <div>
-      <h2>Major Dos</h2>
-{bullet_list(C.HURRICANE_DOS)}
+    <div class="kit-grid">
+{KIT_MAIN}
+      <div class="kit-side">
+{KIT_SIDE}
+      </div>
     </div>
   </div>
 </section>
 
-<section class="section">
-  <div class="container-narrow prose">
-    <h2>Must Haves</h2>
-{MUST_HAVES}
-    <p>Planning and preparation will help you weather the disaster, but your home may be a very different place afterward, whether you have taken shelter at home or elsewhere, be patient with your pets after a disaster. Try to get them back into their normal routines as soon as possible, and be ready for behavioral problems that may result from the stress of the situation. If behavioral problems persist, or if your pet seems to be having any health problems, talk to your veterinarian.</p>
+<section class="section" id="hu-dos">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Plan ahead</p>
+      <h2>What to do, and what to avoid</h2>
+    </div>
+    <div class="dd-grid">
+      <div class="dd-card is-dont">
+        <div class="dd-head"><span class="dd-head-icon" aria-hidden="true">{HU_X_ICON}</span><h3>Major Don'ts</h3></div>
+        <ul class="dd-list">
+{HU_DONTS}
+        </ul>
+      </div>
+      <div class="dd-card is-do">
+        <div class="dd-head"><span class="dd-head-icon" aria-hidden="true">{HU_CHECK_ICON}</span><h3>Major Dos</h3></div>
+        <ul class="dd-list">
+{HU_DOS}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft" id="hu-must">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Must haves</p>
+      <h2>Three things every pet needs</h2>
+    </div>
+    <div class="must-grid">
+{MUST_CARDS}
+    </div>
+  </div>
+</section>
+
+<section class="section section-cream tips-closing" id="hu-after">
+  <div class="container">
+    <div class="tips-closing-card">
+      <p class="eyebrow">After the storm</p>
+      <h2>Be patient as your pet settles back in</h2>
+      <p class="tips-closing-text">{C.HURRICANE_AFTER}</p>
+      <a class="btn btn-secondary btn-lg" href="cats-and-dogs.html">More pet care articles</a>
+    </div>
   </div>
 </section>
 """

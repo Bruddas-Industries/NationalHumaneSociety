@@ -606,8 +606,20 @@ FOODS_TO_AVOID = [
     ("Yeast Dough", "Yeast dough can rise and cause gas to accumulate in your pet’s digestive system. This can be painful and can cause the stomach or intestines to rupture. Because the risk diminishes after the dough is cooked and the yeast has fully risen, pets can have small bits of bread as treats. However, these treats should not constitute more than 5 percent to 10 percent of your pet’s daily caloric intake."),
 ]
 
+# Hurricanes & Your Pets: wording as on the current site. "Dogs and Cats" is
+# written "Cats and Dogs" to match the rest of the site (CJ, 2026-10-22).
+HURRICANE_INTRO = ("Stock up on nonperishables well ahead of time, add perishable items at the last minute, "
+                   "and have everything ready to go at a moment's notice. Keep everything accessible, stored "
+                   "in sturdy containers (duffel bags, covered trash containers, etc.) that can be carried easily.")
+HURRICANE_KIT_INTRO = "Place the following items in a waterproof container so you're ready to go if you need to evacuate."
+HURRICANE_AFTER = ("Planning and preparation will help you weather the disaster, but your home may be a very "
+                   "different place afterward, whether you have taken shelter at home or elsewhere, be patient "
+                   "with your pets after a disaster. Try to get them back into their normal routines as soon as "
+                   "possible, and be ready for behavioral problems that may result from the stress of the "
+                   "situation. If behavioral problems persist, or if your pet seems to be having any health "
+                   "problems, talk to your veterinarian.")
 HURRICANE_KIT = [
-    ("Dogs and Cats", [
+    ("Cats and Dogs", [
         "Your veterinarian's contact name and phone number", "Copies of pet vaccination records",
         "Medications", "Extra collar", "Food and water bowls", "Bottled water", "Toys", "Treats",
         "Paper towels", "Plastic baggies for picking up pet waste", "Muzzle, if necessary",

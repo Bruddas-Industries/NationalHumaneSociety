@@ -527,6 +527,18 @@
     });
   }
 
+  // Hurricanes: the evacuation-kit checklists count what has been ticked off
+  document.querySelectorAll('.kit-card').forEach((card) => {
+    const boxes = [...card.querySelectorAll('input[type="checkbox"]')];
+    const count = card.querySelector('.kit-count');
+    const update = () => {
+      const done = boxes.filter((b) => b.checked).length;
+      count.textContent = done ? `${done} of ${boxes.length} packed` : `${boxes.length} items`;
+      card.classList.toggle('is-complete', done === boxes.length);
+    };
+    boxes.forEach((b) => b.addEventListener('change', update));
+  });
+
   // Prize pages: switch the ticket bundles between Sweepstakes and Raffle Plus
   document.querySelectorAll('[data-tier-switch]').forEach((box) => {
     const tabs = [...box.querySelectorAll('[data-tier]')];
