@@ -2246,11 +2246,20 @@ FOODS_BODY = page_hero(
     <div class="foods-grid">
 {FOODS_ITEMS}
     </div>
-    <a class="source-card foods-source" href="{C.FOODS_SOURCE[1]}" target="_blank" rel="noopener">
-      <span class="source-num" aria-hidden="true">{BOOK_ICON}</span>
-      <span class="source-text"><strong>Source: ASPCA, “{C.FOODS_SOURCE[0]}”</strong><small><span class="source-globe" aria-hidden="true">{GLOBE_ICON}</span>{source_domain(C.FOODS_SOURCE[1])}</small></span>
-      <span class="source-arrow" aria-hidden="true">↗</span>
-    </a>
+    <aside class="tips-sources foods-sources" aria-labelledby="foods-sources-title">
+      <div class="tips-sources-head">
+        <span class="tips-sources-icon" aria-hidden="true">{BOOK_ICON}</span>
+        <div>
+          <h3 id="foods-sources-title">Source for this list</h3>
+          <p>The list above comes from the ASPCA. The link opens in a new tab.</p>
+        </div>
+      </div>
+      <a class="source-card" href="{C.FOODS_SOURCE[1]}" target="_blank" rel="noopener">
+        <span class="source-num">1</span>
+        <span class="source-text"><strong>“{C.FOODS_SOURCE[0]}”</strong><small><span class="source-globe" aria-hidden="true">{GLOBE_ICON}</span>{source_domain(C.FOODS_SOURCE[1])}</small></span>
+        <span class="source-arrow" aria-hidden="true">↗</span>
+      </a>
+    </aside>
   </div>
 </section>
 

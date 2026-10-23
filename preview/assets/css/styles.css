@@ -3516,9 +3516,8 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
 .food-card h3 { font-size: 1.3rem; line-height: 1.3; margin: 6px 0 var(--space-3); }
 .food-card p { margin: 0; color: #2b2a45; line-height: 1.7; }
 
-.foods-source { max-width: 640px; margin: var(--space-4) auto 0; }
-.foods-source .source-num { flex-basis: 40px; height: 40px; background: var(--color-navy); color: var(--color-yellow); }
-.foods-source .source-num svg { width: 20px; height: 20px; }
+/* Same panel as Pet Tips' sources; white here because the section is mist */
+.foods-sources { margin-top: var(--space-6); background: #fff; box-shadow: var(--shadow-sm); }
 
 @media (max-width: 900px) {
   .poison-card { grid-template-columns: auto minmax(0, 1fr); padding: var(--space-6); }

@@ -580,8 +580,9 @@ CATS_DOGS_ARTICLES = [
     ("What To Do If Your Dog Is Lost", "Lost pets", "blue", ["article-lostdog-1.jpg"], None),
     ("\"People Foods\" to Avoid Feeding Your Pets", "Nutrition", "navy", None, "foods-to-avoid.html"),
 ]
+# "dogs and cats" -> "cats and dogs" to match the page title (CJ, 2026-10-22)
 CATS_DOGS_INTRO = ("Please read these very informative articles on topics ranging from the problems with the "
-                   "overpopulation of dogs and cats to useful techniques for caring for your dogs and cats.")
+                   "overpopulation of cats and dogs to useful techniques for caring for your cats and dogs.")
 
 # Foods to Avoid: wording as on the current page, with the poison line's
 # number written with dashes and "recumbancy" -> "recumbency" (2026-10-21).
