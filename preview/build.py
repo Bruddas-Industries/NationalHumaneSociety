@@ -2455,15 +2455,81 @@ HURRICANE_BODY = page_hero(
 """
 
 # --- ANIMAL INFO: DELAWARE RESIDENTS ----------------------------------------
+DE_ICONS = {
+    "pin": ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+            '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>'),
+    "globe": GLOBE_ICON,
+    "heart": ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+              '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>'),
+}
+DE_FACT_CARDS = "\n".join(
+    f'      <div class="way-card"><span class="way-icon" aria-hidden="true">{DE_ICONS[icon]}</span><h3>{title}</h3><p>{text}</p></div>'
+    for title, icon, text in C.DELAWARE_FACTS)
+
+
+def de_partner(name, colour, site):
+    link = ""
+    if site:
+        url, label = site
+        link = (f'\n          <a class="story-site" href="{url}" target="_blank" rel="noopener">'
+                f'<span class="story-site-icon" aria-hidden="true">{GLOBE_ICON}</span>'
+                f'<span class="story-site-text"><strong>{label}</strong><small>{source_domain(url)}</small></span>'
+                f'<span class="story-site-arrow" aria-hidden="true">→</span></a>')
+    return f"""      <article class="de-partner">
+        <div class="post-cover is-{colour} de-partner-cover" aria-hidden="true"><span class="de-partner-mark">{PAW_ICON}</span></div>
+        <div class="de-partner-body">
+          <p class="de-partner-label"><span aria-hidden="true">{PAW_ICON}</span>Supported by NHS</p>
+          <h3>{name}</h3>{link}
+        </div>
+      </article>"""
+
+
+DE_PARTNER_CARDS = "\n".join(de_partner(*p) for p in C.DELAWARE_PARTNERS)
+
 DELAWARE_BODY = page_hero(
     "Delaware Residents",
-    "",
+    "We're a Delaware nonprofit helping animals in all 50 states, and support from Delaware goes to animal charities right here at home.",
     "Delaware Residents",
-) + """
+) + f"""
 <section class="section">
-  <div class="container-narrow prose">
-    <p class="lead">NHS is a nonprofit organization incorporated in Delaware that provides funding to animal shelters nationally, not just in Delaware.</p>
-    <p>NHS solicits and sells raffles to a national market and provides funding to local non-profits to help animal over population in any of the 50 states. Delaware supporters will be used for the benefit of Delaware non profits whose mission is related to animal care, shelters or programs to fight animal over population. In the past NHS has given to Delaware Humane Society and Faithful Friends.</p>
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Our home state</p>
+      <h2 class="de-balance">A Delaware nonprofit with a national reach</h2>
+    </div>
+    <div class="ways-grid de-facts">
+{DE_FACT_CARDS}
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Local partners</p>
+      <h2>Delaware shelters we've supported</h2>
+      <p class="lead" style="margin:0 auto">{C.DELAWARE_PARTNERS_LINE}</p>
+    </div>
+    <div class="de-partners-wrap">
+      {review_note("<p>The page says NHS has given to <strong>“Delaware Humane Society”</strong>. The Wilmington shelter of that kind was the Delaware Humane Association, which merged with the Delaware SPCA in 2022 to become Humane Animal Partners (humaneanimalpartners.org). Please confirm the name to show, and whether to link their website.</p>")}
+      <div class="de-partners">
+{DE_PARTNER_CARDS}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-cream tips-closing">
+  <div class="container">
+    <div class="tips-closing-card">
+      <p class="eyebrow">Questions?</p>
+      <h2>Have a question about giving from Delaware?</h2>
+      <p class="tips-closing-text">Our customer service team is happy to help. You can also read about the shelters and animals your support reaches across the country.</p>
+      <div class="de-actions">
+        <a class="btn btn-primary btn-lg de-call" href="{tel(C.CUSTOMER_SERVICE)}"><span aria-hidden="true">{PHONE_ICON}</span>Call {C.CUSTOMER_SERVICE}</a>
+        <a class="btn btn-secondary btn-lg" href="donations-helping-animals.html">Donations Helping Animals</a>
+      </div>
+    </div>
   </div>
 </section>
 """

@@ -666,6 +666,28 @@ HURRICANE_MUST_HAVES = [
     ]),
 ]
 
+# Delaware Residents: the current page's two paragraphs, split into three
+# cards and a partners line. Wording unchanged.
+# (card title, icon key, text)
+DELAWARE_FACTS = [
+    ("Based in Delaware", "pin",
+     "NHS is a nonprofit organization incorporated in Delaware that provides funding to animal shelters "
+     "nationally, not just in Delaware."),
+    ("Helping in all 50 states", "globe",
+     "NHS solicits and sells raffles to a national market and provides funding to local non-profits to help "
+     "animal over population in any of the 50 states."),
+    ("Delaware support stays local", "heart",
+     "Delaware supporters will be used for the benefit of Delaware non profits whose mission is related to "
+     "animal care, shelters or programs to fight animal over population."),
+]
+DELAWARE_PARTNERS_LINE = "In the past NHS has given to Delaware Humane Society and Faithful Friends."
+# (name, cover colour, website or None). "Delaware Humane Society" has no link
+# until NHS confirms the name (see the client note on the page).
+DELAWARE_PARTNERS = [
+    ("Delaware Humane Society", "teal", None),
+    ("Faithful Friends", "orange", ("https://faithfulfriends.us/", "Visit Faithful Friends")),
+]
+
 # ---------------------------------------------------------------------------
 # Educational Messages (/blog) — every post on the live site (81 on
 # 2026-10-20), newest first, with the live slug and a category. The categories
