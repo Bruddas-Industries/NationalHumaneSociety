@@ -322,8 +322,19 @@ PARTNER_LOGOS = [
 ]
 
 # (title, image or None, signature, paragraphs) from /donations-helping-animals.
+# Extra photos and a website for a story, keyed by its title. The photos are
+# the six that sat between the S.C.A.R.S. story and Hank's on the current
+# page; the story's own photo stays first.
+STORY_EXTRAS = {
+    "Second Chance Animal Refuge Society": {
+        "photos": ["story-scars-1.jpg", "story-scars-2.jpg", "story-scars-3.jpg",
+                   "story-scars-4.jpg", "story-scars-5.jpg", "story-scars-6.jpg"],
+        "website": ("https://www.scarsusa.com/", "Visit S.C.A.R.S."),
+    },
+}
+
 STORIES = [
-    ("Haven", "story-haven.png", "Eryn · with A Dozen Roses Animal Rescue", [
+    ("Haven", "story-haven.png", "Eryn", [
         "Haven had a rough start to life but it immediately improved when A Dozen Roses Animal Rescue pulled her from a bad situation. I work at a busy veterinary clinic and remember the day they walked through the door with this sad looking 7 week old puppy. It was clear from looking at her that she was going to lose her eye. It’s unclear how it happened but she sustained trauma or severe infection to the point that her eye had ruptured and it couldn’t be saved. Surgery was a success and although her eye was gone, she would be a lot less painful.",
         "Unfortunately, it was also discovered that Haven had a severe heart murmur. A murmur that is almost as bad as it gets. She was given a very short life expectancy. Days, weeks, maybe a few months if she was lucky. She wasn’t adoptable and she was going to break someone’s heart in a short amount of time and I decided it may as well be mine. Haven joined my family that day and she has made it to 7 months old. She has defied all odds so far.",
         "She recently had a cardiac work up done, which involved an ultrasound to see exactly where the problem with her heart lies. Haven has something called severe Pulmonic Stenosis. Pulmonic Stenosis is a congenital heart defect of the semilunar valve that is between the right ventricle of the heart and the pulmonary artery (the vessel that takes blood to the lungs). The leaflets of this valve are thickened and/or partially fused together and restricting blood flow. Because of this, Haven shows signs of exercise intolerance and will occasionally faint when she exerts herself.",
@@ -343,7 +354,8 @@ STORIES = [
         "Last month we rescued five dogs who were living under the Sardou Bridge in Topeka, Ks. It is a rough area of town, and dogs roam the banks in search of food. We were able to catch five and they have been here for a month. Two are larger brown pit bull mixes and have gained 20 lbs each. Two are smaller and have gained 10 lbs each. The last was a 3 month of fawn brindle female pittie who was riddled with a variety of worms. It took several weeks of parasite treatment from our vet to bring these under control but Baby is gaining weight and now happy and healthy.",
         "These are a small sampling of the dogs who will receive full medical care due to the support by the National Humane Society....our heroes.",
     ]),
-    ("Hank", "story-hank.jpg", "Second Chance Animal Refuge Society", [
+    # The current site gives no author for Hank's story (CJ, 2026-10-21)
+    ("Hank", "story-hank.jpg", "Anonymous", [
         "Saturday morn rolled around, we were all busy as bees, when the car pulled up the driveway and the couple got out, holding a stuffed bag full of towels to donate. I immediately recognized them as people who had volunteered a few years back.",
         "They came through the gate and we began chatting as the husband reached down petting every dog. He happened to glance up and I noticed something held his attention and I looked over to where he was staring. \"Is that a Great Dane\" he asked me looking at Hank who was in the big kennel having his breakfast.",
         "My mind went back to the day two years ago when my phone rang. \"There is a purebred Great Dane being starved and beaten and owner is willing to surrender if I can find a place for a giant breed.\" How could I say no? I told her to bring him over and I would figure it out.",
@@ -362,6 +374,137 @@ STORIES = [
         "The world is yours......",
     ]),
 ]
+
+# ---------------------------------------------------------------------------
+# Pet Tips (/animal-info, "Pet Tips" tab) — the full article from the current
+# site (2026-10-21). Wording is the current site's, with obvious spacing and
+# split-word typos fixed ("in corporation", "as mall", "bottle necked",
+# missing spaces after commas, "pick update" -> "pickup date"), and "ten
+# high-impact ways" -> "six" to match the list (CJ, 2026-10-21). The six links
+# to outside sites are kept as references (PET_TIPS_SOURCES, CJ 2026-10-21).
+# ---------------------------------------------------------------------------
+PET_TIPS_INTRO_TITLE = "How to Support Shelter Pets with Time, Space, and Money"
+PET_TIPS_INTRO = (
+    "Busy parents juggling work and family, apartment renters with pet limits, and animal lovers on tight "
+    "budgets often carry the same quiet worry: caring about shelter and rescue pets feels meaningful, but the "
+    "“right” way to help can feel out of reach. That tension is real, community support for animals is built "
+    "by many people doing what they can, not a few people doing everything. Volunteering for animal shelters, "
+    "pet fostering programs, and animal welfare advocacy aren’t reserved for experts or people with perfect "
+    "circumstances. With a clear sense of what fits a real life, small commitments can ripple into lifesaving impact."
+)
+PET_TIPS_THREE_WAYS_TITLE = "Understanding the Three Ways to Help Shelter Pets"
+# (way, the article's own sentence for it)
+PET_TIPS_THREE_WAYS = [
+    ("Time", "Hands-on volunteering roles that keep daily care running."),
+    ("Space", "Fostering, even short term, so an animal can rest outside the kennel."),
+    ("Money", "Donations, supplies, or sponsor style gifts that fill the gaps."),
+]
+PET_TIPS_THREE_WAYS_TEXT = [
+    "Helping shelter and rescue pets usually falls into three lanes: giving time, giving space, or giving money. "
+    "Time means hands-on volunteering roles that keep daily care running; engaging with local communities captures "
+    "the spirit of showing up where help is needed. Space means fostering, even short term, so an animal can rest "
+    "outside the kennel. Money means donations, supplies, or sponsor style gifts that fill the gaps.",
+    "This matters because shelters need a mix of support to stay steady when life gets expensive. When pet products "
+    "increased, even small donations can stretch further than you think. Choosing one lane keeps you consistent "
+    "instead of burnt out.",
+    "Picture a week where your schedule is packed and your lease is strict. You might donate a bag of food or cover "
+    "one vaccination instead of fostering. A friend with more flexibility might walk dogs on Saturdays, while someone "
+    "else fosters a shy cat for two weeks. When support gets organized, nonprofit structure can protect the work and "
+    "unlock bigger funding.",
+]
+PET_TIPS_NONPROFIT_TITLE = "Build a Bigger Rescue Mission with Nonprofit Basics"
+PET_TIPS_NONPROFIT = [
+    "Once you know whether your best “give” is time, space, or money, you may realize you want to pull those pieces "
+    "together into something more sustained. Some people take that next step by starting a grassroots rescue "
+    "initiative or a small foster network, coordinating a few homes, sharing transport runs, and helping pets move "
+    "out of the shelter and into stability. When those efforts begin to grow, founders sometimes choose to "
+    "incorporate as a nonprofit organization so they can raise funds more reliably, accept donations, and expand "
+    "what they’re able to offer. Because incorporation comes with real paperwork and requirements, it can help to "
+    "lean on nonprofit formation support to navigate the process without losing momentum on the work that matters "
+    "most: helping animals.",
+    "If a full nonprofit isn’t your path (yet), the next section offers six high-impact ways to make a difference "
+    "this month, starting right where you are.",
+]
+PET_TIPS_ACTIONS_TITLE = "High-Impact Ways to Help This Month"
+PET_TIPS_ACTIONS_INTRO = (
+    "If you’ve ever wished you could do <em>something</em> for shelter pets but didn’t know what would matter most, "
+    "this is your menu. Pick one or two actions for this month, then build a rhythm you can actually sustain."
+)
+PET_TIPS_ACTIONS = [
+    ("Try fostering with a clear, short plan",
+     "Ask a rescue for a “two-week decompression” or “weekend break” foster, short stays still create real animal "
+     "fostering benefits by freeing kennel space and giving pets a calmer environment to show their true personality. "
+     "Get specifics up front: who covers vet care, what food is provided, and what happens if the match isn’t right. "
+     "If you bring a dog home, set them up for success with gradual introductions so the transition doesn’t "
+     "overwhelm them, or you."),
+    ("Volunteer where the shelter is actually bottlenecked",
+     "Don’t just ask “Do you need help?” Ask, “What task would reduce staff load the most this week?” Many shelters "
+     "need dog walkers who can follow handling notes, cat enrichment teams, laundry and dish crews, adoption-day "
+     "greeters, and photo/video helpers. Commit to a realistic schedule like one 2-hour shift weekly for a month so "
+     "staff can plan around you."),
+    ("Make one strategic, boring donation that keeps doors open",
+     "Flashy items are fun, but predictable operating support is often what stabilizes care. Because nearly 80% of "
+     "shelters report that they are underfunded, consider setting up a modest recurring gift and earmarking it for "
+     "medical funds, spay/neuter, behavior support, or transport. If you’re plugged into a small community rescue "
+     "working toward nonprofit status, this is also where good bookkeeping and restricted funds can protect trust."),
+    ("Run a “wish-list only” pet supply drive in a tight time box",
+     "Choose one location (workplace, gym, school pickup line) and one week. Ask the shelter for its current top 5 "
+     "items and post them clearly, then add a drop-off bin and a pickup date so it doesn’t drag on. Offer to sort and "
+     "label donations by category (food, cleaning, enrichment) so staff can use them immediately."),
+    ("Be the admin support rescues rarely have",
+     "A few hours of behind-the-scenes help can unlock adoptions and donations. Offer to write two pet bios, respond "
+     "to messages for a set time window, update a spreadsheet of supplies, or organize foster paperwork. If a rescue "
+     "is formalizing into a nonprofit, your consistency here, clean records, receipts, simple budgets, directly "
+     "supports long-term legitimacy."),
+    ("Show up for one rescue event and bring a plan, not just enthusiasm",
+     "Pick a single adoption event or fundraiser and ask what would increase conversions: setting up crates, managing "
+     "a meet-and-greet flow, taking quick photos, or collecting adoption applications. Bring simple supplies like "
+     "clipboards, pens, and water bowls, and volunteer to do a 30-minute “closing shift” so staff isn’t packing alone. "
+     "One well-run event can mean multiple animals placed, and fewer returns."),
+]
+PET_TIPS_FAQ_TITLE = "Shelter Pet Support: Common Questions Answered"
+PET_TIPS_FAQ = [
+    ("What if I foster and the pet doesn’t fit my home or schedule?",
+     "That happens, and a good rescue expects it. Ask about a trial period, backup fosters, and what “returning” "
+     "looks like before you say yes. Set a simple reset plan for yourself too: quiet space, predictable routine, and "
+     "one point of contact for questions."),
+    ("How much time do I need to volunteer without burning out?",
+     "Consistency matters more than big hours. Offer one shift you can repeat for 3 to 4 weeks and pick a task with "
+     "clear start and stop times, like laundry, kennel prep, or adoption event check-in. If your life gets hectic, "
+     "give early notice so staff can adjust."),
+    ("Can I help if I can’t handle big dogs or I have mobility limits?",
+     "Yes. Many shelters need photo sorting, bio writing, supply inventory, transport coordination, and front-desk "
+     "support. Tell them what you can do safely and ask for the most urgent behind-the-scenes job."),
+    ("Why do small monthly donations matter more than one big drop-off?",
+     "Predictable gifts help shelters plan meds, food orders, and staffing. Since 3% of all donations go to animal "
+     "and environment causes, even a modest recurring amount can fill a real gap."),
+    ("What should I know about shelter policies before I foster or volunteer?",
+     "Expect rules about ID, age limits, closed-toe shoes, and training for handling or bite-risk notes. Ask what "
+     "expenses are covered, when you should call for medical concerns, and what steps are required for "
+     "meet-and-greets."),
+]
+# The article's links to outside sites, in the order they appear. Each link
+# text appears once in the copy above; build.py turns it into a reference.
+# (link text as in the article, url)
+PET_TIPS_SOURCES = [
+    ("engaging with local communities",
+     "https://www.edpropt.org/post/community-engagement-volunteering-ways-to-connect-with-locals-in-portugal"),
+    ("pet products increased",
+     "https://www.post-gazette.com/news/state/2022/08/14/pittsburgh-area-pet-shelters-struggling-with-higher-admissions-fewer-adoptions/stories/202208110013"),
+    ("nonprofit formation support", "https://www.zenbusiness.com/nonprofit-corp/"),
+    ("gradual introductions", "https://petfolk.com/petfolklore/bringing-shelter-dogs-home"),
+    ("nearly 80% of shelters report that they are underfunded",
+     "https://www.twitchycoffeeco.com/post/support-animal-shelters-start-making-a-positive-impact"),
+    ("3% of all donations", "https://faunalytics.org/giving-to-animals-new-data-who-how/"),
+]
+PET_TIPS_CLOSING_TITLE = "Build Lasting Support Habits That Strengthen Shelter Pet Outcomes"
+PET_TIPS_CLOSING = (
+    "Caring about shelter pets is easy; sustaining help through busy weeks, limited space, and tight budgets is the "
+    "hard part. The steadier path is the mindset this guide has emphasized: choose realistic, repeatable support that "
+    "fits life, and let that consistency become ongoing animal advocacy through simple community engagement for pets. "
+    "Over time, those long-term support strategies ease pressure on shelters, reduce burnout, and create more stable "
+    "placements, real, sustained rescue impact. Consistency, not perfection, is what keeps shelter pets supported."
+)
 
 # ---------------------------------------------------------------------------
 # Animal programs — veterinary care assistance directory (/animal-programs)
@@ -424,14 +567,31 @@ VET_STATES = [
 # ---------------------------------------------------------------------------
 # Titles listed under "Information on Dogs & Cats". Only the last one links
 # anywhere on the live site.
+# The five articles on the current "Cats & Dogs" tab. The first four open, on
+# the current site, as pop-ups of scanned article pages (found 2026-10-21; the
+# scans credit their source sites, e.g. vetdepot.com). The fifth is a page.
+# (title, topic label, cover colour, scanned pages or None, page link or None)
 CATS_DOGS_ARTICLES = [
-    ("Annual Veterinary Exams and Preventive Care", None),
-    ("Basic Emergency First Aid for Pets", None),
-    ("Heartworm: The Quiet Killer", None),
-    ("What To Do If Your Dog Is Lost", None),
-    ("\"People Foods\" to Avoid Feeding Your Pets", "foods-to-avoid.html"),
+    ("Annual Veterinary Exams and Preventive Care", "Vet care", "teal",
+     ["article-vet-1.jpg", "article-vet-2.jpg"], None),
+    ("Basic Emergency First Aid for Pets", "First aid", "coral",
+     ["article-firstaid-1.jpg", "article-firstaid-2.jpg", "article-firstaid-3.jpg", "article-firstaid-4.jpg"], None),
+    ("Heartworm: The Quiet Killer", "Health", "orange", ["article-heartworm-1.jpg"], None),
+    ("What To Do If Your Dog Is Lost", "Lost pets", "blue", ["article-lostdog-1.jpg"], None),
+    ("\"People Foods\" to Avoid Feeding Your Pets", "Nutrition", "navy", None, "foods-to-avoid.html"),
 ]
+# "dogs and cats" -> "cats and dogs" to match the page title (CJ, 2026-10-22)
+CATS_DOGS_INTRO = ("Please read these very informative articles on topics ranging from the problems with the "
+                   "overpopulation of cats and dogs to useful techniques for caring for your cats and dogs.")
 
+# Foods to Avoid: wording as on the current page, with the poison line's
+# number written with dashes and "recumbancy" -> "recumbency" (2026-10-21).
+FOODS_INTRO = ("If you suspect your pet has eaten any of the following foods, please note the amount "
+               "ingested and contact your veterinarian or the ASPCA Animal Poison Control Center at "
+               "888-426-4435.")
+FOODS_POISON_PHONE = "888-426-4435"
+FOODS_SOURCE = ("People Foods to Avoid Feeding Your Pets",
+                "https://www.aspca.org/pet-care/aspca-poison-control/people-foods-avoid-feeding-your-pets")
 FOODS_TO_AVOID = [
     ("Chocolate, Coffee, Caffeine", "These products all contain substances called methylxanthines, which can cause vomiting and diarrhea, panting, excessive thirst and urination, hyperactivity, abnormal heart rhythm, tremors, seizures and even death. The darker the chocolate, the more dangerous it is to your pet."),
     ("Alcohol", "Alcoholic beverages and food products containing alcohol can cause vomiting, diarrhea, decreased coordination, central nervous system depression, difficulty breathing, tremors, abnormal blood acidity, coma and death."),
@@ -442,12 +602,31 @@ FOODS_TO_AVOID = [
     ("Onions, Garlic, Chives", "These vegetables and herbs can cause gastrointestinal irritation and could lead to red blood cell damage. Although cats are more susceptible, dogs are also at risk if a large enough amount is consumed. Toxicity is normally diagnosed through history, clinical signs and microscopic confirmation of Heinz bodies. An occasional low dose, such as what might be found in pet foods or treats, likely will not cause a problem, but we recommend that you do NOT give your pets large quantities of these foods."),
     ("Raw/Undercooked Meat, Eggs and Bones", "Raw meat and raw eggs can contain bacteria such as Salmonella and E. coli that can be harmful to pets. In addition, raw eggs contain an enzyme called avidin that decreases the absorption of biotin (a B vitamin), which can lead to skin and coat problems. Feeding your pet raw bones may seem like a natural and healthy option that might occur if your pet lived in the wild. However, this can be very dangerous for a domestic pet, who might choke on bones, or sustain a grave injury should the bone splinter and become lodged in or puncture your pet’s digestive tract."),
     ("Salt", "Large amounts of salt can produce excessive thirst and urination, or even sodium ion poisoning in pets. Signs that your pet may have eaten too many salty foods include vomiting, diarrhea, depression, tremors, elevated body temperature, seizures and even death. In other words, keep those salty chips to yourself!"),
-    ("Xylitol", "Xylitol is used as a sweetener in many products, including gum, candy, baked goods and toothpaste. It can cause insulin release in most species, which can lead to liver failure. The increase in insulin leads to hypoglycemia (lowered sugar levels). Initial signs of toxicosis include vomiting, lethargy and loss of coordination. Signs can progress to recumbancy and seizures. Elevated liver enzymes and liver failure can be seen within a few days."),
+    ("Xylitol", "Xylitol is used as a sweetener in many products, including gum, candy, baked goods and toothpaste. It can cause insulin release in most species, which can lead to liver failure. The increase in insulin leads to hypoglycemia (lowered sugar levels). Initial signs of toxicosis include vomiting, lethargy and loss of coordination. Signs can progress to recumbency and seizures. Elevated liver enzymes and liver failure can be seen within a few days."),
     ("Yeast Dough", "Yeast dough can rise and cause gas to accumulate in your pet’s digestive system. This can be painful and can cause the stomach or intestines to rupture. Because the risk diminishes after the dough is cooked and the yeast has fully risen, pets can have small bits of bread as treats. However, these treats should not constitute more than 5 percent to 10 percent of your pet’s daily caloric intake."),
 ]
 
+# Hurricanes & Your Pets: wording as on the current site. "Dogs and Cats" is
+# written "Cats and Dogs" to match the rest of the site (CJ, 2026-10-22).
+HURRICANE_INTRO = ("Stock up on nonperishables well ahead of time, add perishable items at the last minute, "
+                   "and have everything ready to go at a moment's notice. Keep everything accessible, stored "
+                   "in sturdy containers (duffel bags, covered trash containers, etc.) that can be carried easily.")
+# The two websites named in the first "Major Dos" item, shown as references.
+# Written without "www." so the long name doesn't leave a gap when it wraps.
+# petsallowed-hotels.com no longer resolves (checked 2026-10-22); in the client note.
+HURRICANE_SOURCES = [
+    ("petswelcome.com", "https://www.petswelcome.com/"),
+    ("petsallowed-hotels.com", "https://www.petsallowed-hotels.com/"),
+]
+HURRICANE_KIT_INTRO = "Place the following items in a waterproof container so you're ready to go if you need to evacuate."
+HURRICANE_AFTER = ("Planning and preparation will help you weather the disaster, but your home may be a very "
+                   "different place afterward, whether you have taken shelter at home or elsewhere, be patient "
+                   "with your pets after a disaster. Try to get them back into their normal routines as soon as "
+                   "possible, and be ready for behavioral problems that may result from the stress of the "
+                   "situation. If behavioral problems persist, or if your pet seems to be having any health "
+                   "problems, talk to your veterinarian.")
 HURRICANE_KIT = [
-    ("Dogs and Cats", [
+    ("Cats and Dogs", [
         "Your veterinarian's contact name and phone number", "Copies of pet vaccination records",
         "Medications", "Extra collar", "Food and water bowls", "Bottled water", "Toys", "Treats",
         "Paper towels", "Plastic baggies for picking up pet waste", "Muzzle, if necessary",
@@ -468,7 +647,7 @@ HURRICANE_DONTS = [
     "Don't leave your pet at a boarding facility in the strike zone. There's no guarantee they have an evacuation plan.",
 ]
 HURRICANE_DOS = [
-    "Choose an evacuation destination in advance of an evacuation order. Consider pet-friendly hotels, family, friends, and boarding facilities outside of the danger area. Pet friendly hotels can be found by visiting two websites www.petswelcome.com or www.petsallowed-hotels.com. If you don't have a computer, you can also visit a local library or the LA/SPCA.",
+    "Choose an evacuation destination in advance of an evacuation order. Consider pet-friendly hotels, family, friends, and boarding facilities outside of the danger area. Pet friendly hotels can be found by visiting two websites petswelcome.com or petsallowed-hotels.com. If you don't have a computer, you can also visit a local library or the LA/SPCA.",
     "Call or check the website of the Louisiana Department of Agriculture &amp; Forestry or the LA/SPCA to find out where pet-friendly shelters may be located. These should be used as a last resort; they fill quickly on a first-come, first-served basis. You will be required to care for your pet so staying close-by the pet-friendly shelter is required.",
     "Check your pet's boarding facility's evacuation plans before going on vacation. Many veterinarians were forced to leave their clients' pets behind when Hurricane Katrina threatened New Orleans. Some people who boarded their pets while on vacation were unable to get back and their pets died. Make sure your boarding facility has a plan in advance in case you are unable to come home to retrieve your pet.",
     "Keep a hurricane-ready pack for your pet so you can pick up and go without forgetting important items.",
@@ -485,6 +664,30 @@ HURRICANE_MUST_HAVES = [
     ("Health Records &amp; Medication", [
         "All boarding facilities and veterinarian offices require proof of immunization before accepting animals. They will not risk the health and safety of the animals on-site regardless of how much pleading you do.",
     ]),
+]
+
+# Delaware Residents: the current page's two paragraphs, split into three
+# cards and a partners line. Wording unchanged.
+# (card title, icon key, text)
+DELAWARE_FACTS = [
+    ("Based in Delaware", "pin",
+     "NHS is a nonprofit organization incorporated in Delaware that provides funding to animal shelters "
+     "nationally, not just in Delaware."),
+    ("Helping in all 50 states", "globe",
+     "NHS solicits and sells raffles to a national market and provides funding to local non-profits to help "
+     "animal over population in any of the 50 states."),
+    ("Delaware support stays local", "heart",
+     "Delaware supporters will be used for the benefit of Delaware non profits whose mission is related to "
+     "animal care, shelters or programs to fight animal over population."),
+]
+# Was "In the past NHS has given to Delaware Humane Society and Faithful
+# Friends."; reworded (CJ, 2026-10-22) since the cards below name them.
+DELAWARE_PARTNERS_LINE = "Over the years, NHS has proudly given to these Delaware animal shelters."
+# (name, cover colour, website or None). "Delaware Humane Society" has no link
+# until NHS confirms the name (see the client note on the page).
+DELAWARE_PARTNERS = [
+    ("Delaware Humane Society", "teal", None),
+    ("Faithful Friends", "orange", ("https://faithfulfriends.us/", "Visit Faithful Friends")),
 ]
 
 # ---------------------------------------------------------------------------

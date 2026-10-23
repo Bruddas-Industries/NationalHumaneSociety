@@ -1173,19 +1173,77 @@ PROGRAMS_BODY = page_hero(
 """
 
 # --- DONATIONS HELPING ANIMALS ----------------------------------------------
-def story_long(story):
+GLOBE_ICON = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">'
+    '<circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5c2.6 2.6 3.9 5.8 3.9 9.5s-1.3 6.9-3.9 9.5c-2.6-2.6-3.9-5.8-3.9-9.5s1.3-6.9 3.9-9.5z"/></svg>'
+)
+
+
+def site_link(url, label):
+    """An organisation's website as a small reference-style link: globe,
+    domain, arrow, coral underline. `label` is read out by screen readers."""
+    domain = url.split("//", 1)[-1].split("/", 1)[0].removeprefix("www.")
+    return (f'<a class="site-link" href="{url}" target="_blank" rel="noopener" aria-label="{label} (opens in a new tab)">'
+            f'<span class="site-link-globe" aria-hidden="true">{GLOBE_ICON}</span>{domain}'
+            f'<span class="site-link-arrow" aria-hidden="true">↗</span></a>')
+
+# Stories longer than this many characters start collapsed with a
+# "Read the full story" button (nav.js).
+STORY_COLLAPSE_AT = 1200
+
+
+def story_long(story, i=0):
+    """A story card: photo (or a paw-print tile when there's none) beside the
+    text, the name as a heading and the sign-off as a signature. Photo and
+    text swap sides on alternate stories."""
     title, image, signature, paras = story
-    pic = f'<img class="story-photo" src="assets/img/{image}" alt="{title}" loading="lazy">' if image else ""
-    return f"""    <article class="story-long">
-      {pic}
-      <h3>{title}</h3>
+    extras = C.STORY_EXTRAS.get(title, {})
+    photos = ([image] if image else []) + extras.get("photos", [])
+    if len(photos) > 1:
+        # several photos: a cycling photo strip (the same one the prize pages use)
+        slides = "\n".join(
+            f'          <div class="prize-slide" style="background-image:url(\'assets/img/{p}\')" role="img" aria-label="{title}, photo {n}"></div>'
+            for n, p in enumerate(photos, 1))
+        dots = "".join(f'<button type="button" aria-label="Show photo {n}"{active}></button>'
+                       for n in range(1, len(photos) + 1)
+                       for active in [' class="is-active"' if n == 1 else ""])
+        pic = f"""<div class="prize-gallery story-gallery" data-gallery data-autoplay="4000">
+        <div class="prize-slides">
+{slides}
+        </div>
+        <span class="gallery-count">{len(photos)} photos</span>
+        <button class="gallery-btn gallery-prev" type="button" aria-label="Previous photo">‹</button>
+        <button class="gallery-btn gallery-next" type="button" aria-label="Next photo">›</button>
+        <div class="gallery-dots">{dots}</div>
+      </div>"""
+    elif image:
+        pic = f'<img src="assets/img/{image}" alt="{title}" loading="lazy">'
+    else:
+        colour = ["coral", "teal", "blue", "orange"][i % 4]
+        pic = f'<div class="winner-blank is-{colour} story-blank" aria-hidden="true"><span class="winner-initials">{title}</span></div>'
+    long = sum(len(p) for p in paras) > STORY_COLLAPSE_AT
+    body = f"""        <div class="story-text{' is-collapsible' if long else ''}"{' data-collapsible' if long else ''}>
 {paragraphs(paras)}
-      <p class="story-sign">{signature}</p>
+        </div>"""
+    toggle = (f'\n        <button type="button" class="story-toggle" data-story-toggle aria-expanded="false">'
+              f'Read {title}\'s full story <span aria-hidden="true">↓</span></button>') if long else ""
+    flipped = " is-flipped" if i % 2 else ""
+    website = ""
+    if "website" in extras:
+        website = "\n        <p class=\"story-site\">" + site_link(*extras["website"]) + "</p>"
+    return f"""    <article class="story-card-long{flipped}">
+      <div class="story-media">{pic}</div>
+      <div class="story-content">
+        <h3>{title}</h3>
+{body}{toggle}
+        <p class="story-sign"><span aria-hidden="true">{PAW_ICON}</span>{signature}</p>{website}
+      </div>
     </article>"""
 
 
 LOGO_ROW = "\n".join(
-    f'      <img src="assets/img/{img}" alt="{name}" loading="lazy">' for img, name in C.PARTNER_LOGOS
+    f"""      <figure class="partner-card"><div class="partner-logo"><img src="assets/img/{img}" alt="{name} logo" loading="lazy"></div></figure>"""
+    for img, name in C.PARTNER_LOGOS
 )
 
 DONATIONS_BODY = page_hero(
@@ -1195,21 +1253,31 @@ DONATIONS_BODY = page_hero(
 ) + f"""
 <section class="section">
   <div class="container">
-    <div class="logo-row">
+    <p class="eyebrow text-center">Shelters &amp; rescues we've supported</p>
+    <div class="partner-row">
 {LOGO_ROW}
     </div>
-    <p class="lead text-center" style="margin:var(--space-6) auto 0">Without your help this would not be possible. These groups shelter, feed, provide veterinarian care and rescue animals from storms.</p>
+  </div>
+</section>
+
+<section class="impact-band">
+  <div class="container">
+    <p class="impact-band-head">Without your help this would not be possible.</p>
+    <p class="impact-band-text">These groups shelter, feed, provide veterinarian care and rescue animals from storms.</p>
   </div>
 </section>
 
 <section class="section section-soft">
-  <div class="container-narrow">
-    <div class="section-head">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-7)">
+      <p class="eyebrow">Their stories</p>
       <h2>Below are some of the recent animals your generous donations have helped.</h2>
-      <a class="btn btn-primary" href="donate.html">Donate Today</a>
+      <a class="btn btn-primary btn-lg btn-donate" href="donate.html" style="margin-top:var(--space-4)"><span class="donate-heart" aria-hidden="true">♥</span>Donate Today</a>
     </div>
     {review_note("<p>Cupcake's letter is published on the current site alongside a photo of the family's credit statement. The photo is left out here, and the letter itself is a request for help rather than an outcome — worth deciding whether it stays.</p>")}
-{chr(10).join(story_long(s) for s in C.STORIES)}
+    <div class="story-list">
+{chr(10).join(story_long(st, i) for i, st in enumerate(C.STORIES))}
+    </div>
   </div>
 </section>
 """
@@ -1914,52 +1982,215 @@ VIDEOS_BODY = page_hero(
 """
 
 # --- ANIMAL INFO: PET TIPS --------------------------------------------------
+# Pet Tips: the full article, laid out as sections (photo intro, three ways,
+# numbered actions, Q&A cards, closing panel). Copy lives in content.py.
+PET_TIPS_WAY_ICONS = {"Time": "⏱", "Space": "⌂", "Money": "♥"}
+
+
+BOOK_ICON = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    '<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5A2.5 2.5 0 0 1 6.5 19H20v3H6.5"/><path d="M8 7h8M8 11h6"/></svg>'
+)
+
+
+def source_domain(url):
+    return url.split("//", 1)[-1].split("/", 1)[0].removeprefix("www.")
+
+
+def with_refs(text, sources=None):
+    """Turn the article's link texts into reference links: the words keep a
+    coral underline and a small arrow, with a numbered marker that matches the
+    Sources list at the end of the page. `sources` defaults to Pet Tips'."""
+    for n, (phrase, url) in enumerate(sources or C.PET_TIPS_SOURCES, 1):
+        if phrase in text:
+            # The last word and the marker stay together, so the number never
+            # wraps onto a line by itself
+            head, _, last = phrase.rpartition(" ")
+            head = head + " " if head else ""
+            text = text.replace(phrase, (
+                f'<a class="ref-link" href="{url}" target="_blank" rel="noopener" '
+                f'title="{source_domain(url)}">{head}<span class="ref-tail">{last}'
+                f'<span class="ref-mark" aria-hidden="true">{n}</span></span></a>'), 1)
+    return text
+
+
+def pet_tips_sources(sources=None):
+    cards = "\n".join(
+        f"""      <a class="source-card" href="{url}" target="_blank" rel="noopener">
+        <span class="source-num">{n}</span>
+        <span class="source-text"><strong>“{phrase}”</strong><small><span class="source-globe" aria-hidden="true">{GLOBE_ICON}</span>{source_domain(url)}</small></span>
+        <span class="source-arrow" aria-hidden="true">↗</span>
+      </a>""" for n, (phrase, url) in enumerate(sources or C.PET_TIPS_SOURCES, 1))
+    return f'    <div class="source-grid">\n{cards}\n    </div>'
+
+
+def pet_tips_faq():
+    items = []
+    for n, (q, a) in enumerate(C.PET_TIPS_FAQ, 1):
+        opened = " open" if n == 1 else ""
+        items.append(f"""        <details class="faq-card"{opened}>
+          <summary><span class="faq-num">{n:02d}</span><span class="faq-q">{q}</span><span class="faq-icon" aria-hidden="true"></span></summary>
+          <div class="faq-a"><div class="faq-a-inner"><p>{with_refs(a)}</p></div></div>
+        </details>""")
+    return "\n".join(items)
+
+
+PET_TIPS_WAY_CARDS = "\n".join(
+    f'      <div class="way-card"><span class="way-icon" aria-hidden="true">{PET_TIPS_WAY_ICONS[w]}</span><h3>{w}</h3><p>{t}</p></div>'
+    for w, t in C.PET_TIPS_THREE_WAYS)
+PET_TIPS_ACTION_CARDS = "\n".join(
+    f'      <article class="action-card"><span class="action-num" aria-hidden="true">{n}</span><h3>{t}</h3><p>{with_refs(d)}</p></article>'
+    for n, (t, d) in enumerate(C.PET_TIPS_ACTIONS, 1))
+
+
 PET_TIPS_BODY = page_hero(
     "Pet Tips",
-    "How to Support Shelter Pets with Time, Space, and Money",
+    "Simple, practical ways anyone can help shelter pets, whatever your schedule, space or budget.",
     "Pet Tips",
 ) + f"""
 <section class="section">
-  <div class="container-narrow prose">
-    {review_note("<p>On the current site this tab is headed “Help keep your pet safe during the colder months by following these simple guidelines”, but the article beneath it is about supporting shelter pets and contains several links to unrelated third-party sites. The opening and the list of ideas are shown here; the links are left out. Should this article stay, or should the cold-weather tips come back?</p>")}
-    <p>Busy parents juggling work and family, apartment renters with pet limits, and animal lovers on tight budgets often carry the same quiet worry: caring about shelter and rescue pets feels meaningful, but the “right” way to help can feel out of reach. That tension is real, community support for animals is built by many people doing what they can, not a few people doing everything. Volunteering for animal shelters, pet fostering programs, and animal welfare advocacy aren’t reserved for experts or people with perfect circumstances. With a clear sense of what fits a real life, small commitments can ripple into lifesaving impact.</p>
+  <div class="container tips-intro">
+    <div>
+      <p class="eyebrow">Getting started</p>
+      <h2>{C.PET_TIPS_INTRO_TITLE}</h2>
+      <p class="tips-lead">{C.PET_TIPS_INTRO}</p>
+    </div>
+    <div class="tips-photo">
+      <img src="assets/img/animal-winterpup.jpg" alt="A dog wearing a fuzzy bear-ears hood" width="570" height="618">
+    </div>
+  </div>
+</section>
 
-    <h2>Understanding the Three Ways to Help Shelter Pets</h2>
-    <p>Helping shelter and rescue pets usually falls into three lanes: giving time, giving space, or giving money. Time means hands-on volunteering roles that keep daily care running. Space means fostering, even short term, so an animal can rest outside the kennel. Money means donations, supplies, or sponsor style gifts that fill the gaps.</p>
+<section class="section section-soft">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Find your lane</p>
+      <h2>{C.PET_TIPS_THREE_WAYS_TITLE}</h2>
+    </div>
+    <div class="ways-grid">
+{PET_TIPS_WAY_CARDS}
+    </div>
+    <div class="container-narrow tips-prose" style="padding:0; margin-top:var(--space-7)">
+{paragraphs([with_refs(p) for p in C.PET_TIPS_THREE_WAYS_TEXT])}
+    </div>
+  </div>
+</section>
 
-    <h2>High-Impact Ways to Help This Month</h2>
-    <p>If you’ve ever wished you could do something for shelter pets but didn’t know what would matter most, this is your menu. Pick one or two actions for this month, then build a rhythm you can actually sustain.</p>
-    <ol>
-      <li>Try fostering with a clear, short plan</li>
-      <li>Volunteer where the shelter is actually bottlenecked</li>
-      <li>Make one strategic, boring donation that keeps doors open</li>
-      <li>Run a “wish-list only” pet supply drive in a tight time box</li>
-      <li>Be the admin support rescues rarely have</li>
-      <li>Show up for one rescue event and bring a plan, not just enthusiasm</li>
-    </ol>
-    <p><a href="{C.LIVE_SITE}/animal-info" target="_blank" rel="noopener">Read the full article on the current site →</a></p>
+<section class="section">
+  <div class="container-narrow tips-prose">
+    <p class="eyebrow">Going further</p>
+    <h2>{C.PET_TIPS_NONPROFIT_TITLE}</h2>
+{paragraphs([with_refs(p) for p in C.PET_TIPS_NONPROFIT])}
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Your menu</p>
+      <h2>{C.PET_TIPS_ACTIONS_TITLE}</h2>
+      <p class="lead" style="margin:0 auto">{C.PET_TIPS_ACTIONS_INTRO}</p>
+    </div>
+    <div class="action-grid">
+{PET_TIPS_ACTION_CARDS}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-narrow">
+    <div class="text-center" style="margin-bottom:var(--space-6)">
+      <p class="eyebrow">Q&amp;A</p>
+      <h2>{C.PET_TIPS_FAQ_TITLE}</h2>
+    </div>
+    <div class="faq-group">
+{pet_tips_faq()}
+    </div>
+  </div>
+</section>
+
+<section class="section section-cream tips-closing">
+  <div class="container">
+    <div class="tips-closing-card">
+      <p class="eyebrow">Keep it going</p>
+      <h2>{C.PET_TIPS_CLOSING_TITLE}</h2>
+      <p class="tips-closing-text">{C.PET_TIPS_CLOSING}</p>
+      <a class="btn btn-primary btn-lg btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Give monthly</a>
+    </div>
+    <aside class="tips-sources" aria-labelledby="tips-sources-title">
+      <div class="tips-sources-head">
+        <span class="tips-sources-icon" aria-hidden="true">{BOOK_ICON}</span>
+        <div>
+          <h3 id="tips-sources-title">Sources mentioned in this article</h3>
+          <p>Outside websites referenced in the text. Each opens in a new tab.</p>
+        </div>
+      </div>
+{pet_tips_sources()}
+    </aside>
   </div>
 </section>
 """
 
 # --- ANIMAL INFO: CATS & DOGS -----------------------------------------------
-def article_cards():
+def article_cards(exclude=None):
+    """Cats & Dogs article cards. Scanned articles open in the page viewer
+    (nav.js, [data-doc]); without JavaScript the link opens the first page.
+    `exclude` drops the card that links to that page."""
     cards = []
-    for title, href in C.CATS_DOGS_ARTICLES:
-        link = f'<a href="{href}">Read more →</a>' if href else '<span class="dir-note">No article on the current site</span>'
-        cards.append(f'      <div class="card"><h3>{title}</h3>{link}</div>')
+    for title, topic, colour, pages, href in C.CATS_DOGS_ARTICLES:
+        if exclude and href == exclude:
+            continue
+        safe = html.escape(title)
+        if pages:
+            count = f"{len(pages)} page{'s' if len(pages) > 1 else ''}"
+            pages_attr = html.escape(json.dumps([f"assets/img/{p}" for p in pages]))
+            link = (f'<a class="doc-card-link" href="assets/img/{pages[0]}" data-doc="{pages_attr}" data-doc-title="{safe}">'
+                    f'Read article <span aria-hidden="true">→</span></a>')
+            badge = f'<span class="doc-badge">{count}</span>'
+        else:
+            link = f'<a class="doc-card-link" href="{href}">Read article <span aria-hidden="true">→</span></a>'
+            badge = '<span class="doc-badge">Full page</span>'
+        cards.append(f"""      <article class="doc-card">
+        <div class="post-cover is-{colour}" aria-hidden="true">
+          <span class="post-cover-topic">{topic}</span>
+          {badge}
+        </div>
+        <div class="doc-card-body">
+          <h3>{safe}</h3>
+          {link}
+        </div>
+      </article>""")
     return "\n".join(cards)
 
 
 CATS_DOGS_BODY = page_hero(
-    "Information on Dogs &amp; Cats",
-    "Please read these very informative articles on topics ranging from the problems with the overpopulation of dogs and cats to useful techniques for caring for your dogs and cats.",
+    "Information on Cats &amp; Dogs",
+    "A little know-how goes a long way toward a happy, healthy pet, and a safe one when the unexpected happens.",
     "Cats &amp; Dogs",
 ) + f"""
 <section class="section">
+  <div class="container tips-intro">
+    <div>
+      <p class="eyebrow">Pet care reading</p>
+      <h2>Helpful articles for cat and dog owners</h2>
+      <p class="tips-lead">{C.CATS_DOGS_INTRO}</p>
+    </div>
+    <div class="tips-photo">
+      <img src="assets/img/catsdogs-photo.jpg" alt="A woman playing with a beagle on a sunny path" width="570" height="618">
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft">
   <div class="container">
-    {review_note("<p>The current site lists these five titles, but only the last one links to an article. The other four have no content behind them — are the articles available, or should the titles be removed?</p>")}
-    <div class="grid grid-3">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Articles</p>
+        <h2>{len(C.CATS_DOGS_ARTICLES)} articles to read</h2>
+      </div>
+    </div>
+    {review_note("<p>On the current site, four of these titles open pop-ups of <strong>scanned article pages</strong> rather than real text, and the scans credit other websites as their source (e.g. vetdepot.com). They are carried over the same way here. As images they can't be searched, resized or read by screen readers, so for the WordPress site we'd suggest re-typing them as real articles, and confirming NHS has permission to republish them.</p>")}
+    <div class="doc-grid">
 {article_cards()}
     </div>
   </div>
@@ -1967,82 +2198,339 @@ CATS_DOGS_BODY = page_hero(
 """
 
 # --- ANIMAL INFO: FOODS TO AVOID --------------------------------------------
-FOODS_ITEMS = "\n".join(f"""    <div class="faq-item">
-      <h3>{name}</h3>
-      <p>{text}</p>
-    </div>""" for name, text in C.FOODS_TO_AVOID)
+PHONE_ICON = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>'
+)
+FOOD_COLOURS = ["coral", "teal", "orange", "blue"]
+
+
+def food_slug(name):
+    return "food-" + "".join(ch if ch.isalnum() else "-" for ch in name.lower().replace("&amp;", "and")).strip("-").replace("--", "-").replace("--", "-")
+
+
+FOODS_INTRO_HTML = C.FOODS_INTRO.replace(
+    C.FOODS_POISON_PHONE, f'<a class="poison-num" href="tel:{C.FOODS_POISON_PHONE}">{C.FOODS_POISON_PHONE}</a>')
+FOODS_JUMP = "\n".join(
+    f'      <a class="foods-chip" href="#{food_slug(name)}">{name}</a>' for name, _ in C.FOODS_TO_AVOID)
+FOODS_ITEMS = "\n".join(
+    f"""      <article class="food-card is-{FOOD_COLOURS[i % 4]}" id="{food_slug(name)}">
+        <span class="food-num" aria-hidden="true">{i + 1:02d}</span>
+        <h3>{name}</h3>
+        <p>{text}</p>
+      </article>""" for i, (name, text) in enumerate(C.FOODS_TO_AVOID))
 
 FOODS_BODY = page_hero(
     "ASPCA List of People Foods to Avoid Feeding Your Pets",
-    "If you suspect your pet has eaten any of the following foods, please note the amount ingested and contact your veterinarian or the ASPCA Animal Poison Control Center at (888) 426-4435.",
+    "Some everyday foods that are safe for people can make cats and dogs seriously ill. Here’s what to keep out of reach, and why.",
     "Foods to Avoid",
     parent=("Cats &amp; Dogs", "cats-and-dogs.html"),
 ) + f"""
 <section class="section">
-  <div class="container-narrow">
+  <div class="container">
+    <div class="poison-card">
+      <span class="poison-icon" aria-hidden="true">{PHONE_ICON}</span>
+      <div class="poison-text">
+        <p class="eyebrow">Think your pet ate something harmful?</p>
+        <h2>Act fast and call for help</h2>
+        <p>{FOODS_INTRO_HTML}</p>
+      </div>
+      <a class="btn btn-primary btn-lg poison-call" href="tel:{C.FOODS_POISON_PHONE}"><span aria-hidden="true">{PHONE_ICON}</span>Call {C.FOODS_POISON_PHONE}</a>
+    </div>
+    <nav class="foods-jump" aria-labelledby="foods-jump-title">
+      <h2 class="foods-jump-title" id="foods-jump-title">Browse by food</h2>
+      <div class="foods-chips">
+{FOODS_JUMP}
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">The list</p>
+      <h2>{len(C.FOODS_TO_AVOID)} people foods that can harm pets</h2>
+    </div>
+    <div class="foods-grid">
 {FOODS_ITEMS}
+    </div>
+    <aside class="tips-sources foods-sources" aria-labelledby="foods-sources-title">
+      <div class="tips-sources-head">
+        <span class="tips-sources-icon" aria-hidden="true">{BOOK_ICON}</span>
+        <div>
+          <h3 id="foods-sources-title">Source for this list</h3>
+          <p>The list above comes from the ASPCA. The link opens in a new tab.</p>
+        </div>
+      </div>
+      <a class="source-card" href="{C.FOODS_SOURCE[1]}" target="_blank" rel="noopener">
+        <span class="source-num">1</span>
+        <span class="source-text"><strong>“{C.FOODS_SOURCE[0]}”</strong><small><span class="source-globe" aria-hidden="true">{GLOBE_ICON}</span>{source_domain(C.FOODS_SOURCE[1])}</small></span>
+        <span class="source-arrow" aria-hidden="true">↗</span>
+      </a>
+    </aside>
+  </div>
+</section>
+
+<section class="section section-cream">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Keep reading</p>
+        <h2>More articles for cat and dog owners</h2>
+      </div>
+      <a class="btn btn-secondary" href="cats-and-dogs.html">All Cats &amp; Dogs articles</a>
+    </div>
+    <div class="doc-grid is-four">
+{article_cards(exclude='foods-to-avoid.html')}
+    </div>
   </div>
 </section>
 """
 
 # --- ANIMAL INFO: HURRICANES ------------------------------------------------
-KIT_BLOCKS = "\n".join(f"""      <div>
-        <h4>{name}</h4>
-{bullet_list(items)}
-      </div>""" for name, items in C.HURRICANE_KIT)
+# Kit cards: (cover label, cover colour) for each HURRICANE_KIT group. The
+# text in brackets in the group name becomes a note under the cover.
+KIT_COVERS = {
+    "Cats and Dogs": ("Cats &amp; dogs", "coral"),
+    "Snake": ("Snakes", "teal"),
+    "Small mammals (in small carriers)": ("Small mammals", "orange"),
+    "Birds (in carrier with perch inside)": ("Birds", "blue"),
+}
+HU_X_ICON = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">'
+             '<path d="M6 6l12 12M18 6L6 18"/></svg>')
+HU_CHECK_ICON = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                 '<path d="M5 12.5l4.5 4.5L19 7"/></svg>')
+MUST_HAVE_ICONS = {
+    "Pet Travel Carrier": '<rect x="2.5" y="7" width="19" height="13.5" rx="2"/><path d="M16 20.5V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v15.5"/>',
+    "Proper Identification": '<path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><circle cx="7" cy="7" r="1.6"/>',
+    "Health Records &amp; Medication": '<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 12h6M9 16h4"/>',
+}
+MUST_COLOURS = ["coral", "teal", "orange"]
+HU_PLAN = [
+    ("hu-kit", "Pack an evacuation kit", "What each kind of pet needs"),
+    ("hu-dos", "Know the dos and don'ts", "Decisions to make before an order"),
+    ("hu-must", "Get the must-haves", "Carrier, ID and health records"),
+    ("hu-after", "Help them settle back in", "After the storm passes"),
+]
 
-MUST_HAVES = "\n".join(
-    f"    <h4>{name}</h4>\n{bullet_list(items)}" for name, items in C.HURRICANE_MUST_HAVES
-)
+
+def kit_card(name, items, main=False):
+    label, colour = KIT_COVERS[name]
+    note = name.split("(", 1)[1].rstrip(")") if "(" in name else ""
+    note_html = f'\n          <span class="kit-cover-note">{note[0].upper() + note[1:]}</span>' if note else ""
+    key = name.split("(")[0].strip().lower().replace(" ", "-")
+    rows = "\n".join(
+        f'            <li><label class="kit-item"><input type="checkbox"><span>{item}</span></label></li>'
+        for item in items)
+    return f"""      <article class="kit-card is-{colour}{' is-main' if main else ''}" data-kit="{key}">
+        <div class="post-cover is-{colour}">
+          <span class="post-cover-topic">{label}</span>{note_html}
+          <span class="doc-badge kit-count" aria-live="polite">{len(items)} items</span>
+        </div>
+        <div class="kit-card-body">
+          <ul class="kit-list">
+{rows}
+          </ul>
+        </div>
+      </article>"""
+
+
+HU_PLAN_STEPS = "\n".join(
+    f'          <li><a href="#{anchor}"><span class="hu-plan-num">{n}</span>'
+    f'<span class="hu-plan-text"><strong>{title}</strong><small>{sub}</small></span>'
+    f'<span class="hu-plan-arrow" aria-hidden="true">↓</span></a></li>'
+    for n, (anchor, title, sub) in enumerate(HU_PLAN, 1))
+KIT_MAIN = kit_card(*C.HURRICANE_KIT[0], main=True)
+KIT_SIDE = "\n".join(kit_card(name, items) for name, items in C.HURRICANE_KIT[1:])
+HU_DONTS = "\n".join(
+    f'          <li><span class="dd-mark">{HU_X_ICON}</span><span>{t}</span></li>' for t in C.HURRICANE_DONTS)
+HU_DOS = "\n".join(
+    f'          <li><span class="dd-mark">{HU_CHECK_ICON}</span><span>{with_refs(t, C.HURRICANE_SOURCES)}</span></li>'
+    for t in C.HURRICANE_DOS)
+MUST_CARDS = "\n".join(
+    f"""      <article class="must-card is-{MUST_COLOURS[i % 3]}">
+        <span class="must-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{MUST_HAVE_ICONS[name]}</svg></span>
+        <h3>{name}</h3>
+        <ul class="must-list">
+{chr(10).join(f"          <li>{t}</li>" for t in items)}
+        </ul>
+      </article>""" for i, (name, items) in enumerate(C.HURRICANE_MUST_HAVES))
 
 HURRICANE_BODY = page_hero(
     "Hurricanes &amp; Your Pets",
-    "Every member of your family should know what he or she needs to take when you evacuate. You also should prepare supplies for your pets.",
+    "When it's time to evacuate, everyone in your household should know exactly what to grab, and that includes everything your pets will need.",
     "Hurricanes &amp; Your Pets",
 ) + f"""
 <section class="section">
-  <div class="container-narrow prose">
-    {review_note("<p>This guidance was written for Louisiana — it names the LA/SPCA, the Louisiana Department of Agriculture &amp; Forestry and a free-tag offer “for a limited time”. Carried over unchanged; worth generalizing for a national audience.</p>")}
-    <p>Stock up on nonperishables well ahead of time, add perishable items at the last minute, and have everything ready to go at a moment's notice. Keep everything accessible, stored in sturdy containers (duffel bags, covered trash containers, etc.) that can be carried easily.</p>
-    <p>Place the following items in a waterproof container so you're ready to go if you need to evacuate.</p>
-    <div class="grid grid-2">
-{KIT_BLOCKS}
+  <div class="container">
+    {review_note("<p>This guidance was written for Louisiana — it names the LA/SPCA, the Louisiana Department of Agriculture &amp; Forestry and a free-tag offer “for a limited time”. Carried over unchanged; worth generalizing for a national audience.</p><p>The Major Dos also send readers to <strong>www.petsallowed-hotels.com</strong>, which no longer exists (checked October 2026). It needs replacing or removing.</p>")}
+    <div class="tips-intro hu-intro">
+      <div>
+        <p class="eyebrow">Before the storm</p>
+        <h2>Make a plan before you need it</h2>
+        <p class="tips-lead">{C.HURRICANE_INTRO}</p>
+      </div>
+      <nav class="hu-plan" aria-labelledby="hu-plan-title">
+        <h3 id="hu-plan-title">Your storm plan, step by step</h3>
+        <ol>
+{HU_PLAN_STEPS}
+        </ol>
+      </nav>
     </div>
   </div>
 </section>
 
-<section class="section section-soft">
-  <div class="container grid grid-2">
-    <div>
-      <h2>Major Don'ts</h2>
-{bullet_list(C.HURRICANE_DONTS)}
+<section class="section section-soft" id="hu-kit">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Evacuation kit</p>
+      <h2>What to pack for each pet</h2>
+      <p class="lead" style="margin:0 auto">{C.HURRICANE_KIT_INTRO}</p>
+      <div class="kit-toolbar">
+        <p class="kit-tip">Tap an item to tick it off as you pack. Your ticks are remembered on this device.</p>
+        <button type="button" class="kit-clear" disabled><span aria-hidden="true">↺</span> Clear</button>
+      </div>
     </div>
-    <div>
-      <h2>Major Dos</h2>
-{bullet_list(C.HURRICANE_DOS)}
+    <div class="kit-grid">
+{KIT_MAIN}
+      <div class="kit-side">
+{KIT_SIDE}
+      </div>
     </div>
   </div>
 </section>
 
-<section class="section">
-  <div class="container-narrow prose">
-    <h2>Must Haves</h2>
-{MUST_HAVES}
-    <p>Planning and preparation will help you weather the disaster, but your home may be a very different place afterward, whether you have taken shelter at home or elsewhere, be patient with your pets after a disaster. Try to get them back into their normal routines as soon as possible, and be ready for behavioral problems that may result from the stress of the situation. If behavioral problems persist, or if your pet seems to be having any health problems, talk to your veterinarian.</p>
+<section class="section" id="hu-dos">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Plan ahead</p>
+      <h2>What to do, and what to avoid</h2>
+    </div>
+    <div class="dd-grid">
+      <div class="dd-card is-dont">
+        <div class="dd-head"><span class="dd-head-icon" aria-hidden="true">{HU_X_ICON}</span><h3>Major Don'ts</h3></div>
+        <ul class="dd-list">
+{HU_DONTS}
+        </ul>
+      </div>
+      <div class="dd-card is-do">
+        <div class="dd-head"><span class="dd-head-icon" aria-hidden="true">{HU_CHECK_ICON}</span><h3>Major Dos</h3></div>
+        <ul class="dd-list">
+{HU_DOS}
+        </ul>
+      </div>
+    </div>
+    <aside class="tips-sources hu-sources" aria-labelledby="hu-sources-title">
+      <div class="tips-sources-head">
+        <span class="tips-sources-icon" aria-hidden="true">{BOOK_ICON}</span>
+        <div>
+          <h3 id="hu-sources-title">Websites mentioned above</h3>
+          <p>Outside websites referenced in the Major Dos. Each opens in a new tab.</p>
+        </div>
+      </div>
+{pet_tips_sources(C.HURRICANE_SOURCES)}
+    </aside>
+  </div>
+</section>
+
+<section class="section section-soft" id="hu-must">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Must haves</p>
+      <h2>Three things every pet needs</h2>
+    </div>
+    <div class="must-grid">
+{MUST_CARDS}
+    </div>
+  </div>
+</section>
+
+<section class="section section-cream tips-closing" id="hu-after">
+  <div class="container">
+    <div class="tips-closing-card">
+      <p class="eyebrow">After the storm</p>
+      <h2>Be patient as your pet settles back in</h2>
+      <p class="tips-closing-text">{C.HURRICANE_AFTER}</p>
+      <a class="btn btn-secondary btn-lg" href="cats-and-dogs.html">More pet care articles</a>
+    </div>
   </div>
 </section>
 """
 
 # --- ANIMAL INFO: DELAWARE RESIDENTS ----------------------------------------
+DE_ICONS = {
+    "pin": ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+            '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>'),
+    "globe": GLOBE_ICON,
+    "heart": ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+              '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>'),
+}
+DE_FACT_CARDS = "\n".join(
+    f'      <div class="way-card"><span class="way-icon" aria-hidden="true">{DE_ICONS[icon]}</span><h3>{title}</h3><p>{text}</p></div>'
+    for title, icon, text in C.DELAWARE_FACTS)
+
+
+def de_partner(name, colour, site):
+    """Horizontal partner card: a paw badge in the card's colour stands in for
+    a logo; the website (if any) is a small reference-style link."""
+    link = "\n          " + site_link(*site) if site else ""
+    return f"""      <article class="de-partner is-{colour}">
+        <span class="de-partner-mark" aria-hidden="true">{PAW_ICON}</span>
+        <div class="de-partner-body">
+          <p class="de-partner-label">Supported by NHS</p>
+          <h3>{name}</h3>{link}
+        </div>
+        <span class="de-partner-watermark" aria-hidden="true">{PAW_ICON}</span>
+      </article>"""
+
+
+DE_PARTNER_CARDS = "\n".join(de_partner(*p) for p in C.DELAWARE_PARTNERS)
+
 DELAWARE_BODY = page_hero(
     "Delaware Residents",
-    "",
+    "We're a Delaware nonprofit helping animals in all 50 states, and support from Delaware goes to animal charities right here at home.",
     "Delaware Residents",
-) + """
+) + f"""
 <section class="section">
-  <div class="container-narrow prose">
-    <p class="lead">NHS is a nonprofit organization incorporated in Delaware that provides funding to animal shelters nationally, not just in Delaware.</p>
-    <p>NHS solicits and sells raffles to a national market and provides funding to local non-profits to help animal over population in any of the 50 states. Delaware supporters will be used for the benefit of Delaware non profits whose mission is related to animal care, shelters or programs to fight animal over population. In the past NHS has given to Delaware Humane Society and Faithful Friends.</p>
+  <div class="container">
+    <div class="text-center" style="max-width:960px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Our home state</p>
+      <h2>A Delaware nonprofit with a national reach</h2>
+    </div>
+    <div class="ways-grid de-facts">
+{DE_FACT_CARDS}
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Local partners</p>
+      <h2>Delaware shelters we've supported</h2>
+      <p class="lead" style="margin:0 auto">{C.DELAWARE_PARTNERS_LINE}</p>
+    </div>
+    <div class="de-partners-wrap">
+      {review_note("<p>The page says NHS has given to <strong>“Delaware Humane Society”</strong>. The Wilmington shelter of that kind was the Delaware Humane Association, which merged with the Delaware SPCA in 2022 to become Humane Animal Partners (humaneanimalpartners.org). Please confirm the name to show, and whether to link their website.</p>")}
+      <div class="de-partners">
+{DE_PARTNER_CARDS}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-cream tips-closing">
+  <div class="container">
+    <div class="tips-closing-card">
+      <p class="eyebrow">Questions?</p>
+      <h2>Have a question about giving from Delaware?</h2>
+      <p class="tips-closing-text">Our customer service team is happy to help. You can also read about the shelters and animals your support reaches across the country.</p>
+      <div class="de-actions">
+        <a class="btn btn-primary btn-lg de-call" href="{tel(C.CUSTOMER_SERVICE)}"><span aria-hidden="true">{PHONE_ICON}</span>Call {C.CUSTOMER_SERVICE}</a>
+        <a class="btn btn-secondary btn-lg" href="donations-helping-animals.html">Donations Helping Animals</a>
+      </div>
+    </div>
   </div>
 </section>
 """
