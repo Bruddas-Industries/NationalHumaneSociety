@@ -527,17 +527,49 @@
     });
   }
 
-  // Hurricanes: the evacuation-kit checklists count what has been ticked off
-  document.querySelectorAll('.kit-card').forEach((card) => {
-    const boxes = [...card.querySelectorAll('input[type="checkbox"]')];
-    const count = card.querySelector('.kit-count');
-    const update = () => {
-      const done = boxes.filter((b) => b.checked).length;
-      count.textContent = done ? `${done} of ${boxes.length} packed` : `${boxes.length} items`;
-      card.classList.toggle('is-complete', done === boxes.length);
+  // Hurricanes: evacuation-kit checklists. Each card counts what has been
+  // ticked off; ticks are remembered in this browser (if storage is allowed)
+  // and "Clear all ticks" starts over.
+  const kitCards = [...document.querySelectorAll('.kit-card')];
+  if (kitCards.length) {
+    const KIT_KEY = 'nhs-hurricane-kit';
+    const clearBtn = document.querySelector('.kit-clear');
+    const boxesOf = (card) => [...card.querySelectorAll('input[type="checkbox"]')];
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(KIT_KEY) || '{}') || {}; } catch (e) { saved = {}; }
+    const refresh = () => {
+      let any = false;
+      kitCards.forEach((card) => {
+        const boxes = boxesOf(card);
+        const done = boxes.filter((b) => b.checked).length;
+        card.querySelector('.kit-count').textContent = done ? `${done} of ${boxes.length} packed` : `${boxes.length} items`;
+        card.classList.toggle('is-complete', done === boxes.length);
+        if (done) any = true;
+      });
+      if (clearBtn) clearBtn.disabled = !any;
     };
-    boxes.forEach((b) => b.addEventListener('change', update));
-  });
+    const save = () => {
+      const data = {};
+      kitCards.forEach((card) => {
+        const on = boxesOf(card).map((b, i) => (b.checked ? i : -1)).filter((i) => i >= 0);
+        if (on.length) data[card.dataset.kit] = on;
+      });
+      try { localStorage.setItem(KIT_KEY, JSON.stringify(data)); } catch (e) { /* storage blocked */ }
+    };
+    kitCards.forEach((card) => {
+      const boxes = boxesOf(card);
+      (saved[card.dataset.kit] || []).forEach((i) => { if (boxes[i]) boxes[i].checked = true; });
+      boxes.forEach((b) => b.addEventListener('change', () => { refresh(); save(); }));
+    });
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        kitCards.forEach((card) => boxesOf(card).forEach((b) => { b.checked = false; }));
+        refresh();
+        save();
+      });
+    }
+    refresh();
+  }
 
   // Prize pages: switch the ticket bundles between Sweepstakes and Raffle Plus
   document.querySelectorAll('[data-tier-switch]').forEach((box) => {

@@ -611,6 +611,12 @@ FOODS_TO_AVOID = [
 HURRICANE_INTRO = ("Stock up on nonperishables well ahead of time, add perishable items at the last minute, "
                    "and have everything ready to go at a moment's notice. Keep everything accessible, stored "
                    "in sturdy containers (duffel bags, covered trash containers, etc.) that can be carried easily.")
+# The two websites named in the first "Major Dos" item, shown as references.
+# petsallowed-hotels.com no longer resolves (checked 2026-10-22); in the client note.
+HURRICANE_SOURCES = [
+    ("www.petswelcome.com", "https://www.petswelcome.com/"),
+    ("www.petsallowed-hotels.com", "https://www.petsallowed-hotels.com/"),
+]
 HURRICANE_KIT_INTRO = "Place the following items in a waterproof container so you're ready to go if you need to evacuate."
 HURRICANE_AFTER = ("Planning and preparation will help you weather the disaster, but your home may be a very "
                    "different place afterward, whether you have taken shelter at home or elsewhere, be patient "

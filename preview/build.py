@@ -1993,25 +1993,30 @@ def source_domain(url):
     return url.split("//", 1)[-1].split("/", 1)[0].removeprefix("www.")
 
 
-def with_refs(text):
+def with_refs(text, sources=None):
     """Turn the article's link texts into reference links: the words keep a
     coral underline and a small arrow, with a numbered marker that matches the
-    Sources list at the end of the page."""
-    for n, (phrase, url) in enumerate(C.PET_TIPS_SOURCES, 1):
+    Sources list at the end of the page. `sources` defaults to Pet Tips'."""
+    for n, (phrase, url) in enumerate(sources or C.PET_TIPS_SOURCES, 1):
         if phrase in text:
+            # The last word and the marker stay together, so the number never
+            # wraps onto a line by itself
+            head, _, last = phrase.rpartition(" ")
+            head = head + " " if head else ""
             text = text.replace(phrase, (
                 f'<a class="ref-link" href="{url}" target="_blank" rel="noopener" '
-                f'title="{source_domain(url)}">{phrase}<span class="ref-mark" aria-hidden="true">{n}</span></a>'), 1)
+                f'title="{source_domain(url)}">{head}<span class="ref-tail">{last}'
+                f'<span class="ref-mark" aria-hidden="true">{n}</span></span></a>'), 1)
     return text
 
 
-def pet_tips_sources():
+def pet_tips_sources(sources=None):
     cards = "\n".join(
         f"""      <a class="source-card" href="{url}" target="_blank" rel="noopener">
         <span class="source-num">{n}</span>
         <span class="source-text"><strong>“{phrase}”</strong><small><span class="source-globe" aria-hidden="true">{GLOBE_ICON}</span>{source_domain(url)}</small></span>
         <span class="source-arrow" aria-hidden="true">↗</span>
-      </a>""" for n, (phrase, url) in enumerate(C.PET_TIPS_SOURCES, 1))
+      </a>""" for n, (phrase, url) in enumerate(sources or C.PET_TIPS_SOURCES, 1))
     return f'    <div class="source-grid">\n{cards}\n    </div>'
 
 
@@ -2309,16 +2314,17 @@ HU_PLAN = [
 def kit_card(name, items, main=False):
     label, colour = KIT_COVERS[name]
     note = name.split("(", 1)[1].rstrip(")") if "(" in name else ""
-    note_html = f'\n          <p class="kit-note">{note[0].upper() + note[1:]}</p>' if note else ""
+    note_html = f'\n          <span class="kit-cover-note">{note[0].upper() + note[1:]}</span>' if note else ""
+    key = name.split("(")[0].strip().lower().replace(" ", "-")
     rows = "\n".join(
         f'            <li><label class="kit-item"><input type="checkbox"><span>{item}</span></label></li>'
         for item in items)
-    return f"""      <article class="kit-card{' is-main' if main else ''}">
+    return f"""      <article class="kit-card is-{colour}{' is-main' if main else ''}" data-kit="{key}">
         <div class="post-cover is-{colour}">
-          <span class="post-cover-topic">{label}</span>
+          <span class="post-cover-topic">{label}</span>{note_html}
           <span class="doc-badge kit-count" aria-live="polite">{len(items)} items</span>
         </div>
-        <div class="kit-card-body">{note_html}
+        <div class="kit-card-body">
           <ul class="kit-list">
 {rows}
           </ul>
@@ -2336,7 +2342,8 @@ KIT_SIDE = "\n".join(kit_card(name, items) for name, items in C.HURRICANE_KIT[1:
 HU_DONTS = "\n".join(
     f'          <li><span class="dd-mark">{HU_X_ICON}</span><span>{t}</span></li>' for t in C.HURRICANE_DONTS)
 HU_DOS = "\n".join(
-    f'          <li><span class="dd-mark">{HU_CHECK_ICON}</span><span>{t}</span></li>' for t in C.HURRICANE_DOS)
+    f'          <li><span class="dd-mark">{HU_CHECK_ICON}</span><span>{with_refs(t, C.HURRICANE_SOURCES)}</span></li>'
+    for t in C.HURRICANE_DOS)
 MUST_CARDS = "\n".join(
     f"""      <article class="must-card is-{MUST_COLOURS[i % 3]}">
         <span class="must-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{MUST_HAVE_ICONS[name]}</svg></span>
@@ -2348,12 +2355,12 @@ MUST_CARDS = "\n".join(
 
 HURRICANE_BODY = page_hero(
     "Hurricanes &amp; Your Pets",
-    "Every member of your family should know what he or she needs to take when you evacuate. You also should prepare supplies for your pets.",
+    "When it's time to evacuate, everyone in your household should know exactly what to grab, and that includes everything your pets will need.",
     "Hurricanes &amp; Your Pets",
 ) + f"""
 <section class="section">
   <div class="container">
-    {review_note("<p>This guidance was written for Louisiana — it names the LA/SPCA, the Louisiana Department of Agriculture &amp; Forestry and a free-tag offer “for a limited time”. Carried over unchanged; worth generalizing for a national audience.</p>")}
+    {review_note("<p>This guidance was written for Louisiana — it names the LA/SPCA, the Louisiana Department of Agriculture &amp; Forestry and a free-tag offer “for a limited time”. Carried over unchanged; worth generalizing for a national audience.</p><p>The Major Dos also send readers to <strong>www.petsallowed-hotels.com</strong>, which no longer exists (checked October 2026). It needs replacing or removing.</p>")}
     <div class="tips-intro hu-intro">
       <div>
         <p class="eyebrow">Before the storm</p>
@@ -2376,7 +2383,10 @@ HURRICANE_BODY = page_hero(
       <p class="eyebrow">Evacuation kit</p>
       <h2>What to pack for each pet</h2>
       <p class="lead" style="margin:0 auto">{C.HURRICANE_KIT_INTRO}</p>
-      <p class="kit-tip">Tap an item to tick it off as you pack.</p>
+      <div class="kit-toolbar">
+        <p class="kit-tip">Tap an item to tick it off as you pack. Your ticks are remembered on this device.</p>
+        <button type="button" class="kit-clear" disabled><span aria-hidden="true">↺</span> Clear</button>
+      </div>
     </div>
     <div class="kit-grid">
 {KIT_MAIN}
@@ -2407,6 +2417,16 @@ HURRICANE_BODY = page_hero(
         </ul>
       </div>
     </div>
+    <aside class="tips-sources hu-sources" aria-labelledby="hu-sources-title">
+      <div class="tips-sources-head">
+        <span class="tips-sources-icon" aria-hidden="true">{BOOK_ICON}</span>
+        <div>
+          <h3 id="hu-sources-title">Websites mentioned above</h3>
+          <p>Outside websites referenced in the Major Dos. Each opens in a new tab.</p>
+        </div>
+      </div>
+{pet_tips_sources(C.HURRICANE_SOURCES)}
+    </aside>
   </div>
 </section>
 
