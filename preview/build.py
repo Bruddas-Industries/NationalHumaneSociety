@@ -2468,19 +2468,21 @@ DE_FACT_CARDS = "\n".join(
 
 
 def de_partner(name, colour, site):
+    """Horizontal partner card: a paw badge in the card's colour stands in for
+    a logo; the website (if any) is a small reference-style link."""
     link = ""
     if site:
         url, label = site
-        link = (f'\n          <a class="story-site" href="{url}" target="_blank" rel="noopener">'
-                f'<span class="story-site-icon" aria-hidden="true">{GLOBE_ICON}</span>'
-                f'<span class="story-site-text"><strong>{label}</strong><small>{source_domain(url)}</small></span>'
-                f'<span class="story-site-arrow" aria-hidden="true">→</span></a>')
-    return f"""      <article class="de-partner">
-        <div class="post-cover is-{colour} de-partner-cover" aria-hidden="true"><span class="de-partner-mark">{PAW_ICON}</span></div>
+        link = (f'\n          <a class="de-partner-link" href="{url}" target="_blank" rel="noopener" aria-label="{label} (opens in a new tab)">'
+                f'<span class="de-partner-globe" aria-hidden="true">{GLOBE_ICON}</span>{source_domain(url)}'
+                f'<span class="de-partner-arrow" aria-hidden="true">↗</span></a>')
+    return f"""      <article class="de-partner is-{colour}">
+        <span class="de-partner-mark" aria-hidden="true">{PAW_ICON}</span>
         <div class="de-partner-body">
-          <p class="de-partner-label"><span aria-hidden="true">{PAW_ICON}</span>Supported by NHS</p>
+          <p class="de-partner-label">Supported by NHS</p>
           <h3>{name}</h3>{link}
         </div>
+        <span class="de-partner-watermark" aria-hidden="true">{PAW_ICON}</span>
       </article>"""
 
 
@@ -2493,9 +2495,9 @@ DELAWARE_BODY = page_hero(
 ) + f"""
 <section class="section">
   <div class="container">
-    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+    <div class="text-center" style="max-width:960px; margin:0 auto var(--space-6)">
       <p class="eyebrow">Our home state</p>
-      <h2 class="de-balance">A Delaware nonprofit with a national reach</h2>
+      <h2>A Delaware nonprofit with a national reach</h2>
     </div>
     <div class="ways-grid de-facts">
 {DE_FACT_CARDS}

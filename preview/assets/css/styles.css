@@ -3766,39 +3766,76 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
 /* ==========================================================================
    Delaware Residents: fact cards, partner cards, contact actions
    ========================================================================== */
-.de-balance { text-wrap: balance; }
 .de-facts .way-icon svg { width: 28px; height: 28px; }
 .de-facts .way-card h3 { font-size: 1.35rem; }
 .de-facts .way-card p { line-height: 1.7; }
 .de-partners-wrap { max-width: 900px; margin: 0 auto; }
 .de-partners { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); }
 .de-partner {
+  --de: var(--color-coral);
+  position: relative;
+  overflow: hidden;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-6);
   background: #fff;
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  border-left: 6px solid var(--de);
   box-shadow: var(--shadow-sm);
   transition: transform .2s ease, box-shadow .2s ease;
 }
+.de-partner.is-teal { --de: var(--color-teal); }
+.de-partner.is-orange { --de: var(--color-orange); }
 .de-partner:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-.de-partner .post-cover { aspect-ratio: auto; min-height: 120px; }
-.de-partner-cover { justify-content: center; align-items: center; }
-.de-partner-mark { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.95); color: var(--cover); box-shadow: 0 6px 18px rgba(0,0,0,.15); }
-.de-partner-mark .paw-icon { width: 32px; height: 32px; fill: currentColor; }
-.de-partner-body { flex: 1; padding: var(--space-5) var(--space-5) var(--space-6); }
+.de-partner-mark {
+  flex: 0 0 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--de);
+  color: #fff;
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--de) 15%, #fff);
+}
+.de-partner-mark .paw-icon { width: 36px; height: 36px; fill: currentColor; }
+.de-partner-body { position: relative; z-index: 1; min-width: 0; }
 .de-partner-label {
-  display: flex; align-items: center; gap: 8px;
-  margin: 0 0 var(--space-2);
+  margin: 0 0 4px;
   font-family: var(--font-eyebrow);
   font-size: .75rem;
   letter-spacing: .16em;
   text-transform: uppercase;
   color: var(--color-coral-dark);
 }
-.de-partner-label .paw-icon { width: 14px; height: 14px; fill: currentColor; }
-.de-partner-body h3 { font-size: 1.35rem; margin: 0; }
-.de-partner .story-site { margin-top: var(--space-4); }
+.de-partner-body h3 { font-size: 1.45rem; line-height: 1.2; margin: 0; }
+.de-partner-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--space-3);
+  padding-bottom: 2px;
+  border-bottom: 2px solid var(--color-coral);
+  color: var(--color-navy);
+  font-weight: 700;
+  font-size: .95rem;
+  transition: color .15s ease;
+}
+.de-partner-link:hover { text-decoration: none; color: var(--color-coral-dark); }
+.de-partner-globe { display: inline-flex; color: var(--color-teal); }
+.de-partner-globe svg { width: 15px; height: 15px; }
+.de-partner-arrow { color: var(--color-coral); transition: transform .15s ease; }
+.de-partner-link:hover .de-partner-arrow { transform: translate(2px, -2px); }
+.de-partner-watermark {
+  position: absolute;
+  right: -18px;
+  bottom: -26px;
+  color: var(--de);
+  opacity: .08;
+  transform: rotate(-18deg);
+  pointer-events: none;
+}
+.de-partner-watermark .paw-icon { width: 130px; height: 130px; fill: currentColor; }
 .de-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); }
 .de-call { display: inline-flex; align-items: center; gap: 10px; }
 .de-call svg { width: 20px; height: 20px; }
@@ -3808,4 +3845,8 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
 @media (max-width: 640px) {
   .de-partners { grid-template-columns: 1fr; }
   .de-actions .btn { width: 100%; justify-content: center; }
+  .de-partner { padding: var(--space-5); gap: var(--space-4); }
+  .de-partner-mark { flex-basis: 60px; height: 60px; }
+  .de-partner-mark .paw-icon { width: 28px; height: 28px; }
+  .de-partner-body h3 { font-size: 1.25rem; }
 }
