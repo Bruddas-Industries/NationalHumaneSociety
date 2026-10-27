@@ -571,6 +571,41 @@
     refresh();
   }
 
+  // Wills & Estates: copy the sample bequest wording (blanks as underscores)
+  document.querySelectorAll('[data-copy]').forEach((btn) => {
+    const label = btn.querySelector('.bequest-copy-label');
+    const idle = label ? label.textContent : '';
+    btn.addEventListener('click', async () => {
+      try {
+        // Clipboard API where allowed; otherwise the older select-and-copy
+        const text = btn.dataset.copy;
+        let done = false;
+        if (navigator.clipboard && window.isSecureContext) {
+          done = await Promise.race([
+            navigator.clipboard.writeText(text).then(() => true),
+            new Promise((resolve) => setTimeout(() => resolve(false), 800)),
+          ]);
+        }
+        if (!done) {
+          const area = document.createElement('textarea');
+          area.value = text;
+          area.setAttribute('readonly', '');
+          area.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+          document.body.appendChild(area);
+          area.select();
+          done = document.execCommand('copy');
+          area.remove();
+        }
+        if (!done) throw new Error('copy failed');
+        if (label) label.textContent = 'Copied!';
+      } catch (e) {
+        if (label) label.textContent = 'Select and copy';
+      }
+      btn.classList.add('is-copied');
+      setTimeout(() => { btn.classList.remove('is-copied'); if (label) label.textContent = idle; }, 2200);
+    });
+  });
+
   // Prize pages: switch the ticket bundles between Sweepstakes and Raffle Plus
   document.querySelectorAll('[data-tier-switch]').forEach((box) => {
     const tabs = [...box.querySelectorAll('[data-tier]')];

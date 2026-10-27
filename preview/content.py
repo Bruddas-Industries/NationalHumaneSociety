@@ -712,6 +712,65 @@ DELAWARE_PARTNERS = [
     ("Faithful Friends", "orange", ("https://faithfulfriends.us/", "Visit Faithful Friends")),
 ]
 
+# Wills & Estates: wording as on the current page (with the clean-ups noted
+# in the page's client note). The short card titles are new labels.
+WILLS_CHARITY = "We are a 501(c)(3) tax-exempt charity."
+# Shown on this page only (CJ, 2026-10-26); the current page writes it "58 -2399783".
+WILLS_TAX_ID = "58-2399783"
+WILLS_INTRO = ("Assigning the National Humane Society in your will or trust is a helpful way for our organization "
+               "to continue serving animals in need. Several programs and services we offer and sponsor have been "
+               "supported by individuals including the National Humane Society in their wills.")
+# (card title, icon key, text)
+WILLS_WAYS = [
+    ("A specific amount", "dollar",
+     "By setting a specific dollar amount or asset in your will to the National Humane Society"),
+    ("A percentage", "percent", "Set a percentage of your estate assigned to the National Humane Society"),
+    ("What remains", "layers",
+     "Designate the remaining of your estate that remains after all bequests to family and/or loved ones"),
+]
+# The sample bequest; each None is a blank, labelled below.
+WILLS_BEQUEST = ["I give and bequeath to The National Humane Society, a non-profit organization, addressed "
+                 "presently located at ", "address", ", in the sum of ", "amount", ", or ", "percentage",
+                 " of my estate, which will be used for the accomplishment of its general purposes."]
+WILLS_TRUST_ITEMS = [("Cash gifts", "cash"), ("Personal property", "gift"), ("Real Estate", "home"),
+                     ("Securities", "chart")]
+WILLS_FORMS = [
+    ("Unrestricted", "heart",
+     "For unrestricted general purposes. The National Humane Society will use these resources without specific direction."),
+    ("A specific request", "target", "A specific request (the gift is used to sponsor a specific program)"),
+]
+WILLS_RETIREMENT = [
+    ("Charitable gifts by assigning a beneficiary",
+     "The National Humane Society can be named as a beneficiary or contingent beneficiary from your retirement "
+     "account. If the account is left to a charity, there are no income taxes subject to the organization. For "
+     "questions and assistance, contact your retirement plan\u2019s administrator."),
+    ("Charitable gifts through a trust",
+     "A trust can be named for your retirement plan during the event of excess or unused assets. Further, the "
+     "trust can issue income to other beneficiaries or heirs for a period of time. After the time has passed, the "
+     "trust\u2019s assets will fund the assigned charity."),
+]
+WILLS_LIFE_INTRO = ("A life insurance policy is often forgotten as a way to give back to charity like the National "
+                    "Humane Society. As this policy is similar to beneficiaries in a will, there are many ways to "
+                    "issue a charitable gift.")
+# (short title, text)
+WILLS_LIFE_OPTIONS = [
+    ("Add a beneficiary",
+     "Adding a beneficiary or beneficiaries is quite simple. Contact your life insurance provider so they can help "
+     "add in the charity, such as the National Humane Society, to the policy."),
+    ("Create a new policy",
+     "Create a new policy with the National Humane Society named as the primary beneficiary. Here, you will make "
+     "premium payments to your insurance company or pay on behalf of the National Humane Society. This type of gift "
+     "does qualify as an income tax deduction."),
+    ("Give a paid-up policy",
+     "Give your paid-up policy and assign the National Humane Society as the new owner. Once the transfer is "
+     "complete, the National Humane Society can receive the full amount immediately or receive the benefit at a "
+     "later time. The original policy holder will receive an income tax deduction depending on the value of the "
+     "policy."),
+]
+WILLS_DISCLAIMER = ("The information posted on this page is to provide a general understanding and help guide the "
+                    "reader. For serious inquiries, please consult with your attorney, tax advisor, or business "
+                    "manager. This information is not to be viewed as financial, legal, tax or advice.")
+
 # ---------------------------------------------------------------------------
 # Educational Messages (/blog) — every post on the live site (81 on
 # 2026-10-20), newest first, with the live slug and a category. The categories

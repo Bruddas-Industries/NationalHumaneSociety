@@ -3993,3 +3993,158 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
   .prog-more { flex-wrap: wrap; padding: var(--space-5); }
   .prog-more-btn { width: 100%; justify-content: center; }
 }
+
+/* ==========================================================================
+   Wills & Estates
+   ========================================================================== */
+.wills-intro { margin-top: var(--space-2); }
+.charity-card {
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-7) var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--color-navy);
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+}
+.charity-icon { width: 64px; height: 64px; border-radius: 18px; display: grid; place-items: center; background: var(--color-yellow); color: var(--color-navy); margin-bottom: var(--space-5); }
+.charity-icon svg { width: 32px; height: 32px; }
+.charity-label { margin: 0 0 4px; font-family: var(--font-eyebrow); font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; color: var(--color-yellow); }
+.charity-card h3 { color: #fff; font-size: 1.8rem; margin: 0 0 var(--space-3); }
+.charity-text { position: relative; z-index: 1; margin: 0; font-size: 1.15rem; line-height: 1.6; color: rgba(255,255,255,.88); }
+.charity-taxid { position: relative; z-index: 1; margin-top: var(--space-5); padding: var(--space-4) var(--space-5); border-radius: 14px; background: #262550; border: 1px solid rgba(255,255,255,.14); }
+.charity-taxid-label { display: block; margin-bottom: 4px; font-size: .85rem; color: rgba(255,255,255,.7); }
+.charity-taxid-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+.charity-taxid-num { font-family: var(--font-display); font-size: 1.9rem; letter-spacing: .04em; color: var(--color-yellow); font-variant-numeric: tabular-nums; }
+.charity-paw { position: absolute; right: -24px; top: -30px; color: #fff; opacity: .07; transform: rotate(-18deg); }
+.charity-paw .paw-icon { width: 170px; height: 170px; fill: currentColor; }
+
+.wills-ways .way-icon svg { width: 28px; height: 28px; }
+.wills-ways .way-card h3 { font-size: 1.35rem; }
+.wills-ways .way-card p { line-height: 1.7; }
+
+/* Sample bequest, shown like a page from a will */
+.bequest-doc { max-width: 900px; margin: var(--space-7) auto 0; background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); overflow: hidden; }
+.bequest-doc-head { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-5); background: var(--color-navy); color: #fff; }
+.bequest-doc-icon { flex: 0 0 auto; display: inline-flex; color: var(--color-yellow); }
+.bequest-doc-icon svg { width: 22px; height: 22px; }
+.bequest-doc-head figcaption { flex: 1; font-weight: 700; line-height: 1.35; }
+.bequest-copy {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: var(--radius-pill);
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  font: inherit; font-size: .88rem; font-weight: 700;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+}
+.bequest-copy svg { width: 16px; height: 16px; }
+.bequest-copy:hover { background: rgba(255,255,255,.18); }
+.bequest-copy.is-copied { background: var(--color-teal); border-color: var(--color-teal); }
+.bequest-copy:focus-visible { outline: 3px solid var(--color-yellow); outline-offset: 2px; }
+.bequest-text {
+  margin: 0;
+  padding: var(--space-7) var(--space-7) var(--space-7) calc(var(--space-7) + 6px);
+  border-left: 6px solid var(--color-coral);
+  font-size: 1.2rem;
+  line-height: 2.1;
+  font-style: italic;
+  color: #2b2a45;
+}
+.bequest-blank {
+  display: inline-block;
+  min-width: 8.5em;
+  padding: 0 .5em;
+  border-bottom: 2px solid var(--color-coral);
+  font-size: .72em;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--color-coral) 75%, #fff);
+}
+
+.trust-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); align-items: stretch; max-width: 1000px; margin: 0 auto; }
+.trust-tile {
+  --tile: var(--color-coral);
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  background: #fff;
+  border: 1px solid #e6ebf0;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--color-navy);
+  text-align: center;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.trust-tile:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.trust-tile.is-teal { --tile: var(--color-teal); }
+.trust-tile.is-orange { --tile: var(--color-orange); }
+.trust-tile.is-blue { --tile: var(--color-blue); }
+.trust-icon { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--tile) 14%, #fff); color: var(--tile); }
+.trust-icon svg { width: 28px; height: 28px; }
+.wills-forms-head { max-width: 760px; margin: var(--space-8) auto var(--space-6); }
+.wills-forms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); max-width: 1000px; margin: 0 auto; }
+.must-text { margin: 0; line-height: 1.7; color: #2b2a45; }
+
+.plan-card {
+  --plan: var(--color-blue);
+  max-width: 1100px;
+  margin: 0 auto var(--space-5);
+  padding: var(--space-6);
+  background: #fff;
+  border-radius: var(--radius-lg);
+  border-top: 5px solid var(--plan);
+  box-shadow: var(--shadow-sm);
+}
+.plan-card.is-orange { --plan: var(--color-orange); }
+.plan-head { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-5); }
+.plan-head h3 { margin: 0; font-size: 1.6rem; }
+.plan-icon { flex: 0 0 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--plan); color: #fff; }
+.plan-icon svg { width: 26px; height: 26px; }
+.plan-blocks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); }
+.plan-block { padding: var(--space-5); border-radius: 14px; background: var(--color-mist); }
+.plan-block h4, .life-option h4 { margin: 0 0 var(--space-2); font-size: 1.1rem; }
+.plan-block p, .life-option p, .plan-intro { margin: 0; line-height: 1.7; color: #2b2a45; }
+.plan-intro { margin-bottom: var(--space-5); max-width: 860px; }
+.life-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+.life-option { position: relative; padding: var(--space-5); padding-top: calc(var(--space-5) + 6px); border-radius: 14px; background: var(--color-mist); }
+.life-num { display: grid; place-items: center; width: 34px; height: 34px; margin-bottom: var(--space-3); border-radius: 50%; background: var(--color-yellow); color: var(--color-navy); font-family: var(--font-display); }
+.wills-disclaimer {
+  display: flex; gap: var(--space-4);
+  max-width: 1100px;
+  margin: var(--space-6) auto 0;
+  padding: var(--space-5);
+  border: 1px dashed #c9d2da;
+  border-radius: var(--radius-lg);
+  background: rgba(255,255,255,.6);
+}
+.wills-disclaimer-icon { flex: 0 0 auto; color: var(--color-text-muted); display: inline-flex; }
+.wills-disclaimer-icon svg { width: 22px; height: 22px; }
+.wills-disclaimer h3 { margin: 0 0 4px; font-size: 1rem; font-family: var(--font-body); font-weight: 700; color: var(--color-navy); }
+.wills-disclaimer p { margin: 0; font-size: .92rem; line-height: 1.65; color: var(--color-text-muted); }
+
+@media (max-width: 1000px) {
+  .trust-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .life-options { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .wills-forms, .plan-blocks { grid-template-columns: 1fr; }
+  .bequest-doc-head { flex-wrap: wrap; }
+  .bequest-doc-head figcaption { flex-basis: calc(100% - 40px); }
+  .bequest-doc-head .bequest-copy { margin-left: 34px; }
+  .bequest-text { padding: var(--space-5) var(--space-5) var(--space-5) calc(var(--space-5) + 4px); font-size: 1.05rem; }
+  .plan-card { padding: var(--space-5); }
+  .charity-card { padding: var(--space-6) var(--space-5); }
+}
+@media (max-width: 480px) {
+  .trust-grid { grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .trust-tile { padding: var(--space-5) var(--space-3); font-size: 1rem; }
+}
