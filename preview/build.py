@@ -1099,79 +1099,6 @@ ABOUT_BODY = page_hero(
 </section>
 """
 
-# --- ANIMAL PROGRAMS --------------------------------------------------------
-def link_list(items):
-    lis = "\n".join(
-        f'        <li><a href="{url}" target="_blank" rel="noopener">{name}</a></li>'
-        for name, url in items
-    )
-    return f'      <ul class="dir-list">\n{lis}\n      </ul>'
-
-
-def state_directory():
-    blocks = []
-    for state, orgs in C.VET_STATES:
-        lis = []
-        for name, url, note in orgs:
-            note_html = f'<br><span class="dir-note">{note}</span>' if note else ""
-            lis.append(f'          <li><a href="{url}" target="_blank" rel="noopener">{name}</a>{note_html}</li>')
-        blocks.append(f"""      <div class="dir-state">
-        <h4>{state}</h4>
-        <ul class="dir-list">
-{chr(10).join(lis)}
-        </ul>
-      </div>""")
-    return "\n".join(blocks)
-
-
-PROGRAMS_BODY = page_hero(
-    "Animal Programs",
-    "Spay/neuter and veterinary care are the two programs at the center of our work.",
-    "Animal Programs",
-) + f"""
-<section class="section">
-  <div class="container grid grid-2">
-    <div class="card">
-      <div class="card-icon">🐾</div>
-      <h3>Spay/Neuter</h3>
-      <h4>Additional Spay/Neuter Info</h4>
-      <p><a href="https://www.animalleague.org/get-involved/spay-usa/" target="_blank" rel="noopener">List of animal shelters and rescue organizations by state →</a></p>
-    </div>
-    <div class="card">
-      <div class="card-icon">🏥</div>
-      <h3>Veterinary Care</h3>
-      <h4>Veterinary Care Help</h4>
-      <p>Here is a list of organizations that provide financial assistance to pet owners who are having trouble affording veterinary care. Keep in mind that each organization is independent, and therefore, have their own set of rules and guidelines as to how they distribute assistance. This means you will have to look into each one individually to determine if you qualify for assistance.</p>
-    </div>
-  </div>
-</section>
-
-<section class="section section-soft">
-  <div class="container">
-    <h2>Veterinary care assistance.</h2>
-    <div class="grid grid-3" style="margin-bottom:var(--space-6)">
-      <div>
-        <h4>National organizations</h4>
-{link_list(C.VET_GENERAL)}
-      </div>
-      <div>
-        <h4>Breed Specific Assistance Programs</h4>
-{link_list(C.VET_BREED)}
-      </div>
-      <div>
-        <h4>Working Dog</h4>
-{link_list(C.VET_WORKING_DOG)}
-      </div>
-    </div>
-    <h3>State-Specific Programs</h3>
-    <div class="dir-states">
-{state_directory()}
-    </div>
-    <p style="margin-top:var(--space-5)"><a href="https://www.cdc.gov/healthypets/" target="_blank" rel="noopener">For more information visit the CDC Healthy Pets page →</a></p>
-  </div>
-</section>
-"""
-
 # --- DONATIONS HELPING ANIMALS ----------------------------------------------
 GLOBE_ICON = (
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">'
@@ -2530,6 +2457,200 @@ DELAWARE_BODY = page_hero(
         <a class="btn btn-primary btn-lg de-call" href="{tel(C.CUSTOMER_SERVICE)}"><span aria-hidden="true">{PHONE_ICON}</span>Call {C.CUSTOMER_SERVICE}</a>
         <a class="btn btn-secondary btn-lg" href="donations-helping-animals.html">Donations Helping Animals</a>
       </div>
+    </div>
+  </div>
+</section>
+"""
+
+# --- ANIMAL PROGRAMS --------------------------------------------------------
+PROG_ICONS = {
+    "national": ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">'
+                 '<circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5c2.6 2.6 3.9 5.8 3.9 9.5s-1.3 6.9-3.9 9.5c-2.6-2.6-3.9-5.8-3.9-9.5s1.3-6.9 3.9-9.5z"/></svg>'),
+    "breed": ('<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'
+              '<ellipse cx="12" cy="15.6" rx="5.2" ry="4.4"/><ellipse cx="5.2" cy="9.6" rx="2.1" ry="2.7"/>'
+              '<ellipse cx="9.1" cy="5.8" rx="2.2" ry="2.9"/><ellipse cx="14.9" cy="5.8" rx="2.2" ry="2.9"/>'
+              '<ellipse cx="18.8" cy="9.6" rx="2.1" ry="2.7"/></svg>'),
+    "working": ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                '<circle cx="12" cy="9" r="6"/><path d="M8.5 13.9L7 22l5-3 5 3-1.5-8.1"/></svg>'),
+}
+PROG_COLOURS = ["coral", "teal", "orange", "blue"]
+_STROKE = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+           'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">')
+PROG_ICONS.update({
+    "pin": _STROKE + '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+    "list": _STROKE + '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg>',
+    "info": _STROKE + '<circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><path d="M12 7.5h.01"/></svg>',
+    "hospital": _STROKE + '<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M12 8v8M8 12h8"/></svg>',
+    "book": _STROKE + '<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5A2.5 2.5 0 0 1 6.5 19H20v3H6.5"/><path d="M8 7h8M8 11h6"/></svg>',
+})
+
+
+def dir_link(name, url):
+    """One organization in the directory: name, domain, arrow; opens in a new tab."""
+    return (f'<a class="dir-link" href="{url}" target="_blank" rel="noopener">'
+            f'<span class="dir-link-text"><strong>{name}</strong>'
+            f'<small><span class="site-link-globe" aria-hidden="true">{GLOBE_ICON}</span>{source_domain(url)}</small></span>'
+            f'<span class="dir-link-arrow" aria-hidden="true">↗</span></a>')
+
+
+def org_details(org, note):
+    """The extra text under a state organization: its note as an info line,
+    then any clinics, each with a hospital icon, address and call chip."""
+    clinics = C.VET_CLINICS.get(org, [])
+    if not note and not clinics:
+        return ""
+    parts = []
+    if note:
+        parts.append(f'<p class="org-note"><span class="org-note-icon" aria-hidden="true">{PROG_ICONS["info"]}</span><span>{note}</span></p>')
+    if clinics:
+        rows = "\n".join(
+            f'                <li class="clinic"><span class="clinic-icon" aria-hidden="true">{PROG_ICONS["hospital"]}</span>'
+            f'<span class="clinic-text"><strong>{name}</strong><span>{street}, {city}</span>'
+            f'<a class="clinic-phone" href="{tel(phone)}"><span aria-hidden="true">{PHONE_ICON}</span>{phone}</a></span></li>'
+            for name, street, city, phone in clinics)
+        parts.append(f'<ul class="clinics">\n{rows}\n              </ul>')
+    return '\n            <div class="org-details">\n              ' + "\n              ".join(parts) + '\n            </div>'
+
+
+def dir_group(title, icon, colour, items):
+    links = "\n".join(f"          <li>{dir_link(n, u)}</li>" for n, u in items)
+    return f"""      <div class="dir-group is-{colour}">
+        <div class="dir-group-head"><span class="dir-group-icon" aria-hidden="true">{PROG_ICONS[icon]}</span><h3>{title}</h3></div>
+        <ul class="dir-links">
+{links}
+        </ul>
+      </div>"""
+
+
+def state_slug(state):
+    return "state-" + state.lower().replace(" ", "-")
+
+
+def state_cards():
+    cards = []
+    for i, (state, orgs) in enumerate(C.VET_STATES):
+        rows = []
+        for name, url, note in orgs:
+            rows.append(f"""          <li class="dir-org">
+            {dir_link(name, url)}{org_details(name, note)}
+          </li>""")
+        cards.append(f"""      <section class="state-card is-{PROG_COLOURS[i % 4]}" id="{state_slug(state)}" aria-labelledby="{state_slug(state)}-title">
+        <div class="state-card-head"><span class="state-abbr" aria-hidden="true">{C.STATE_ABBR[state]}</span><h4 id="{state_slug(state)}-title">{state}</h4></div>
+        <ul class="dir-links">
+{chr(10).join(rows)}
+        </ul>
+      </section>""")
+    return "\n".join(cards)
+
+
+STATE_CHIPS = "\n".join(
+    f'      <a class="foods-chip" href="#{state_slug(st)}">{st}</a>' for st, _ in C.VET_STATES)
+PROG_GROUPS = "\n".join([
+    dir_group("National organizations", "national", "coral", C.VET_GENERAL),
+    dir_group("Breed Specific Assistance Programs", "breed", "teal", C.VET_BREED),
+    dir_group("Working Dog", "working", "orange", C.VET_WORKING_DOG),
+])
+
+
+def prog_resource(colour, icon, title, sub, button, href):
+    """A tinted, fully clickable panel: icon, title, small line, button.
+    Outside links open in a new tab; # links jump down the page."""
+    outside = href.startswith("http")
+    target = ' target="_blank" rel="noopener"' if outside else ""
+    arrow = "↗" if outside else "↓"
+    return (f'<a class="prog-resource is-{colour}" href="{href}"{target}>'
+            f'<span class="prog-resource-icon" aria-hidden="true">{PROG_ICONS[icon]}</span>'
+            f'<span class="prog-resource-text"><strong>{title}</strong><small>{sub}</small></span>'
+            f'<span class="prog-resource-btn">{button} <span aria-hidden="true">{arrow}</span></span></a>')
+
+
+SPAY_RESOURCE = prog_resource(
+    "coral", "pin", C.SPAY_LINK[0], f"{source_domain(C.SPAY_LINK[1])} · opens in a new tab",
+    "Find help near you", C.SPAY_LINK[1])
+VET_RESOURCE = prog_resource(
+    "teal", "list", "Veterinary care assistance directory", "National, breed-specific and state programs",
+    "Browse the directory", "#vet-directory")
+
+
+PROGRAMS_BODY = page_hero(
+    "Animal Programs",
+    "Resources to help pet owners find spay/neuter services and financial help with veterinary care.",
+    "Animal Programs",
+) + f"""
+<section class="section">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Where to start</p>
+      <h2>Spay/neuter and vet care resources</h2>
+    </div>
+    <div class="prog-grid">
+      <article class="prog-card">
+        <div class="post-cover is-coral"><span class="post-cover-topic">Spay/Neuter</span></div>
+        <div class="prog-card-body">
+          <h3>Additional Spay/Neuter Info</h3>
+          {SPAY_RESOURCE}
+        </div>
+      </article>
+      <article class="prog-card">
+        <div class="post-cover is-teal"><span class="post-cover-topic">Veterinary Care</span></div>
+        <div class="prog-card-body">
+          <h3>Help paying for vet care</h3>
+          {VET_RESOURCE}
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft" id="vet-directory">
+  <div class="container">
+    <div class="tips-intro prog-intro">
+      <div>
+        <p class="eyebrow">Veterinary care</p>
+        <h2>Veterinary Care Help</h2>
+        <p class="tips-lead">{C.VET_HELP_INTRO}</p>
+      </div>
+      <div class="tips-photo">
+        <img src="assets/img/programs-vet.jpg" alt="A veterinarian holding a cat during a check-up" width="570" height="618">
+      </div>
+    </div>
+
+    {review_note("<p>We checked every link in this directory (October 2026). Several no longer work:</p><ul><li><strong>Redirect to a different site:</strong> PAWS San Diego (pawssdc.org now goes to an unrelated pet-gear site, pawgearlab.com); Max Fund (maxfund.org now goes to truecompanions.org; it may have rebranded).</li><li><strong>Website no longer exists:</strong> Voice for the Animals Foundation (vftafoundation.org); Manchester Area Network on AIDS AID-A-PET (mana-ct.net).</li><li><strong>Not responding:</strong> Canine Cancer Awareness, PAWS San Francisco, RIVMA Companion Animal Foundation.</li><li><strong>Page not found:</strong> Phinney&#8217;s Friends (MSPCA) and SPCA of Texas. Their home pages still work.</li></ul><p>Suggest NHS reviews the directory before launch: confirm, update or remove these entries.</p>")}
+    <div class="dir-groups">
+{PROG_GROUPS}
+    </div>
+
+    <div class="text-center prog-states-head">
+      <p class="eyebrow">By state</p>
+      <h2>State-Specific Programs</h2>
+    </div>
+    <nav class="foods-jump prog-jump-nav" aria-labelledby="prog-states-title">
+      <h3 class="foods-jump-title" id="prog-states-title">Browse by state</h3>
+      <div class="foods-chips">
+{STATE_CHIPS}
+      </div>
+    </nav>
+    <div class="state-grid">
+{state_cards()}
+    </div>
+    <div class="prog-more">
+      <span class="prog-more-icon" aria-hidden="true">{PROG_ICONS["book"]}</span>
+      <div class="prog-more-text">
+        <h3>More information</h3>
+        <p>{C.CDC_LINK[0]}.</p>
+      </div>
+      <a class="btn btn-secondary prog-more-btn" href="{C.CDC_LINK[1]}" target="_blank" rel="noopener">CDC Healthy Pets <span aria-hidden="true">↗</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="section section-cream tips-closing">
+  <div class="container">
+    <div class="tips-closing-card">
+      <p class="eyebrow">Make it possible</p>
+      <h2>Help more animals get the care they need</h2>
+      <p class="tips-closing-text">Your support helps shelters and rescues care for animals across the country.</p>
+      <a class="btn btn-primary btn-lg btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Donate today</a>
     </div>
   </div>
 </section>
