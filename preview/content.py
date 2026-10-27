@@ -578,7 +578,8 @@ STATE_ABBR = {
 SPAY_LINK = ("List of animal shelters and rescue organizations by state",
              "https://www.animalleague.org/get-involved/spay-usa/")
 CDC_LINK = ("For more information visit the CDC Healthy Pets page", "https://www.cdc.gov/healthypets/")
-VET_HELP_INTRO = ("Here is a list of organizations that provide financial assistance to pet owners who are having "
+# "Here is a list" -> "Below is a list" (CJ, 2026-10-26)
+VET_HELP_INTRO = ("Below is a list of organizations that provide financial assistance to pet owners who are having "
                   "trouble affording veterinary care. Keep in mind that each organization is independent, and "
                   "therefore, have their own set of rules and guidelines as to how they distribute assistance. This "
                   "means you will have to look into each one individually to determine if you qualify for assistance.")
