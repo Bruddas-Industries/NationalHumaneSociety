@@ -2761,37 +2761,112 @@ WILLS_BODY = page_hero(
 """
 
 # --- CONTACT ----------------------------------------------------------------
+CONTACT_ICONS = {k: _WS + v + "</svg>" for k, v in {
+    "pin": '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+    "headset": '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2.5" y="13.5" width="4" height="6" rx="1.5"/><rect x="17.5" y="13.5" width="4" height="6" rx="1.5"/><path d="M19.5 19.5c0 1.5-1.5 2.5-4 2.5h-2"/>',
+    "send": '<path d="M21.5 2.5L10.5 13.5"/><path d="M21.5 2.5l-7 19-4-8-8-4z"/>',
+}.items()}
+X_ICON = ('<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" '
+          'd="M17.75 3h3.07l-6.71 7.67L22 21h-6.18l-4.84-6.33L5.44 21H2.37l7.18-8.2L2 3h6.34l4.37 5.78L17.75 3zm-1.08 16.17h1.7L7.4 4.74H5.58l11.09 14.43z"/></svg>')
+CONTACT_ADDRESS = ["N.H.S."] + C.ADDRESS_LINES[1:]
+
+
+def contact_copy(text, label, aria):
+    """Small Copy button for the light contact cards (uses nav.js [data-copy])."""
+    return (f'<button type="button" class="bequest-copy contact-copy" data-copy="{text}" aria-label="{aria}">'
+            f'<span aria-hidden="true">{WILLS_ICONS["copy"]}</span><span class="bequest-copy-label">{label}</span></button>')
+
+
+CONTACT_CARDS = "\n".join([
+    f"""      <article class="contact-card is-coral">
+        <span class="contact-card-icon" aria-hidden="true">{PHONE_ICON}</span>
+        <h3>Order Line</h3>
+        <a class="contact-card-value" href="{tel(C.ORDER_LINE)}">{C.ORDER_LINE}</a>
+        <div class="contact-card-actions"><a class="contact-action" href="{tel(C.ORDER_LINE)}">Call now</a></div>
+      </article>""",
+    f"""      <article class="contact-card is-teal">
+        <span class="contact-card-icon" aria-hidden="true">{CONTACT_ICONS["headset"]}</span>
+        <h3>Customer Service</h3>
+        <a class="contact-card-value" href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a>
+        <div class="contact-card-actions"><a class="contact-action" href="{tel(C.CUSTOMER_SERVICE)}">Call now</a></div>
+      </article>""",
+    f"""      <article class="contact-card is-blue">
+        <span class="contact-card-icon" aria-hidden="true">{WILLS_ICONS["mail"]}</span>
+        <h3>Email</h3>
+        <a class="contact-card-value contact-card-email" href="mailto:{C.EMAIL}">{C.EMAIL.replace("@", "@<wbr>")}</a>
+        <div class="contact-card-actions"><a class="contact-action" href="mailto:{C.EMAIL}">Email us</a>{contact_copy(C.EMAIL, "Copy", "Copy email address")}</div>
+      </article>""",
+    f"""      <article class="contact-card is-orange">
+        <span class="contact-card-icon" aria-hidden="true">{CONTACT_ICONS["pin"]}</span>
+        <h3>By mail</h3>
+        <address class="contact-card-value contact-card-address">{"<br>".join(CONTACT_ADDRESS)}</address>
+        <div class="contact-card-actions">{contact_copy(", ".join(CONTACT_ADDRESS), "Copy address", "Copy mailing address")}</div>
+      </article>""",
+])
+
 CONTACT_BODY = page_hero(
     "Contact",
-    "Should you need any information concerning our car raffles, the spaying and neutering of cats and dogs or if you have any other questions or comments please contact us.",
+    "Call, email or write to us. We're always glad to hear from you.",
     "Contact",
 ) + f"""
 <section class="section">
-  <div class="container grid grid-2">
-    <div>
-      <h2>Get in Touch</h2>
-      <h3>Order Line</h3>
-      <p><a href="{tel(C.ORDER_LINE)}">{C.ORDER_LINE}</a></p>
-      <h3 style="margin-top:var(--space-5)">Customer Service</h3>
-      <p><a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a></p>
-      <h3 style="margin-top:var(--space-5)">Email</h3>
-      <p><a href="mailto:{C.EMAIL}">{C.EMAIL}</a></p>
-      <h3 style="margin-top:var(--space-5)">By mail</h3>
-      <p>N.H.S.<br>{"<br>".join(C.ADDRESS_LINES[1:])}</p>
-      <h3 style="margin-top:var(--space-5)">@NationalHumane</h3>
-      <p>Follow us on X for the latest updates, rescue stories, and animal welfare news.</p>
-      <a class="btn btn-secondary btn-sm" href="{C.SOCIAL[3][1]}" target="_blank" rel="noopener">Follow on X</a>
+  <div class="container">
+    <div class="contact-banner">
+      <div class="contact-banner-media"><img class="contact-banner-img" src="assets/img/header-cat-glasses.jpg" alt="A cat wearing glasses being petted" width="1200" height="800"></div>
+      <div class="contact-banner-card">
+        <p class="eyebrow">Get in touch</p>
+        <h2>We're here to help</h2>
+        <p>Should you need any information concerning our car raffles, the spaying and neutering of cats and dogs or if you have any other questions or comments please contact us.</p>
+      </div>
+      <span class="contact-banner-paw" aria-hidden="true">{PAW_ICON}</span>
     </div>
-    <div>
-      <h2>Send a message.</h2>
-      {review_note("<p>The current contact page lists phone, email and mailing address only. This form is a proposed addition.</p>")}
-      <form class="form-grid" onsubmit="event.preventDefault(); alert('Preview only — contact form');">
-        <div class="form-row"><label>Full name</label><input type="text" required></div>
-        <div class="form-row"><label>Email address</label><input type="email" required></div>
-        <div class="form-row"><label>Message</label><textarea rows="6" required></textarea></div>
-        <button class="btn btn-primary" type="submit">Send →</button>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Contact details</p>
+      <h2>Ways to reach us</h2>
+    </div>
+    <div class="contact-grid">
+{CONTACT_CARDS}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container contact-split">
+    <div class="contact-form-card">
+      <p class="eyebrow">Write to us</p>
+      <h2>Send a message</h2>
+      {review_note("<p>The current contact page lists phone, email and mailing address only. This form is a proposed addition; the topic list would let staff route messages.</p>")}
+      <form class="form-grid form-wide" onsubmit="event.preventDefault(); alert('Preview only — contact form');">
+        <div class="contact-form-pair">
+          <div class="form-row"><label for="cf-name">Full name</label><input id="cf-name" type="text" autocomplete="name" required></div>
+          <div class="form-row"><label for="cf-email">Email address</label><input id="cf-email" type="email" autocomplete="email" required></div>
+        </div>
+        <div class="form-row"><label for="cf-topic">What is it about?</label>
+          <select id="cf-topic">
+            <option>Sweepstakes or Raffle Plus tickets</option>
+            <option>A donation</option>
+            <option>Wills &amp; estates</option>
+            <option>Pet care or vet help</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="form-row"><label for="cf-message">Message</label><textarea id="cf-message" rows="6" required></textarea></div>
+        <button class="btn btn-primary btn-lg contact-send" type="submit"><span aria-hidden="true">{CONTACT_ICONS["send"]}</span>Send message</button>
       </form>
     </div>
+    <aside class="contact-x-card" aria-labelledby="contact-x-title">
+      <span class="contact-x-logo" aria-hidden="true">{X_ICON}</span>
+      <p class="contact-x-label">National Humane Society</p>
+      <h3 id="contact-x-title">@NationalHumane</h3>
+      <p>Follow us on X for the latest updates, rescue stories, and animal welfare news.</p>
+      <a class="btn btn-primary contact-x-btn" href="{C.SOCIAL[3][1]}" target="_blank" rel="noopener"><span aria-hidden="true">{X_ICON}</span>Follow on X</a>
+      <span class="contact-x-paw" aria-hidden="true">{PAW_ICON}</span>
+    </aside>
   </div>
 </section>
 """
