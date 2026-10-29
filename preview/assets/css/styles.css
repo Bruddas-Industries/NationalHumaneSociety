@@ -4280,3 +4280,82 @@ a.contact-card-value:hover { color: var(--accent); }
 @media (max-width: 560px) {
   .contact-grid { grid-template-columns: 1fr; }
 }
+/* ==========================================================================
+   Donate page (scoped: the widget is shared with the home page and Monthly Giving)
+   ========================================================================== */
+.donate-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: var(--space-8); align-items: start; }
+.donate-intro { position: sticky; top: 110px; }
+/* Coral block offset behind the photo, with small white paws in the strip that shows */
+.donate-photo { position: relative; isolation: isolate; margin: 0 26px var(--space-7) 0; }
+.donate-photo::before { content: ""; position: absolute; inset: 26px -26px -26px 26px; z-index: -1; border-radius: var(--radius-lg); background: var(--color-coral) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84'%3E%3Cg fill='%23ffffff' fill-opacity='.3' transform='rotate(-18 42 42)'%3E%3Cellipse cx='25' cy='34' rx='5' ry='7'/%3E%3Cellipse cx='36' cy='25' rx='5' ry='7.5'/%3E%3Cellipse cx='49' cy='25' rx='5' ry='7.5'/%3E%3Cellipse cx='60' cy='34' rx='5' ry='7'/%3E%3Cpath d='M42 40c-9 0-17 9-17 16 0 6 5 8 9 7 3-1 5-2 8-2s5 1 8 2c4 1 9-1 9-7 0-7-8-16-17-16z'/%3E%3C/g%3E%3C/svg%3E") right 0 bottom 0 / 26px 26px; }
+.donate-photo img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: 55% 40%; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
+.donate-intro h2 { margin: 0 0 var(--space-4); }
+.donate-lead { font-size: 1.1rem; line-height: 1.75; color: #2b2a45; }
+.donate-facts { list-style: none; margin: var(--space-5) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.donate-facts li { display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border-radius: var(--radius-pill); background: var(--color-mist); color: var(--color-navy); font-weight: 700; font-size: .88rem; }
+.donate-facts svg { width: 16px; height: 16px; color: var(--color-coral); }
+.donate-thanks { position: relative; overflow: hidden; margin: var(--space-6) 0 0; padding: var(--space-5) var(--space-5) var(--space-5) calc(var(--space-5) + 52px); border-radius: var(--radius-lg); background: var(--color-cream); border: 1px solid #efe6da; }
+.donate-thanks p { margin: 0; font-size: 1.1rem; line-height: 1.6; font-style: italic; color: var(--color-navy); text-wrap: pretty; }
+.donate-thanks-paw { position: absolute; left: var(--space-5); top: 50%; transform: translateY(-50%) rotate(-14deg); color: var(--color-coral); }
+.donate-thanks-paw .paw-icon { width: 34px; height: 34px; fill: currentColor; }
+
+.donate-form { padding: var(--space-7); border-top: 6px solid var(--color-coral); box-shadow: var(--shadow-lg); }
+.donate-form .form-grid { margin-top: var(--space-4); grid-template-columns: minmax(0, 1fr); }
+.donate-form .grid > * { min-width: 0; }
+.donate-form .form-row input { width: 100%; min-width: 0; }
+.donate-step { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-7) 0 var(--space-4); padding-top: var(--space-6); border-top: 1px solid var(--color-border); }
+.donate-step:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.donate-step h3 { margin: 0; font-size: 1.4rem; }
+/* Same coral circle as the Sweepstakes / Raffle Plus entry steps (.step-num) */
+.donate-step-num { font-family: var(--font-display); }
+.donate-form .donate-toggle { margin-bottom: var(--space-4); }
+.donate-form .amount-btn { font-size: 1.3rem; padding: 18px 0; border-radius: 12px; }
+.donate-form .amount-btn.is-active { box-shadow: 0 8px 20px rgba(250,88,83,.3); }
+.donate-secure { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: var(--space-4); align-items: start; padding: var(--space-5); border-radius: 14px; background: var(--color-mist); border: 1px solid #dbe5ee; }
+.donate-secure-icon { width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; background: var(--color-teal); color: #fff; }
+.donate-secure-icon svg { width: 24px; height: 24px; }
+.donate-secure .payment-placeholder { padding: 0; border: 0; background: none; }
+.donate-secure .payment-placeholder strong { font-size: 1.05rem; color: var(--color-navy); }
+.donate-submit { width: 100%; justify-content: center; margin-top: var(--space-2); }
+.donate-form .form-footnote { text-align: center; text-wrap: pretty; }
+
+/* Other ways to give */
+.give-ways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
+.give-way {
+  --accent: var(--color-coral); --tint: #fff0ef;
+  display: flex; flex-direction: column; align-items: flex-start;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  border-top: 5px solid var(--accent);
+  box-shadow: var(--shadow-md);
+}
+.give-way.is-teal { --accent: var(--color-teal); --tint: #e6f3f1; }
+.give-way.is-orange { --accent: var(--color-orange); --tint: #fdf2e3; }
+.give-way-icon { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; background: var(--tint); color: var(--accent); margin-bottom: var(--space-4); }
+.give-way-icon svg { width: 28px; height: 28px; }
+.give-way h3 { margin: 0 0 var(--space-2); font-size: 1.45rem; }
+.give-way p { margin: 0; color: var(--color-text-muted); line-height: 1.7; }
+.give-way-address { margin-top: var(--space-3); font-style: normal; font-weight: 700; line-height: 1.5; color: var(--color-navy); }
+.give-way-actions { margin-top: auto; padding-top: var(--space-5); display: flex; flex-wrap: wrap; gap: var(--space-3); }
+/* Both tickets as wide as the wider one */
+.give-way-tickets { display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1fr); width: max-content; max-width: 100%; }
+.give-way-tickets .ticket { width: 100%; }
+.give-way-link { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: var(--radius-pill); background: var(--accent); color: #fff; font-weight: 700; text-decoration: none; }
+.give-way-link:hover { filter: brightness(.92); color: #fff; }
+
+@media (max-width: 1080px) {
+  .donate-layout { grid-template-columns: 1fr; gap: var(--space-7); }
+  .donate-intro { position: static; }
+  .give-ways { grid-template-columns: 1fr; max-width: 640px; margin: 0 auto; }
+}
+@media (max-width: 760px) {
+  .donate-form { padding: var(--space-5); }
+  .donate-step h3 { font-size: 1.25rem; }
+  .donate-form .amount-btn { font-size: 1.15rem; padding: 14px 0; }
+  .donate-secure { grid-template-columns: 1fr; }
+  /* City on its own line, State and Zip side by side */
+  .donate-form .grid.grid-3 { grid-template-columns: 1fr 1fr; }
+  .donate-form .grid.grid-3 > :first-child { grid-column: 1 / -1; }
+  .give-way { padding: var(--space-5); }
+}
