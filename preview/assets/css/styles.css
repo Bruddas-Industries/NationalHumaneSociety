@@ -4359,3 +4359,8 @@ a.contact-card-value:hover { color: var(--accent); }
   .donate-form .grid.grid-3 > :first-child { grid-column: 1 / -1; }
   .give-way { padding: var(--space-5); }
 }
+/* ==========================================================================
+   Raffle home page (landing page)
+   ========================================================================== */
+.raffle-home-mission h2 { text-wrap: balance; }
+.raffle-home-mission .tips-closing-text + .tips-closing-text { margin-top: calc(-1 * var(--space-3)); }

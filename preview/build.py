@@ -1324,6 +1324,74 @@ RAFFLE_BODY = sweeps_hero(
 ) + entry_form("raffle-plus") + winners_strip()
 
 
+# --- RAFFLE HOME PAGE (landing page; /raffle-home-page on the current site) --
+# Not in the menus: on the current site it is a landing page reached from
+# links and ads. Raffle Plus comes first, as it does there.
+RAFFLE_HOME_CASH = [
+    cash_card("$100,000", "$100,000.00 Cash", "Raffle Plus: take the whole prize in cash."),
+    cash_card("$50,000", "$50,000.00 Cash", "Sweepstakes: take the cash instead of a car."),
+]
+
+RAFFLE_HOME_BODY = sweeps_hero(
+    '<a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; Enter Today',
+    "Sweepstakes &amp; Raffle Plus",
+    'Enter today for a chance to win up to two new cars or <span class="hl">$100,000!</span>',
+    "Choose prizes ranging from Porsche, Corvettes, Teslas, and more! Every entry supports our mission. It's a win-win!",
+    0,
+    f"${C.TICKET_TIERS[0][2]} or ${C.TICKET_TIERS[0][3]} Raffle Plus",
+    actions_html=(
+        "        " + ticket("raffle-plus.html#enter", None, "Raffle Plus", None, "ticket-yellow ticket-compact ticket-lg") + "\n"
+        "        " + ticket("sweepstakes.html#enter", None, "Sweepstakes", None, "ticket-navy ticket-compact ticket-lg")
+    ),
+) + f"""
+<section class="section section-soft" id="tickets">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-5)">
+      <p class="eyebrow">Ticket offers</p>
+      <h2>Buy more tickets, get more free</h2>
+    </div>
+    <div class="tier-switch" data-tier-switch>
+      <div class="tier-toggle" role="tablist" aria-label="Ticket type">
+        <button type="button" role="tab" aria-selected="true" data-tier="raffle-plus">Raffle Plus<small>Two cars or $100,000</small></button>
+        <button type="button" role="tab" aria-selected="false" data-tier="sweepstakes">Sweepstakes<small>One car or $50,000</small></button>
+      </div>
+      <div data-tier-panel="raffle-plus">
+{ticket_tiers("raffle-plus")}
+      </div>
+      <div data-tier-panel="sweepstakes" hidden>
+{ticket_tiers("sweepstakes")}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="prizes">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">The prizes</p>
+        <h2>Choose your car, or take the cash</h2>
+      </div>
+    </div>
+{CAR_LINEUP}
+{prize_cards(cash=RAFFLE_HOME_CASH, cash_row=True)}
+  </div>
+</section>
+
+<section class="section section-cream tips-closing">
+  <div class="container">
+    <div class="tips-closing-card raffle-home-mission">
+      <p class="eyebrow">Our mission</p>
+      <h2>Every entry helps animals in need</h2>
+      <p class="tips-closing-text">We are the nation's most effective animal protection &amp; animal welfare organization working to end suffering for all animals.</p>
+      <p class="tips-closing-text">Every year, an estimated 4 to 6 million animals are euthanized. Our goals: spay/neutering, veterinary care for those in need and funding local shelters.</p>
+      <a class="btn btn-primary btn-lg btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Donate Today</a>
+    </div>
+  </div>
+</section>
+""" + winners_strip()
+
+
 # --- PRIZE PAGES (one template, eight pages) --------------------------------
 # Per-page notes for the client, shown under the prize page hero.
 PRIZE_NOTES = {}
@@ -3114,6 +3182,7 @@ PAGES = [
     ("Financial Transparency", "financial-transparency.html", FINANCIAL_BODY, "proposed"),
     ("Sweepstakes", "sweepstakes.html", SWEEPSTAKES_BODY, "live"),
     ("Raffle Plus", "raffle-plus.html", RAFFLE_BODY, "live"),
+    ("Enter Our Sweepstakes", "raffle-home-page.html", RAFFLE_HOME_BODY, "live"),
 ] + [
     (f"{p[1]} Sweepstakes", p[0], prize_body(p), "live") for p in C.PRIZES
 ] + [
