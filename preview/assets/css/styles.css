@@ -4285,9 +4285,9 @@ a.contact-card-value:hover { color: var(--accent); }
    ========================================================================== */
 .donate-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: var(--space-8); align-items: start; }
 .donate-intro { position: sticky; top: 110px; }
-/* Coral block offset behind the photo */
-.donate-photo { position: relative; isolation: isolate; margin: 0 18px var(--space-7) 0; }
-.donate-photo::before { content: ""; position: absolute; inset: 18px -18px -18px 18px; z-index: -1; border-radius: var(--radius-lg); background: var(--color-coral); }
+/* Coral block offset behind the photo, with small white paws in the strip that shows */
+.donate-photo { position: relative; isolation: isolate; margin: 0 26px var(--space-7) 0; }
+.donate-photo::before { content: ""; position: absolute; inset: 26px -26px -26px 26px; z-index: -1; border-radius: var(--radius-lg); background: var(--color-coral) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84'%3E%3Cg fill='%23ffffff' fill-opacity='.3' transform='rotate(-18 42 42)'%3E%3Cellipse cx='25' cy='34' rx='5' ry='7'/%3E%3Cellipse cx='36' cy='25' rx='5' ry='7.5'/%3E%3Cellipse cx='49' cy='25' rx='5' ry='7.5'/%3E%3Cellipse cx='60' cy='34' rx='5' ry='7'/%3E%3Cpath d='M42 40c-9 0-17 9-17 16 0 6 5 8 9 7 3-1 5-2 8-2s5 1 8 2c4 1 9-1 9-7 0-7-8-16-17-16z'/%3E%3C/g%3E%3C/svg%3E") right 0 bottom 0 / 26px 26px; }
 .donate-photo img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: 55% 40%; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
 .donate-intro h2 { margin: 0 0 var(--space-4); }
 .donate-lead { font-size: 1.1rem; line-height: 1.75; color: #2b2a45; }

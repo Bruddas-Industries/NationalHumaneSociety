@@ -1642,7 +1642,7 @@ DONATE_BODY = page_hero(
       </blockquote>
     </div>
     <form class="donate-widget donate-form" data-donate onsubmit="event.preventDefault(); alert('Preview only — donations are not submitted.');">
-{donate_step(1, "Choose your donation amount")}
+{donate_step(1, "Choose your donation")}
 {DONATE_TOGGLE}
       <div class="amount-grid">
 {donate_amount_buttons()}
