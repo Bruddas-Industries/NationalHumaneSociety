@@ -1597,31 +1597,71 @@ WINNERS_BODY = page_hero(
 """
 
 # --- DONATE -----------------------------------------------------------------
+_DS = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+       'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">')
+DONATE_ICONS = {k: _DS + v + "</svg>" for k, v in {
+    "receipt": '<path d="M6 2.5h12v19l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+    "shield": '<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+    "clock": '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    "copy": '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+    "lock": '<rect x="4.5" y="10.5" width="15" height="10.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>',
+    "mail": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6l8.5 7 8.5-7"/>',
+    "doc": '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8M8 17h5"/>',
+    "ticket": '<path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 6v12" stroke-dasharray="2 2.5"/>',
+}.items()}
+DONATE_FACTS = [("receipt", "Tax-deductible"), ("shield", "501(c)(3) nonprofit"), ("clock", "Over 25 years")]
+DONATE_FACT_CHIPS = "\n".join(
+    f'        <li><span aria-hidden="true">{DONATE_ICONS[icon]}</span>{label}</li>' for icon, label in DONATE_FACTS)
+DONATE_MAIL_TO = ", ".join(C.ADDRESS_LINES)
+
+
+def donate_step(n, title):
+    return f'        <div class="donate-step"><span class="donate-step-num" aria-hidden="true">{n}</span><h3>{title}</h3></div>'
+
+
 DONATE_BODY = page_hero(
     "Donate Now",
     "Every dollar can make a difference for an animal in need.",
     "Donate",
 ) + f"""
 <section class="section">
-  <div class="container grid grid-2" style="align-items:start">
-    <div>
-      <img class="rounded-img" src="assets/img/donate-hero.jpeg" alt="" loading="lazy">
-      <p style="margin-top:var(--space-5)">For over 25 years, the National Humane Society has worked tirelessly to put an end to animal abuse and neglect. We are one of the national leaders in the areas of rescue, adoption and welfare, and your tax-deductible donation will help fight cruelty and make a life-changing difference for animals across America.</p>
-      <p>Thank you for making the National Humane Society and the animals we serve a part of your life.</p>
+  <div class="container donate-layout">
+    <div class="donate-intro">
+      <figure class="donate-photo">
+        <img src="assets/img/donate-hero.jpeg" alt="A dog looking out from a dark kennel doorway" loading="lazy">
+        <span class="donate-photo-paw" aria-hidden="true">{PAW_ICON}</span>
+      </figure>
+      <p class="eyebrow">Why give</p>
+      <h2>Help end animal abuse and neglect</h2>
+      <p class="donate-lead">For over 25 years, the National Humane Society has worked tirelessly to put an end to animal abuse and neglect. We are one of the national leaders in the areas of rescue, adoption and welfare, and your tax-deductible donation will help fight cruelty and make a life-changing difference for animals across America.</p>
+      <ul class="donate-facts">
+{DONATE_FACT_CHIPS}
+      </ul>
+      <blockquote class="donate-thanks">
+        <span class="donate-thanks-paw" aria-hidden="true">{PAW_ICON}</span>
+        <p>Thank you for making the National Humane Society and the animals we serve a part of your life.</p>
+      </blockquote>
     </div>
-    <form class="donate-widget" data-donate onsubmit="event.preventDefault(); alert('Preview only — donations are not submitted.');">
-      <h3>Select gift amount</h3>
+    <form class="donate-widget donate-form" data-donate onsubmit="event.preventDefault(); alert('Preview only — donations are not submitted.');">
+{donate_step(1, "Choose your gift")}
 {DONATE_TOGGLE}
       <div class="amount-grid">
 {donate_amount_buttons()}
       </div>
       <div class="form-grid">
         <div class="form-row"><label>Other amount</label><input type="text" inputmode="decimal" placeholder="$ Other Amount"></div>
+      </div>
+{donate_step(2, "Your details")}
+      <div class="form-grid">
 {PERSON_FIELDS}
-        <div class="form-row"><label>Your payment information</label>
+      </div>
+{donate_step(3, "Payment")}
+      <div class="form-grid">
+        <div class="donate-secure">
+          <span class="donate-secure-icon" aria-hidden="true">{DONATE_ICONS["lock"]}</span>
 {PAYMENT_BLOCK}
         </div>
-        <button type="submit" class="btn btn-primary donate-cta" style="width:100%; justify-content:center">Donate $25 monthly →</button>
+        <button type="submit" class="btn btn-primary btn-lg btn-donate donate-cta donate-submit"><span class="donate-heart" aria-hidden="true">♥</span><span class="donate-cta-label">Donate $25 monthly</span></button>
         <p class="form-footnote">Tax-deductible · 501(c)(3). Please remember to spay or neuter your pets. For any questions, please call us at <a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a>.</p>
       </div>
     </form>
@@ -1630,11 +1670,33 @@ DONATE_BODY = page_hero(
 
 <section class="section section-soft">
   <div class="container">
-    <h2 class="text-center" style="margin-bottom:var(--space-6)">Other ways to give.</h2>
-    <div class="grid grid-3">
-      <div class="card"><h3>By mail</h3><p>Send a personal check or money order made payable to the National Humane Society to {", ".join(C.ADDRESS_LINES[1:])}.</p></div>
-      <div class="card"><h3>Wills &amp; estates</h3><p>Assigning the National Humane Society in your will or trust is a helpful way for our organization to continue serving animals in need.</p><a href="wills-estates.html">Learn more →</a></div>
-      <div class="card"><h3>Sweepstakes</h3><p>What is better than helping animals in need while winning some incredible prizes?</p><a href="sweepstakes.html">Enter Now →</a></div>
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">More ways to help</p>
+      <h2>Other ways to give</h2>
+    </div>
+    <div class="give-ways">
+      <article class="give-way is-coral">
+        <span class="give-way-icon" aria-hidden="true">{DONATE_ICONS["mail"]}</span>
+        <h3>By mail</h3>
+        <p>Send a personal check or money order made payable to the National Humane Society to:</p>
+        <address class="give-way-address">{"<br>".join(C.ADDRESS_LINES[1:])}</address>
+        <div class="give-way-actions"><button type="button" class="bequest-copy contact-copy" data-copy="{DONATE_MAIL_TO}" aria-label="Copy mailing address"><span aria-hidden="true">{DONATE_ICONS["copy"]}</span><span class="bequest-copy-label">Copy address</span></button></div>
+      </article>
+      <article class="give-way is-teal">
+        <span class="give-way-icon" aria-hidden="true">{DONATE_ICONS["doc"]}</span>
+        <h3>Wills &amp; estates</h3>
+        <p>Assigning the National Humane Society in your will or trust is a helpful way for our organization to continue serving animals in need.</p>
+        <div class="give-way-actions"><a class="give-way-link" href="wills-estates.html">Learn more <span aria-hidden="true">→</span></a></div>
+      </article>
+      <article class="give-way is-orange">
+        <span class="give-way-icon" aria-hidden="true">{DONATE_ICONS["ticket"]}</span>
+        <h3>Sweepstakes &amp; Raffle Plus</h3>
+        <p>What is better than helping animals in need while winning some incredible prizes?</p>
+        <div class="give-way-actions give-way-tickets">
+        {ticket("sweepstakes.html#enter", None, "Sweepstakes", None, "ticket-navy ticket-compact")}
+        {ticket("raffle-plus.html#enter", None, "Raffle Plus", None, "ticket-yellow ticket-compact")}
+        </div>
+      </article>
     </div>
   </div>
 </section>

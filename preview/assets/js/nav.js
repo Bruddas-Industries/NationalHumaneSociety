@@ -71,9 +71,12 @@
       const btn = widget.querySelector('.amount-btn.is-active');
       const amount = btn ? btn.dataset.amount : null;
       const suffix = mode() === 'monthly' ? ' monthly' : '';
-      cta.textContent = amount && amount !== 'other'
-        ? `Donate $${amount}${suffix} →`
-        : `Donate${suffix} →`;
+      // The Donate page's button keeps its heart: only its label changes, with no arrow
+      const label = cta.querySelector('.donate-cta-label');
+      const arrow = label ? '' : ' →';
+      (label || cta).textContent = amount && amount !== 'other'
+        ? `Donate $${amount}${suffix}${arrow}`
+        : `Donate${suffix}${arrow}`;
     };
     widget.querySelectorAll('.amount-btn').forEach((btn) => {
       btn.addEventListener('click', (e) => {
