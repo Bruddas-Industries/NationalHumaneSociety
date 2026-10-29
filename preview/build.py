@@ -1616,7 +1616,7 @@ DONATE_MAIL_TO = ", ".join(C.ADDRESS_LINES)
 
 
 def donate_step(n, title):
-    return f'        <div class="donate-step"><span class="donate-step-num" aria-hidden="true">{n}</span><h3>{title}</h3></div>'
+    return f'        <div class="donate-step"><span class="step-num donate-step-num" aria-hidden="true">{n}</span><h3>{title}</h3></div>'
 
 
 DONATE_BODY = page_hero(
@@ -1629,7 +1629,6 @@ DONATE_BODY = page_hero(
     <div class="donate-intro">
       <figure class="donate-photo">
         <img src="assets/img/donate-hero.jpeg" alt="A dog looking out from a dark kennel doorway" loading="lazy">
-        <span class="donate-photo-paw" aria-hidden="true">{PAW_ICON}</span>
       </figure>
       <p class="eyebrow">Why give</p>
       <h2>Help end animal abuse and neglect</h2>
@@ -1643,7 +1642,7 @@ DONATE_BODY = page_hero(
       </blockquote>
     </div>
     <form class="donate-widget donate-form" data-donate onsubmit="event.preventDefault(); alert('Preview only — donations are not submitted.');">
-{donate_step(1, "Choose your gift")}
+{donate_step(1, "Choose your donation amount")}
 {DONATE_TOGGLE}
       <div class="amount-grid">
 {donate_amount_buttons()}
