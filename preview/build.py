@@ -1640,58 +1640,6 @@ DONATE_BODY = page_hero(
 </section>
 """
 
-# --- WILLS & ESTATES --------------------------------------------------------
-BEQUEST = """<blockquote class="bequest">"I give and bequeath to The National Humane Society, a non-profit organization, addressed presently located at ________, in the sum of ________, or ________ of my estate, which will be used for the accomplishment of its general purposes."</blockquote>"""
-
-WILLS_BODY = page_hero(
-    "Wills &amp; Estates",
-    "We are a 501(c)(3) tax-exempt charity.",
-    "Wills &amp; Estates",
-) + f"""
-<section class="section">
-  <div class="container-narrow prose">
-    {review_note("<p>Carried over from the current page with three small clean-ups: the sample bequest language has blanks where the address and amounts go (shown here as underscores); a paragraph about spaying that had been pasted into the Life Insurance section is left out; and the second of two identical “Charitable gifts by assigning a beneficiary” headings is retitled.</p>")}
-    <h2>Distributing Wills</h2>
-    <p>Assigning the National Humane Society in your will or trust is a helpful way for our organization to continue serving animals in need. Several programs and services we offer and sponsor have been supported by individuals including the National Humane Society in their wills.</p>
-    <h4>Different ways to give back with your will or trust</h4>
-{bullet_list([
-    "By setting a specific dollar amount or asset in your will to the National Humane Society",
-    "Set a percentage of your estate assigned to the National Humane Society",
-    "Designate the remaining of your estate that remains after all bequests to family and/or loved ones",
-])}
-    <h4>Below is an example of how to include such language in your will or trust:</h4>
-    {BEQUEST}
-
-    <h2>Trusts</h2>
-    <h4>Trusts can also be gifted to the National Humane Society to include:</h4>
-{bullet_list(["Cash gifts", "Personal property", "Real Estate", "Securities"])}
-
-    <h2>Your Will and/or Trusts can be bequeathed in two different forms</h2>
-{bullet_list([
-    "For unrestricted general purposes. The National Humane Society will use these resources without specific direction.",
-    "A specific request (the gift is used to sponsor a specific program)",
-])}
-
-    <h2>Assets from Retirement</h2>
-    <h4>Charitable gifts by assigning a beneficiary</h4>
-    <p>The National Humane Society can be named as a beneficiary or contingent beneficiary from your retirement account. If the account is left to a charity, there are no income taxes subject to the organization. For questions and assistance, contact your retirement plan’s administrator.</p>
-    <h4>Charitable gifts through a trust</h4>
-    <p>A trust can be named for your retirement plan during the event of excess or unused assets. Further, the trust can issue income to other beneficiaries or heirs for a period of time. After the time has passed, the trust’s assets will fund the assigned charity.</p>
-
-    <h2>Life Insurance Policies</h2>
-    <p>A life insurance policy is often forgotten as a way to give back to charity like the National Humane Society. As this policy is similar to beneficiaries in a will, there are many ways to issue a charitable gift.</p>
-{bullet_list([
-    "Adding a beneficiary or beneficiaries is quite simple. Contact your life insurance provider so they can help add in the charity, such as the National Humane Society, to the policy.",
-    "Create a new policy with the National Humane Society named as the primary beneficiary. Here, you will make premium payments to your insurance company or pay on behalf of the National Humane Society. This type of gift does qualify as an income tax deduction.",
-    "Give your paid-up policy and assign the National Humane Society as the new owner. Once the transfer is complete, the National Humane Society can receive the full amount immediately or receive the benefit at a later time. The original policy holder will receive an income tax deduction depending on the value of the policy.",
-])}
-
-    <h2>Disclaimer</h2>
-    <p>The information posted on this page is to provide a general understanding and help guide the reader. For serious inquiries, please consult with your attorney, tax advisor, or business manager. This information is not to be viewed as financial, legal, tax or advice.</p>
-  </div>
-</section>
-"""
-
 # --- EDUCATIONAL MESSAGES (blog index) --------------------------------------
 BLOG_BODY = page_hero(
     "Educational Messages",
@@ -2651,6 +2599,162 @@ PROGRAMS_BODY = page_hero(
       <h2>Help more animals get the care they need</h2>
       <p class="tips-closing-text">Your support helps shelters and rescues care for animals across the country.</p>
       <a class="btn btn-primary btn-lg btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Donate today</a>
+    </div>
+  </div>
+</section>
+"""
+
+# --- WILLS & ESTATES --------------------------------------------------------
+_WS = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+       'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">')
+WILLS_ICONS = {k: _WS + v + "</svg>" for k, v in {
+    "dollar": '<path d="M12 2v20"/><path d="M17 6.5c-1-1.5-2.8-2.5-5-2.5-2.8 0-5 1.6-5 3.8 0 5.2 10 2.6 10 8 0 2.3-2.2 4.2-5 4.2-2.4 0-4.4-1-5.3-2.7"/>',
+    "percent": '<path d="M19 5L5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',
+    "layers": '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>',
+    "cash": '<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9.5h.01M18 14.5h.01"/>',
+    "gift": '<rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12.5h18"/><path d="M12 8C10.5 5 7 4.5 7 6.8 7 8 9 8 12 8zm0 0c1.5-3 5-3.5 5-1.2C17 8 15 8 12 8z"/>',
+    "home": '<path d="M3 11l9-7 9 7"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-5h4v5"/>',
+    "chart": '<path d="M3 20h18"/><path d="M6 16l4-5 3 3 5-7"/><path d="M15 7h3v3"/>',
+    "heart": '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>',
+    "target": '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
+    "bank": '<path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 21h18"/>',
+    "umbrella": '<path d="M3 12a9 9 0 0 1 18 0z"/><path d="M12 12v7a2 2 0 0 1-4 0"/>',
+    "shield": '<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+    "doc": '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8M8 17h5"/>',
+    "copy": '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+    "info": '<circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><path d="M12 7.5h.01"/>',
+    "mail": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+}.items()}
+
+WILLS_WAY_CARDS = "\n".join(
+    f'      <div class="way-card"><span class="way-icon" aria-hidden="true">{WILLS_ICONS[icon]}</span><h3>{title}</h3><p>{text}</p></div>'
+    for title, icon, text in C.WILLS_WAYS)
+# Bequest: blanks are labelled lines on screen and underscores when copied
+WILLS_BEQUEST_HTML = "".join(
+    part if i % 2 == 0 else f'<span class="bequest-blank">{part}</span>'
+    for i, part in enumerate(C.WILLS_BEQUEST))
+WILLS_BEQUEST_COPY = html.escape("\u201c" + "".join(
+    part if i % 2 == 0 else "________" for i, part in enumerate(C.WILLS_BEQUEST)) + "\u201d", quote=True)
+WILLS_TRUST_TILES = "\n".join(
+    f'      <div class="trust-tile is-{PROG_COLOURS[i % 4]}"><span class="trust-icon" aria-hidden="true">{WILLS_ICONS[icon]}</span><span>{name}</span></div>'
+    for i, (name, icon) in enumerate(C.WILLS_TRUST_ITEMS))
+WILLS_FORM_CARDS = "\n".join(
+    f"""      <article class="must-card is-{('coral', 'teal')[i]}">
+        <span class="must-icon" aria-hidden="true">{WILLS_ICONS[icon]}</span>
+        <h3>{title}</h3>
+        <p class="must-text">{text}</p>
+      </article>""" for i, (title, icon, text) in enumerate(C.WILLS_FORMS))
+WILLS_RETIREMENT_BLOCKS = "\n".join(
+    f'        <div class="plan-block"><h4>{t}</h4><p>{x}</p></div>' for t, x in C.WILLS_RETIREMENT)
+WILLS_LIFE_CARDS = "\n".join(
+    f'        <div class="life-option"><span class="life-num" aria-hidden="true">{n}</span><h4>{t}</h4><p>{x}</p></div>'
+    for n, (t, x) in enumerate(C.WILLS_LIFE_OPTIONS, 1))
+
+WILLS_BODY = page_hero(
+    "Wills &amp; Estates",
+    "Remember animals in need with a gift in your will, trust, retirement account or life insurance policy.",
+    "Wills &amp; Estates",
+) + f"""
+<section class="section">
+  <div class="container">
+    {review_note("<p>Carried over from the current page with three small clean-ups: the sample bequest language has labelled blanks where the address and amounts go (and a Copy button that copies it with underscores); a paragraph about spaying that had been pasted into the Life Insurance section is left out; and the second of two identical “Charitable gifts by assigning a beneficiary” headings is retitled.</p>")}
+    <div class="tips-intro wills-intro">
+      <div>
+        <p class="eyebrow">Planned giving</p>
+        <h2>Distributing Wills</h2>
+        <p class="tips-lead">{C.WILLS_INTRO}</p>
+      </div>
+      <aside class="charity-card" aria-labelledby="charity-title">
+        <span class="charity-icon" aria-hidden="true">{WILLS_ICONS["shield"]}</span>
+        <p class="charity-label">National Humane Society</p>
+        <h3 id="charity-title">Charity Information</h3>
+        <p class="charity-text">{C.WILLS_CHARITY}</p>
+        <div class="charity-taxid">
+          <span class="charity-taxid-label">Our tax ID number is:</span>
+          <span class="charity-taxid-row"><span class="charity-taxid-num">{C.WILLS_TAX_ID}</span><button type="button" class="bequest-copy taxid-copy" data-copy="{C.WILLS_TAX_ID}" aria-label="Copy tax ID number"><span aria-hidden="true">{WILLS_ICONS["copy"]}</span><span class="bequest-copy-label">Copy</span></button></span>
+        </div>
+        <span class="charity-paw" aria-hidden="true">{PAW_ICON}</span>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <div class="text-center" style="max-width:820px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Your will or trust</p>
+      <h2>Different ways to give back with your will or trust</h2>
+    </div>
+    <div class="ways-grid wills-ways">
+{WILLS_WAY_CARDS}
+    </div>
+
+    <figure class="bequest-doc">
+      <div class="bequest-doc-head">
+        <span class="bequest-doc-icon" aria-hidden="true">{WILLS_ICONS["doc"]}</span>
+        <figcaption>Below is an example of how to include such language in your will or trust:</figcaption>
+        <button type="button" class="bequest-copy" data-copy="{WILLS_BEQUEST_COPY}"><span aria-hidden="true">{WILLS_ICONS["copy"]}</span><span class="bequest-copy-label">Copy text</span></button>
+      </div>
+      <blockquote class="bequest-text">\u201c{WILLS_BEQUEST_HTML}\u201d</blockquote>
+    </figure>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Trusts</p>
+      <h2>Trusts can also be gifted to the National Humane Society to include:</h2>
+    </div>
+    <div class="trust-grid">
+{WILLS_TRUST_TILES}
+    </div>
+
+    <div class="text-center wills-forms-head">
+      <h2>Your Will and/or Trusts can be bequeathed in two different forms</h2>
+    </div>
+    <div class="wills-forms">
+{WILLS_FORM_CARDS}
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">More ways to give</p>
+      <h2>Retirement assets and life insurance</h2>
+    </div>
+    <article class="plan-card is-blue">
+      <div class="plan-head"><span class="plan-icon" aria-hidden="true">{WILLS_ICONS["bank"]}</span><h3>Assets from Retirement</h3></div>
+      <div class="plan-blocks">
+{WILLS_RETIREMENT_BLOCKS}
+      </div>
+    </article>
+    <article class="plan-card is-orange">
+      <div class="plan-head"><span class="plan-icon" aria-hidden="true">{WILLS_ICONS["umbrella"]}</span><h3>Life Insurance Policies</h3></div>
+      <p class="plan-intro">{C.WILLS_LIFE_INTRO}</p>
+      <div class="life-options">
+{WILLS_LIFE_CARDS}
+      </div>
+    </article>
+    <aside class="wills-disclaimer" aria-labelledby="disclaimer-title">
+      <span class="wills-disclaimer-icon" aria-hidden="true">{WILLS_ICONS["info"]}</span>
+      <div><h3 id="disclaimer-title">Disclaimer</h3><p>{C.WILLS_DISCLAIMER}</p></div>
+    </aside>
+  </div>
+</section>
+
+<section class="section section-cream tips-closing">
+  <div class="container">
+    <div class="tips-closing-card">
+      <p class="eyebrow">Questions?</p>
+      <h2>Thinking about leaving a gift?</h2>
+      <p class="tips-closing-text">We're happy to answer your questions about including the National Humane Society in your will or estate plans.</p>
+      <div class="de-actions">
+        <a class="btn btn-primary btn-lg de-call" href="{tel(C.CUSTOMER_SERVICE)}"><span aria-hidden="true">{PHONE_ICON}</span>Call {C.CUSTOMER_SERVICE}</a>
+        <a class="btn btn-secondary btn-lg de-call" href="mailto:{C.EMAIL}"><span aria-hidden="true">{WILLS_ICONS["mail"]}</span>Email us</a>
+      </div>
     </div>
   </div>
 </section>
