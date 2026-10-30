@@ -114,7 +114,7 @@
   <div class="container">
     <div class="fact-strip">
       <div><span class="fact-label">Next drawing</span><span class="fact-value">December 31, 2026</span></div>
-      <div><span class="fact-label">Tickets</span><span class="fact-value">From $125</span></div>
+      <div><span class="fact-label">Tickets</span><span class="fact-value"><a class="fact-link" href="#enter">See ticket options <span aria-hidden="true">↓</span></a></span></div>
       <div><span class="fact-label">To win</span><span class="fact-value">No need to be present</span></div>
       <div><span class="fact-label">Ticket numbers</span><span class="fact-value">Emailed within 48 hours</span></div>
     </div>
@@ -129,14 +129,6 @@
         <h2>One winner. Any two cars, one car and $50,000.00 — or $100,000.00.</h2>
       </div>
     </div>
-    <ul class="lineup">
-      <li><strong>Porsche</strong> 911 Carrera Cabriolet, Taycan, Macan S, 1965 356C</li>
-      <li><strong>Corvette</strong> Stingray, E-Ray, Classic 1967</li>
-      <li><strong>Tesla</strong> Model Y</li>
-      <li><strong>Rivian</strong> R1T, R1S</li>
-      <li><strong>Lucid</strong> Gravity, Air</li>
-      <li><strong>Cadillac</strong> Escalade</li>
-    </ul>
     <div class="grid prize-grid-4">
     <article class="prize-card">
       <div class="prize-gallery" data-gallery>
@@ -298,24 +290,27 @@
           <legend><span class="step-num">1</span> Select number of tickets</legend>
           <div class="choice-grid choice-tickets">
             <label class="choice-card ticket-choice">
-              <input type="radio" name="tickets" value="1" data-price="125" data-label="1 ticket + 50 free" required>
+              <input type="radio" name="tickets" value="15" data-price="125" data-label="15 tickets" required>
               
-              <span class="ticket-count">1 Ticket</span>
-              <span class="ticket-free">+ 50 free</span>
+              <span class="ticket-count">15<small>tickets</small></span>
               <span class="ticket-price">$125</span>
             </label>
+            <label class="choice-card ticket-choice">
+              <input type="radio" name="tickets" value="50" data-price="135" data-label="50 tickets" required>
+              
+              <span class="ticket-count">50<small>tickets</small></span>
+              <span class="ticket-price">$135</span>
+            </label>
             <label class="choice-card ticket-choice is-popular">
-              <input type="radio" name="tickets" value="3" data-price="175" data-label="3 tickets + 2500 free" required>
+              <input type="radio" name="tickets" value="2500" data-price="200" data-label="2,500 tickets" required>
               <span class="choice-badge"><span aria-hidden="true">★</span> Most Popular</span>
-              <span class="ticket-count">3 Tickets</span>
-              <span class="ticket-free">+ 2500 free</span>
-              <span class="ticket-price">$175</span>
+              <span class="ticket-count">2,500<small>tickets</small></span>
+              <span class="ticket-price">$200</span>
             </label>
             <label class="choice-card ticket-choice">
-              <input type="radio" name="tickets" value="10" data-price="350" data-label="10 tickets + 6000 free" required>
+              <input type="radio" name="tickets" value="6000" data-price="350" data-label="6,000 tickets" required>
               
-              <span class="ticket-count">10 Tickets</span>
-              <span class="ticket-free">+ 6000 free</span>
+              <span class="ticket-count">6,000<small>tickets</small></span>
               <span class="ticket-price">$350</span>
             </label>
           </div>
@@ -325,79 +320,79 @@
           <legend><span class="step-num">2</span> Choose your prizes</legend>
           <p class="step-help">Pick any two cars, $100,000.00, or one car and $50,000.00. <span class="prize-count" data-prize-count></span></p>
           <div class="choice-grid choice-prizes">
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text">
               <input type="checkbox" name="prize" value="Porsche 911 Carrera Cabriolet" data-kind="car">
-              <span class="choice-thumb" style="background-image:url('assets/img/prize-porsche-911.webp')"></span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">Porsche 911 Carrera Cabriolet</span>
             </label>
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text">
               <input type="checkbox" name="prize" value="Electric Porsche Taycan" data-kind="car">
-              <span class="choice-thumb" style="background-image:url('assets/img/prize-porsche-taycan.jpg')"></span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">Electric Porsche Taycan</span>
             </label>
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text">
               <input type="checkbox" name="prize" value="Macan S" data-kind="car">
-              <span class="choice-thumb" style="background-image:url('assets/img/prize-porsche-macan.webp')"></span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">Macan S</span>
             </label>
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text">
               <input type="checkbox" name="prize" value="1965 Porsche" data-kind="car">
-              <span class="choice-thumb" style="background-image:url('assets/img/prize-porsche-1965.jpg')"></span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">1965 Porsche</span>
             </label>
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text">
               <input type="checkbox" name="prize" value="Corvette" data-kind="car">
-              <span class="choice-thumb" style="background-image:url('assets/img/prize-corvette-new.jpg')"></span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">Corvette</span>
             </label>
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text">
               <input type="checkbox" name="prize" value="Corvette E-Ray" data-kind="car">
-              <span class="choice-thumb" style="background-image:url('assets/img/prize-corvette-eray.webp')"></span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">Corvette E-Ray</span>
             </label>
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text">
               <input type="checkbox" name="prize" value="Classic 1967 Corvette" data-kind="car">
-              <span class="choice-thumb" style="background-image:url('assets/img/prize-corvette-classic.jpg')"></span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">Classic 1967 Corvette</span>
             </label>
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text">
               <input type="checkbox" name="prize" value="Tesla Y" data-kind="car">
-              <span class="choice-thumb" style="background-image:url('assets/img/prize-tesla-y.jpg')"></span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">Tesla Y</span>
             </label>
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text">
               <input type="checkbox" name="prize" value="Rivian R1T" data-kind="car">
-              <span class="choice-thumb" style="background-image:url('assets/img/prize-rivian.jpg')"></span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">Rivian R1T</span>
             </label>
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text">
               <input type="checkbox" name="prize" value="Rivian R1S" data-kind="car">
-              <span class="choice-thumb" style="background-image:url('assets/img/prize-rivian-r1s.avif')"></span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">Rivian R1S</span>
             </label>
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text">
               <input type="checkbox" name="prize" value="Lucid Gravity" data-kind="car">
-              <span class="choice-thumb" style="background-image:url('assets/img/prize-lucid-gravity.jpg')"></span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">Lucid Gravity</span>
             </label>
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text">
               <input type="checkbox" name="prize" value="Lucid Air" data-kind="car">
-              <span class="choice-thumb" style="background-image:url('assets/img/prize-lucid-air.webp')"></span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">Lucid Air</span>
             </label>
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text">
               <input type="checkbox" name="prize" value="Cadillac Escalade" data-kind="car">
-              <span class="choice-thumb" style="background-image:url('assets/img/prize-cadillac-escalade.avif')"></span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">Cadillac Escalade</span>
             </label>
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text is-cash">
               <input type="checkbox" name="prize" value="$50,000.00 Cash" data-kind="cash">
-              <span class="choice-thumb is-cash">$50,000</span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">$50,000.00 Cash</span>
             </label>
-            <label class="choice-card prize-choice">
+            <label class="choice-card prize-choice is-text is-cash">
               <input type="checkbox" name="prize" value="$100,000.00 Cash" data-kind="all">
-              <span class="choice-thumb is-cash">$100,000</span>
+              <span class="choice-dot" aria-hidden="true"></span>
               <span class="choice-label">$100,000.00 Cash</span>
             </label>
           </div>

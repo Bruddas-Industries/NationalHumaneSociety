@@ -697,7 +697,25 @@
     };
     form.addEventListener('change', update);
 
-    // Links from the prize pages arrive with ?tickets=3 or ?prize=Rivian%20R1T:
+    // Phones: once a step is done (a ticket bundle picked; the prize, or both
+    // Raffle Plus prizes, picked) scroll on to the next step. Only for the
+    // visitor's own clicks, not the choices preset from a link.
+    const narrow = window.matchMedia('(max-width: 900px)');
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const steps = [...form.querySelectorAll('.entry-step')];
+    const advance = (input) => {
+      const next = steps[steps.indexOf(input.closest('.entry-step')) + 1];
+      if (!next) return;
+      setTimeout(() => next.scrollIntoView({ behavior: calm.matches ? 'instant' : 'smooth', block: 'start' }), 350);
+    };
+    form.addEventListener('change', (e) => {
+      const input = e.target;
+      if (!narrow.matches || !e.isTrusted || !input.checked) return;
+      if (input.name === 'tickets') advance(input);
+      else if (input.name === 'prize' && (input.type === 'radio' || total() === 2)) advance(input);
+    });
+
+    // Links from the prize pages arrive with ?tickets=2500 or ?prize=Rivian%20R1T:
     // start the form with that bundle / car already chosen.
     const params = new URLSearchParams(location.search);
     const preset = (name, value) => {

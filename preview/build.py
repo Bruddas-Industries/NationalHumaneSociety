@@ -323,15 +323,13 @@ def ticket_tiers(kind):
     already selected (nav.js reads ?tickets=)."""
     page = "sweepstakes.html" if kind == "sweepstakes" else "raffle-plus.html"
     cards = []
-    for bought, free, sweeps_price, plus_price, popular in C.TICKET_TIERS:
+    for tickets, sweeps_price, plus_price, popular in C.TICKET_TIERS:
         price = sweeps_price if kind == "sweepstakes" else plus_price
-        noun = "Ticket" if bought == 1 else "Tickets"
         badge = '<span class="tier-badge"><span aria-hidden="true">★</span> Most Popular</span>' if popular else ""
         cls = "tier-card is-popular" if popular else "tier-card"
-        cards.append(f"""      <a class="{cls}" href="{page}?tickets={bought}#enter">
+        cards.append(f"""      <a class="{cls}" href="{page}?tickets={tickets}#enter">
         {badge}
-        <h3>Buy {bought} {noun}</h3>
-        <p class="tier-free">Get {free} Free!</p>
+        <h3>{tickets:,}<small>tickets</small></h3>
         <p class="tier-price">${price}</p>
         <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
       </a>""")
@@ -359,29 +357,39 @@ PERSON_FIELDS = """        <div class="form-row"><label>Full name</label><input 
 def ticket_choices(kind):
     """Ticket bundles as selectable cards (radio inputs) for the entry form."""
     cards = []
-    for bought, free, sweeps_price, plus_price, popular in C.TICKET_TIERS:
+    for tickets, sweeps_price, plus_price, popular in C.TICKET_TIERS:
         price = sweeps_price if kind == "sweepstakes" else plus_price
-        noun = "Ticket" if bought == 1 else "Tickets"
         badge = '<span class="choice-badge"><span aria-hidden="true">★</span> Most Popular</span>' if popular else ""
         cls = "choice-card ticket-choice is-popular" if popular else "choice-card ticket-choice"
-        summary = f"{bought} {noun.lower()} + {free} free"
         cards.append(f"""            <label class="{cls}">
-              <input type="radio" name="tickets" value="{bought}" data-price="{price}" data-label="{summary}" required>
+              <input type="radio" name="tickets" value="{tickets}" data-price="{price}" data-label="{tickets:,} tickets" required>
               {badge}
-              <span class="ticket-count">{bought} {noun}</span>
-              <span class="ticket-free">+ {free} free</span>
+              <span class="ticket-count">{tickets:,}<small>tickets</small></span>
               <span class="ticket-price">${price}</span>
             </label>""")
     return "\n".join(cards)
 
 
+# Client (call with CJ, 2026-10-29): the prize options on the entry forms
+# without car photos. False shows text cards (cash options keep the banknote
+# colours); True brings the photo cards back.
+SHOW_PRIZE_CHOICE_PHOTOS = False
+
+
 def prize_choice(label, image, input_type, kind="car"):
+    required = " required" if input_type == "radio" else ""
+    if not SHOW_PRIZE_CHOICE_PHOTOS:
+        cls = "choice-card prize-choice is-text" + ("" if image else " is-cash")
+        return f"""            <label class="{cls}">
+              <input type="{input_type}" name="prize" value="{label}" data-kind="{kind}"{required}>
+              <span class="choice-dot" aria-hidden="true"></span>
+              <span class="choice-label">{label}</span>
+            </label>"""
     if image:
         thumb = f"<span class=\"choice-thumb\" style=\"background-image:url('assets/img/{image}')\"></span>"
     else:
         amount = label.split(" ")[0].replace(".00", "")
         thumb = f'<span class="choice-thumb is-cash">{amount}</span>'
-    required = " required" if input_type == "radio" else ""
     return f"""            <label class="choice-card prize-choice">
               <input type="{input_type}" name="prize" value="{label}" data-kind="{kind}"{required}>
               {thumb}
@@ -581,14 +589,14 @@ def ticket(href, tag, title, detail, variant):
     </a>"""
 
 
-_ONE_TICKET = C.TICKET_TIERS[0]  # (tickets, free, sweepstakes $, raffle plus $, popular)
+_ONE_TICKET = C.TICKET_TIERS[0]  # (tickets, sweepstakes $, raffle plus $, popular)
 # Used on Previous Winners, whose section heading already gives the drawing
 # date, so the tickets leave it out (CJ, 2026-10-19).
 SWEEPS_CTA = f"""    <div class="cta-pair">
     {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000",
-            f"Tickets from ${_ONE_TICKET[3]}", "ticket-yellow ticket-stacked")}
+            f"Tickets from ${_ONE_TICKET[2]}", "ticket-yellow ticket-stacked")}
     {ticket("sweepstakes.html", "Sweepstakes", "Win one car or $50,000",
-            f"Tickets from ${_ONE_TICKET[2]}", "ticket-navy ticket-stacked")}
+            f"Tickets from ${_ONE_TICKET[1]}", "ticket-navy ticket-stacked")}
     </div>"""
 
 # Prize pages list Sweepstakes before Raffle Plus everywhere (hero buttons,
@@ -596,9 +604,9 @@ SWEEPS_CTA = f"""    <div class="cta-pair">
 # it stacks Sweepstakes first on small screens too. Other pages keep SWEEPS_CTA.
 SWEEPS_CTA_SWEEPS_FIRST = f"""    <div class="cta-pair">
     {ticket("sweepstakes.html", "Sweepstakes", "Win one car or $50,000",
-            f"Tickets from ${_ONE_TICKET[2]} · Drawing {C.DRAWING_DATE}", "ticket-navy ticket-stacked")}
+            f"Tickets from ${_ONE_TICKET[1]} · Drawing {C.DRAWING_DATE}", "ticket-navy ticket-stacked")}
     {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000",
-            f"Tickets from ${_ONE_TICKET[3]} · Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-stacked")}
+            f"Tickets from ${_ONE_TICKET[2]} · Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-stacked")}
     </div>"""
 
 # Hidden on 2026-10-19 at CJ's request: the Enter now ticket pair at the bottom
@@ -895,6 +903,18 @@ HOME_IMPACT_PLACEHOLDER = """
 </section>
 """
 
+# Client (call with CJ, 2026-10-29): the hero's Raffle Plus ticket becomes a
+# red bar across the bottom of the video, like the current site's red banner.
+# Set this to False for the yellow ticket under the buttons instead.
+HOME_HERO_TICKET_BAR = True
+HOME_TICKET_BAR = f"""  <a class="hero-ticket-bar" href="raffle-plus.html">
+    <span class="container hero-ticket-bar-inner">
+      <span class="ticket-tag">Raffle Plus</span>
+      <span class="hero-ticket-bar-text"><strong>Win two cars or $100,000</strong><small><span class="hero-ticket-bar-kind">Raffle Plus · </span>Drawing {C.DRAWING_DATE}</small></span>
+      <span class="hero-ticket-bar-stub">Enter now <span class="ticket-arrow" aria-hidden="true">→</span></span>
+    </span>
+  </a>"""
+
 HOME_BODY = f"""
 <section class="hero-video">
   <video autoplay muted loop playsinline preload="metadata"
@@ -910,8 +930,9 @@ HOME_BODY = f"""
       <a class="btn btn-primary btn-lg btn-donate" href="donate.html"><span class="donate-heart" aria-hidden="true">♥</span>Donate Today</a>
       <a class="btn btn-ghost btn-lg" href="about.html">Our Mission</a>
     </div>
-    {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000", f"Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-hero")}
+    {"" if HOME_HERO_TICKET_BAR else ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000", f"Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-hero")}
   </div>
+{HOME_TICKET_BAR if HOME_HERO_TICKET_BAR else ""}
 </section>
 
 {HOME_PLACEHOLDER_BANDS if SHOW_PLACEHOLDER_STATS else ''}{edu_video_carousel()}
@@ -942,9 +963,9 @@ HOME_BODY = f"""
     </div>
     <div class="cta-pair">
     {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000",
-            f"Tickets from ${_ONE_TICKET[3]}", "ticket-yellow ticket-stacked ticket-featured")}
+            f"Tickets from ${_ONE_TICKET[2]}", "ticket-yellow ticket-stacked ticket-featured")}
     {ticket("sweepstakes.html", "Sweepstakes", "Win one car or $50,000",
-            f"Tickets from ${_ONE_TICKET[2]}", "ticket-navy ticket-stacked")}
+            f"Tickets from ${_ONE_TICKET[1]}", "ticket-navy ticket-stacked")}
     </div>
     <div style="margin-top:var(--space-7)">
 {prize_cards(cash=RAFFLE_CASH, slugs=HOME_PRIZES)}
@@ -1213,14 +1234,12 @@ DONATIONS_BODY = page_hero(
 # The live page's headline lineup disagreed with its entry form (Tesla Model S
 # and 3, no Cadillac). CJ confirmed the entry form is right (2026-10-15), so
 # the lineup now lists exactly the cars on the form (C.CAR_PRIZES).
-CAR_LINEUP = """    <ul class="lineup">
-      <li><strong>Porsche</strong> 911 Carrera Cabriolet, Taycan, Macan S, 1965 356C</li>
-      <li><strong>Corvette</strong> Stingray, E-Ray, Classic 1967</li>
-      <li><strong>Tesla</strong> Model Y</li>
-      <li><strong>Rivian</strong> R1T, R1S</li>
-      <li><strong>Lucid</strong> Gravity, Air</li>
-      <li><strong>Cadillac</strong> Escalade</li>
-    </ul>"""
+# The plain-text prize list under "The prizes" heading was removed at the
+# client's request (call with CJ, 2026-10-29); the prize cards list every car.
+
+# Client (call with CJ, 2026-10-29): the hero's ticket fact on the entry pages
+# links down to the entry form instead of giving a price.
+TICKET_FACT_LINK = '<a class="fact-link" href="#enter">See ticket options <span aria-hidden="true">↓</span></a>'
 
 
 def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact, gallery_html=None, actions=None, actions_html=None):
@@ -1275,7 +1294,7 @@ SWEEPSTAKES_BODY = sweeps_hero(
     'Win a new car or <span class="hl">$50,000.00!</span>',
     "Choose prizes ranging from Porsche, Corvettes, Teslas, and more! Every entry supports our mission. It's a win-win!",
     0,  # starts on the Porsche 911
-    f"From ${C.TICKET_TIERS[0][2]}",
+    TICKET_FACT_LINK,
 ) + f"""
 <section class="section" id="prizes">
   <div class="container">
@@ -1285,7 +1304,6 @@ SWEEPSTAKES_BODY = sweeps_hero(
         <h2>One winner. Your choice of car — or $50,000.00.</h2>
       </div>
     </div>
-{CAR_LINEUP}
 {prize_cards(cash_row=True)}
   </div>
 </section>
@@ -1302,7 +1320,7 @@ RAFFLE_BODY = sweeps_hero(
     'Win two new cars or <span class="hl">$100,000.00!</span>',
     "Pick any two cars, $100,000.00, or one car and $50,000.00. Every entry supports our mission.",
     4,  # starts on the Corvette
-    f"From ${C.TICKET_TIERS[0][3]}",
+    TICKET_FACT_LINK,
 ) + f"""
 <section class="section" id="prizes">
   <div class="container">
@@ -1312,7 +1330,6 @@ RAFFLE_BODY = sweeps_hero(
         <h2>One winner. Any two cars, one car and $50,000.00 — or $100,000.00.</h2>
       </div>
     </div>
-{CAR_LINEUP}
 {prize_cards(cash=RAFFLE_CASH, cash_row=True)}
   </div>
 </section>
@@ -1391,8 +1408,8 @@ RAFFLE_HOME_BODY = f"""
         <h1>Two ways to win</h1>
         <p class="lead">Pick from Porsche, Corvette, Tesla and more, or take the cash. Every entry supports our mission.</p>
         <div class="rh-tickets">
-          {ticket("raffle-plus.html#enter", "Raffle Plus", "Win two cars or $100,000.00", f"Tickets from ${_ONE_TICKET[3]}", "ticket-yellow ticket-stacked")}
-          {ticket("sweepstakes.html#enter", "Sweepstakes", "Win one car or $50,000.00", f"Tickets from ${_ONE_TICKET[2]}", "ticket-navy ticket-stacked")}
+          {ticket("raffle-plus.html#enter", "Raffle Plus", "Win two cars or $100,000.00", f"Tickets from ${_ONE_TICKET[2]}", "ticket-yellow ticket-stacked")}
+          {ticket("sweepstakes.html#enter", "Sweepstakes", "Win one car or $50,000.00", f"Tickets from ${_ONE_TICKET[1]}", "ticket-navy ticket-stacked")}
         </div>
       </div>
       <div class="rh-cars">
@@ -1402,7 +1419,7 @@ RAFFLE_HOME_BODY = f"""
     </div>
     <div class="fact-strip">
       <div><span class="fact-label">Next drawing</span><span class="fact-value">{C.DRAWING_DATE}</span></div>
-      <div><span class="fact-label">Tickets</span><span class="fact-value">From ${_ONE_TICKET[2]} or ${_ONE_TICKET[3]} Raffle Plus</span></div>
+      <div><span class="fact-label">Tickets</span><span class="fact-value">From ${_ONE_TICKET[1]} or ${_ONE_TICKET[2]} Raffle Plus</span></div>
       <div><span class="fact-label">To win</span><span class="fact-value">No need to be present</span></div>
       <div><span class="fact-label">Ticket numbers</span><span class="fact-value">Emailed within 48 hours</span></div>
     </div>
@@ -1413,7 +1430,7 @@ RAFFLE_HOME_BODY = f"""
   <div class="container">
     <div class="text-center" style="max-width:760px; margin:0 auto var(--space-5)">
       <p class="eyebrow">Ticket offers</p>
-      <h2>Buy more tickets, get more free</h2>
+      <h2>Pick your tickets</h2>
     </div>
     <div class="tier-switch" data-tier-switch>
       <div class="tier-toggle" role="tablist" aria-label="Ticket type">
@@ -1474,8 +1491,8 @@ def car_sheet(i, name, year, image, specs):
         </dl>
         <p class="car-sheet-win">Win this car with</p>
         <div class="car-sheet-actions">
-          {ticket(f"sweepstakes.html{pick}#enter", None, "Sweepstakes", f"From ${C.TICKET_TIERS[0][2]}", "ticket-navy ticket-compact")}
-          {ticket(f"raffle-plus.html{pick}#enter", None, "Raffle Plus", f"From ${C.TICKET_TIERS[0][3]}", "ticket-yellow ticket-compact")}
+          {ticket(f"sweepstakes.html{pick}#enter", None, "Sweepstakes", f"From ${C.TICKET_TIERS[0][1]}", "ticket-navy ticket-compact")}
+          {ticket(f"raffle-plus.html{pick}#enter", None, "Raffle Plus", f"From ${C.TICKET_TIERS[0][2]}", "ticket-yellow ticket-compact")}
         </div>
       </div>
     </article>"""
@@ -1510,7 +1527,7 @@ def prize_body(prize):
         title,
         lead,
         0,
-        f"${C.TICKET_TIERS[0][2]} or ${C.TICKET_TIERS[0][3]} Raffle Plus",
+        f"${C.TICKET_TIERS[0][1]} or ${C.TICKET_TIERS[0][2]} Raffle Plus",
         gallery_html=hero_gallery,
         actions_html=(
             "        " + ticket("sweepstakes.html#enter", None, "Sweepstakes", None, "ticket-navy ticket-compact ticket-lg") + "\n"
@@ -1676,7 +1693,7 @@ RULES_BODY = page_hero(
       <h3>At a glance</h3>
       <ul class="faq-contacts">
         <li><span>Next drawing</span><strong>{C.DRAWING_DATE}</strong></li>
-        <li><span>Tickets</span><strong>From ${C.TICKET_TIERS[0][2]} · Raffle Plus from ${C.TICKET_TIERS[0][3]}</strong></li>
+        <li><span>Tickets</span><strong>From ${C.TICKET_TIERS[0][1]} · Raffle Plus from ${C.TICKET_TIERS[0][2]}</strong></li>
         <li><span>To enter</span><strong>18 or older</strong></li>
         <li><span>To win</span><strong>No need to be present</strong></li>
       </ul>

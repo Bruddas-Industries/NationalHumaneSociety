@@ -33,11 +33,15 @@ LIVE_SITE = "https://www.nationalhumanesociety.org"
 # the entry forms, the Rules and the FAQ all read it from here.
 DRAWING_DATE = "December 31, 2026"
 
-# (tickets bought, free tickets, sweepstakes price, raffle plus price, most popular?)
+# (tickets, sweepstakes price, raffle plus price, most popular?)
+# New prices from the client (call with CJ, 2026-10-29). Each price buys that
+# many tickets outright (the current site's "Buy 1, get 50 free" style is gone).
+# Most Popular stays on the 2,500-ticket bundle, as on the current site.
 TICKET_TIERS = [
-    (1, "50", 25, 125, False),
-    (3, "2500", 75, 175, True),
-    (10, "6000", 250, 350, False),
+    (15, 25, 125, False),
+    (50, 35, 135, False),
+    (2500, 100, 200, True),
+    (6000, 250, 350, False),
 ]
 
 # Every car a winner can choose: the same list on both entry forms, in the
@@ -204,11 +208,11 @@ PRIZES = [
 ]
 
 # In the order published on /sweepstakes-rules, plus the 18+ age rule from the
-# FAQ (added at CJ's request, 2026-10-18). Wording is verbatim except rule 1
-# (both ticket prices) and two "it's" -> "its" fixes (CJ, 2026-10-19).
+# FAQ (added at CJ's request, 2026-10-18). Wording is verbatim except two
+# "it's" -> "its" fixes (CJ, 2026-10-19). The published rule 1 (ticket prices
+# and payment methods) is removed at the client's request (call with CJ,
+# 2026-10-29).
 RULES = [
-    # Rule 1 named only the Sweepstakes price; both are given (CJ, 2026-10-19).
-    f"Tickets start at ${TICKET_TIERS[0][2]}.00 for the Sweepstakes and ${TICKET_TIERS[0][3]}.00 for Raffle Plus, and can be paid for by credit card, money order or check.",
     "Winner will be announced at time and place of drawing.",
     "All entries to \"the presenter\" will remain property of the presenter.",
     "All tickets will be sent within 48 hours via email or USPS.",

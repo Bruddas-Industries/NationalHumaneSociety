@@ -462,6 +462,60 @@ body.is-home .site-header.at-top .brand-logo {
   .ticket::after { display: none; }
 }
 
+/* Home hero: the Raffle Plus bar across the bottom of the video
+   (HOME_HERO_TICKET_BAR), red like the current site's banner, with the
+   ticket's tear-off stub and passing light */
+.hero-ticket-bar {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 3;
+  display: block;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--color-coral-dark), var(--color-coral));
+  color: #fff;
+  box-shadow: 0 -10px 30px rgba(0,0,0,.25);
+}
+.hero-ticket-bar:hover { text-decoration: none; color: #fff; background: linear-gradient(90deg, #cc2f2a, var(--color-coral-dark)); }
+.hero-ticket-bar-inner { display: flex; align-items: center; gap: var(--space-5); }
+.hero-ticket-bar .ticket-tag { background: #fff; color: var(--color-coral-dark); }
+.hero-ticket-bar-text { flex: 1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px var(--space-4); padding: 18px 0; }
+.hero-ticket-bar-text strong { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.15; }
+.hero-ticket-bar-text small { font-size: .95rem; font-weight: 600; opacity: .9; }
+/* On phones the tag is hidden, so the small line names Raffle Plus instead */
+.hero-ticket-bar-kind { display: none; }
+.hero-ticket-bar-stub {
+  align-self: stretch;
+  display: flex; align-items: center; gap: var(--space-2);
+  padding-left: var(--space-5);
+  border-left: 2px dashed rgba(255,255,255,.55);
+  font-weight: 700; font-size: 1.1rem;
+  white-space: nowrap;
+}
+.hero-ticket-bar:hover .ticket-arrow { transform: translateX(4px); }
+.hero-ticket-bar::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  left: -40%;
+  width: 20%;
+  background: linear-gradient(100deg, rgba(255,255,255,0), rgba(255,255,255,.3), rgba(255,255,255,0));
+  transform: skewX(-20deg);
+  animation: ticket-sheen 6s ease-in-out infinite;
+  pointer-events: none;
+}
+.hero-video:has(.hero-ticket-bar) .hero-content { padding-bottom: 140px; }
+@media (max-width: 600px) {
+  .hero-ticket-bar-inner { gap: var(--space-3); }
+  .hero-ticket-bar .ticket-tag { display: none; }
+  .hero-ticket-bar-kind { display: inline; }
+  .hero-ticket-bar-text { padding: 14px 0; }
+  .hero-ticket-bar-text strong { font-size: 1.1rem; }
+  .hero-ticket-bar-text small { font-size: .82rem; }
+  .hero-ticket-bar-stub { padding-left: var(--space-3); font-size: .95rem; }
+  .hero-video:has(.hero-ticket-bar) .hero-content { padding-bottom: 120px; }
+}
+@media (prefers-reduced-motion: reduce) { .hero-ticket-bar::after { display: none; } }
+
 /* Stat strip below the video hero (sits on a contrasting band) */
 .hero-stat-band {
   background: #fff;
@@ -1270,7 +1324,7 @@ body.is-home .site-header.at-top .brand-logo {
 .cta-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); }
 
 /* Ticket tiers */
-.tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+.tier-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5); }
 .tier-card {
   position: relative;
   background: #fff;
@@ -1280,6 +1334,8 @@ body.is-home .site-header.at-top .brand-logo {
   text-align: center;
 }
 .tier-card h3 { margin-bottom: var(--space-2); }
+.tier-card h3 small { display: block; margin-top: 2px; font-family: var(--font-body); font-size: .9rem; font-weight: 700; color: var(--color-coral-dark); }
+.tier-card.is-popular h3 small { color: var(--color-yellow); }
 .tier-badge {
   position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
   padding: 4px 14px;
@@ -1391,7 +1447,8 @@ body.is-home .site-header.at-top .brand-logo {
 .footer-social a { color: var(--color-yellow); }
 
 @media (max-width: 900px) {
-  .cta-pair, .tier-grid, .video-grid { grid-template-columns: 1fr; }
+  .cta-pair, .video-grid { grid-template-columns: 1fr; }
+  .tier-grid { grid-template-columns: 1fr 1fr; }
   .check-grid { grid-template-columns: 1fr 1fr; }
   .story-photo { float: none; width: 100%; margin: 0 0 var(--space-4); }
   .tier-grid { gap: var(--space-6); }
@@ -1461,6 +1518,10 @@ body.is-home .site-header.at-top .brand-logo {
   line-height: 1.2;
   color: #fff;
 }
+.fact-link { color: #fff; text-decoration: underline; text-decoration-color: rgba(251,255,0,.7); text-underline-offset: 4px; }
+.fact-link:hover { color: var(--color-yellow); }
+.fact-link span { display: inline-block; color: var(--color-yellow); transition: transform .15s ease; }
+.fact-link:hover span { transform: translateY(3px); }
 
 /* Cross-sell band between the two entry pages */
 .upsell-band { background: var(--color-navy); color: #fff; }
@@ -1502,6 +1563,8 @@ body.is-home .site-header.at-top .brand-logo {
   color: var(--color-navy);
 }
 .entry-step legend + * { clear: both; }
+/* Phones move on to the next step after each choice (nav.js): clear the header */
+.entry-step { scroll-margin-top: 84px; }
 .step-num {
   display: grid; place-items: center;
   flex: none;
@@ -1516,7 +1579,7 @@ body.is-home .site-header.at-top .brand-logo {
 
 /* Selectable cards (radio / checkbox inside a label) */
 .choice-grid { display: grid; gap: var(--space-4); }
-.choice-tickets { grid-template-columns: repeat(3, 1fr); padding-top: var(--space-5); }
+.choice-tickets { grid-template-columns: repeat(4, 1fr); padding-top: var(--space-5); }
 .choice-prizes { grid-template-columns: repeat(4, 1fr); }
 .choice-card {
   position: relative;
@@ -1554,6 +1617,8 @@ body.is-home .site-header.at-top .brand-logo {
   letter-spacing: .12em; text-transform: uppercase; white-space: nowrap;
 }
 .ticket-count { display: block; font-family: var(--font-display); font-size: 1.5rem; color: var(--color-navy); line-height: 1.1; }
+.ticket-count small { display: block; margin-top: 2px; font-family: var(--font-body, inherit); font-size: .85rem; font-weight: 700; letter-spacing: .02em; color: var(--color-coral-dark); }
+.ticket-choice.is-popular .ticket-count small { color: var(--color-yellow); }
 .ticket-free { display: block; margin-top: 4px; font-weight: 700; color: var(--color-coral-dark); }
 .ticket-price { display: block; margin-top: var(--space-3); font-family: var(--font-display); font-size: 2.2rem; color: var(--color-navy); line-height: 1; }
 
@@ -1580,6 +1645,41 @@ body.is-home .site-header.at-top .brand-logo {
   pointer-events: none;
 }
 .choice-label { display: block; padding: var(--space-3); font-weight: 600; font-size: .95rem; line-height: 1.25; color: var(--color-navy); }
+
+/* Prize options as text (SHOW_PRIZE_CHOICE_PHOTOS = False): a round (one
+   prize) or square (two prizes) tick box and the prize name; the cash
+   options keep the banknote colours */
+.prize-choice.is-text { display: flex; align-items: center; gap: var(--space-3); min-height: 64px; padding: 12px var(--space-4); }
+.prize-choice.is-text .choice-label { padding: 0; }
+.choice-dot {
+  flex: none;
+  width: 22px; height: 22px;
+  border: 2px solid #c6c9d4;
+  border-radius: 50%;
+  background: #fff center/14px no-repeat;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+.prize-choice.is-text input[type="checkbox"] ~ .choice-dot { border-radius: 6px; }
+.prize-choice.is-text:hover .choice-dot { border-color: var(--color-coral); }
+.prize-choice.is-text:has(input:checked) { background: #fff6f5; }
+.prize-choice.is-text:has(input:checked) .choice-dot {
+  border-color: var(--color-coral);
+  background-color: var(--color-coral);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M4 8.5l2.5 2.5L12 5.5'/></svg>");
+}
+.prize-choice.is-text:has(input:checked)::after { display: none; }
+.prize-choice.is-text.is-cash {
+  border-color: #1d6b4e;
+  background: radial-gradient(ellipse at center, #2f8f6a 0%, #1d6b4e 60%, #134c37 100%);
+}
+.prize-choice.is-text.is-cash .choice-label { color: var(--color-yellow); font-family: var(--font-display); font-weight: 400; font-size: 1.1rem; }
+.prize-choice.is-text.is-cash .choice-dot { border-color: rgba(255,255,255,.7); background-color: transparent; }
+.prize-choice.is-text.is-cash:has(input:checked) { background: radial-gradient(ellipse at center, #2f8f6a 0%, #1d6b4e 60%, #134c37 100%); }
+@media (max-width: 600px) {
+  .prize-choice.is-text { min-height: 56px; padding: 10px var(--space-3); gap: var(--space-2); }
+  .prize-choice.is-text .choice-label { font-size: .88rem; }
+  .prize-choice.is-text.is-cash .choice-label { font-size: .92rem; }
+}
 
 /* Running summary */
 .entry-summary {
@@ -1627,7 +1727,9 @@ body.is-home .site-header.at-top .brand-logo {
   .fact-strip > div:nth-child(n+3) { border-top: 1px solid rgba(255,255,255,.18); }
 }
 @media (max-width: 600px) {
-  .choice-tickets { grid-template-columns: 1fr; gap: var(--space-5); }
+  .choice-tickets { grid-template-columns: 1fr 1fr; gap: var(--space-5) var(--space-3); }
+  .ticket-count { font-size: 1.2rem; }
+  .ticket-price { font-size: 1.8rem; }
   .choice-prizes { grid-template-columns: 1fr 1fr; }
   .entry-step { padding: var(--space-5) var(--space-4); }
 }
@@ -1941,6 +2043,10 @@ body.ends-on-colour .site-footer { margin-top: 0; }
   .ticket-choice.is-popular, .tier-card.is-popular,
   .ticket-choice.is-popular:hover { transform: none; }
 }
+/* Phones: two bundles across, so the badge has to fit a narrow card */
+@media (max-width: 600px) {
+  .ticket-choice.is-popular .choice-badge, .tier-card.is-popular .tier-badge { font-size: .62rem; letter-spacing: .06em; padding: 6px 10px 4px; }
+}
 
 /* ==========================================================================
    Entry-page prize grid: cars four across, cash in its own row underneath
@@ -1959,13 +2065,28 @@ body.ends-on-colour .site-footer { margin-top: 0; }
   /* Two banknotes side by side get too narrow for $100,000: stack them */
   .cash-grid { grid-template-columns: 1fr; }
 }
+/* Phones: two cards across (client, 2026-10-29), so the entry form is
+   closer; the strips still swipe, without arrows, dots or labels */
 @media (max-width: 600px) {
-  .prize-grid-4 { grid-template-columns: 1fr; }
-  .cash-grid { grid-template-columns: 1fr; }
+  .prize-grid-4 { grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .prize-grid-4 .prize-gallery { aspect-ratio: 4/3; }
+  .prize-grid-4 .gallery-btn, .prize-grid-4 .gallery-dots,
+  .prize-grid-4 .gallery-count, .prize-grid-4 .prize-slide-name { display: none; }
+  .prize-grid-4 .prize-card .prize-body { padding: 10px 12px 12px; }
+  .prize-grid-4 .prize-card h3, .prize-card-cash.is-wide h3 { font-size: 1.05rem; margin-bottom: 2px; }
+  .prize-grid-4 .prize-card p, .prize-card-cash.is-wide p { font-size: .8rem; line-height: 1.35; margin: 0; }
+  .cash-row { margin-top: var(--space-5); }
+  .cash-grid { grid-template-columns: 1fr 1fr; gap: var(--space-3); }
   .prize-card-cash.is-wide { flex-direction: column; }
-  .prize-card-cash.is-wide .cash-face { flex: none; aspect-ratio: 16/10; min-height: 0; }
-  .prize-card-cash.is-wide .prize-body { align-self: stretch; padding: var(--space-5); }
-  .prize-card-cash.is-wide h3 { font-size: 1.4rem; }
+  .prize-card-cash.is-wide .cash-face { flex: none; aspect-ratio: 4/3; min-height: 0; }
+  .prize-card-cash.is-wide .prize-body { align-self: stretch; padding: 10px 12px 12px; }
+  .cash-row .cash-amount { font-size: 1.6rem; }
+  .cash-row .cash-note { font-size: .62rem; letter-spacing: .14em; }
+  .cash-row .cash-face::before { inset: 7px; }
+  /* A single cash card (Sweepstakes) lies on its side across the row */
+  .cash-grid > .prize-card-cash:only-child { flex-direction: row; }
+  .cash-grid > .prize-card-cash:only-child .cash-face { flex: 0 0 50%; aspect-ratio: auto; min-height: 120px; }
+  .cash-grid > .prize-card-cash:only-child .prize-body { align-self: center; }
 }
 
 /* ==========================================================================
