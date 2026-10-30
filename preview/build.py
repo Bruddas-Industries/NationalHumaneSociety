@@ -1326,15 +1326,17 @@ RAFFLE_BODY = sweeps_hero(
 
 # --- RAFFLE HOME PAGE (landing page; /raffle-home-page on the current site) --
 # Laid out like the current page (CJ, 2026-10-29): the car video behind the
-# ticket offers, the two ways to enter and a button for each car. Not in the
-# menus: it is a landing page reached from links and ads. Raffle Plus comes
-# first, as it does there.
+# two ways to enter and a button for each car, then the ticket offers (the
+# price cards with the Raffle Plus / Sweepstakes switch, CJ's pick over the
+# current page's yellow bar). Not in the menus: it is a landing page reached
+# from links and ads. Raffle Plus comes first, as it does there.
 
 # The current page's "Enter Our Sweepstakes!" pop-up. It opens a moment after
 # the page loads, once per visit. Set this to False to turn it off.
 SHOW_RAFFLE_POPUP = True
 
-# The current page's car buttons, in its order: (label, prize page or None for cash)
+# The current page's car buttons, in its order, without its $50,000 Cash
+# button (CJ, 2026-10-29): (label, prize page)
 RAFFLE_HOME_CARS = [
     ("Porsche", "new-porsche-sweepstakes.html"),
     ("Corvette", "new-corvette-sweepstakes.html"),
@@ -1342,33 +1344,17 @@ RAFFLE_HOME_CARS = [
     ("Rivian", "ev-sweepstakes.html"),
     ("Lucid", "lucid.html"),
     ("Cadillac", "cadillac-sweepstakes.html"),
-    ("$50,000.00 Cash", None),
     ("1965 Porsche", "1965-porsche-sweepstakes.html"),
     ("Classic Corvette", "classic-corvette-sweepstakes.html"),
 ]
-
-
-def raffle_home_offers():
-    cells = []
-    for bought, free, _sweeps, _plus, popular in C.TICKET_TIERS:
-        noun = "Ticket" if bought == 1 else "Tickets"
-        badge = '<span class="rh-offer-badge"><span aria-hidden="true">★</span> Most Popular</span>' if popular else ""
-        cls = "rh-offer is-popular" if popular else "rh-offer"
-        cells.append(f'      <li class="{cls}">{badge}<strong>Buy {bought} {noun}</strong><span>Get {free} Free!</span></li>')
-    return '    <ul class="rh-offers" aria-label="Ticket offers">\n' + "\n".join(cells) + "\n    </ul>"
 
 
 def raffle_home_car_buttons():
     images = {p[0]: p[5] for p in C.PRIZES}
     links = []
     for label, page in RAFFLE_HOME_CARS:
-        if page:
-            thumb = f'<img src="assets/img/{images[page]}" alt="" decoding="async">'
-            href, cls = page, "rh-car"
-        else:
-            thumb = '<span aria-hidden="true">$</span>'
-            href, cls = "sweepstakes.html#prizes", "rh-car is-cash"
-        links.append(f'        <li><a class="{cls}" href="{href}"><span class="rh-car-thumb">{thumb}</span>'
+        thumb = f'<img src="assets/img/{images[page]}" alt="" decoding="async">'
+        links.append(f'        <li><a class="rh-car" href="{page}"><span class="rh-car-thumb">{thumb}</span>'
                      f'<span class="rh-car-name">{label}</span><span class="rh-car-arrow" aria-hidden="true">→</span></a></li>')
     return '      <ul class="rh-cars-list">\n' + "\n".join(links) + "\n      </ul>"
 
@@ -1400,7 +1386,6 @@ RAFFLE_HOME_BODY = f"""
   </video>
   <div class="container rh-hero-inner">
     <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; Enter Today</div>
-{raffle_home_offers()}
     <div class="rh-grid">
       <div class="rh-enter">
         <p class="eyebrow">Sweepstakes &amp; Raffle Plus</p>
@@ -1412,8 +1397,7 @@ RAFFLE_HOME_BODY = f"""
         </div>
       </div>
       <div class="rh-cars">
-        <p class="eyebrow">Choose your prize</p>
-        <h2>See each car</h2>
+        <h2>Explore each car</h2>
 {raffle_home_car_buttons()}
       </div>
     </div>
@@ -1422,6 +1406,27 @@ RAFFLE_HOME_BODY = f"""
       <div><span class="fact-label">Tickets</span><span class="fact-value">${_ONE_TICKET[2]} or ${_ONE_TICKET[3]} Raffle Plus</span></div>
       <div><span class="fact-label">To win</span><span class="fact-value">No need to be present</span></div>
       <div><span class="fact-label">Ticket numbers</span><span class="fact-value">Emailed within 48 hours</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft" id="tickets">
+  <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-5)">
+      <p class="eyebrow">Ticket offers</p>
+      <h2>Buy more tickets, get more free</h2>
+    </div>
+    <div class="tier-switch" data-tier-switch>
+      <div class="tier-toggle" role="tablist" aria-label="Ticket type">
+        <button type="button" role="tab" aria-selected="true" data-tier="raffle-plus">Raffle Plus<small>Two cars or $100,000</small></button>
+        <button type="button" role="tab" aria-selected="false" data-tier="sweepstakes">Sweepstakes<small>One car or $50,000</small></button>
+      </div>
+      <div data-tier-panel="raffle-plus">
+{ticket_tiers("raffle-plus")}
+      </div>
+      <div data-tier-panel="sweepstakes" hidden>
+{ticket_tiers("sweepstakes")}
+      </div>
     </div>
   </div>
 </section>
@@ -1801,7 +1806,7 @@ DONATE_BODY = page_hero(
         <span class="give-way-icon" aria-hidden="true">{DONATE_ICONS["doc"]}</span>
         <h3>Wills &amp; estates</h3>
         <p>Assigning the National Humane Society in your will or trust is a helpful way for our organization to continue serving animals in need.</p>
-        <div class="give-way-actions"><a class="give-way-link" href="wills-estates.html">Learn more <span aria-hidden="true">→</span></a></div>
+        <div class="give-way-actions"><a class="give-way-link" href="wills-estates.html">Learn more <span class="give-way-arrow" aria-hidden="true">→</span></a></div>
       </article>
       <article class="give-way is-orange">
         <span class="give-way-icon" aria-hidden="true">{DONATE_ICONS["ticket"]}</span>
