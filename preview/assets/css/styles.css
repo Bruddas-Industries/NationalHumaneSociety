@@ -4415,7 +4415,7 @@ a.contact-card-value:hover { color: var(--accent); }
 }
 .rh-tickets { display: grid; gap: var(--space-4); margin-top: var(--space-5); max-width: 520px; }
 /* Entry tickets: frosted like the car panel, so the video shows through.
-   Raffle Plus stands out with a yellow tint and glow and a solid yellow stub */
+   Raffle Plus stands out with a yellow tint (stub included) and glow */
 .rh-tickets .ticket {
   background: rgba(24,23,51,.45);
   backdrop-filter: blur(6px);
@@ -4437,11 +4437,11 @@ a.contact-card-value:hover { color: var(--accent); }
   background: linear-gradient(135deg, rgba(251,255,0,.28), rgba(24,23,51,.6) 70%);
   box-shadow: 0 0 0 5px rgba(251,255,0,.22), 0 18px 46px rgba(251,255,0,.24);
 }
-.rh-tickets .ticket-yellow .ticket-stub { background: var(--color-yellow); color: var(--color-navy); border-left: 2px dashed rgba(24,23,51,.45); }
+.rh-tickets .ticket-yellow .ticket-stub { background: rgba(251,255,0,.12); color: var(--color-yellow); border-left: 2px dashed rgba(251,255,0,.55); }
 .rh-tickets .ticket-yellow::after { opacity: .35; }
 @media (max-width: 600px) {
   .rh-tickets .ticket-stub { border-top-color: rgba(255,255,255,.4); }
-  .rh-tickets .ticket-yellow .ticket-stub { border-left: 0; border-top-color: rgba(24,23,51,.45); }
+  .rh-tickets .ticket-yellow .ticket-stub { border-left: 0; border-top-color: rgba(251,255,0,.55); }
 }
 
 /* Car buttons: a photo tile for each prize page, two to a row in a frosted

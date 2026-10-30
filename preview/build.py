@@ -1389,7 +1389,7 @@ RAFFLE_HOME_BODY = f"""
       <div class="rh-enter">
         <p class="eyebrow">Sweepstakes &amp; Raffle Plus</p>
         <h1>Two ways to win</h1>
-        <p class="lead">Pick a Porsche, Corvette, Tesla and more, or take the cash. Every entry supports our mission.</p>
+        <p class="lead">Pick from Porsche, Corvette, Tesla and more, or take the cash. Every entry supports our mission.</p>
         <div class="rh-tickets">
           {ticket("raffle-plus.html#enter", "Raffle Plus", "Win two cars or $100,000.00", f"Tickets from ${_ONE_TICKET[3]}", "ticket-yellow ticket-stacked")}
           {ticket("sweepstakes.html#enter", "Sweepstakes", "Win one car or $50,000.00", f"Tickets from ${_ONE_TICKET[2]}", "ticket-navy ticket-stacked")}
