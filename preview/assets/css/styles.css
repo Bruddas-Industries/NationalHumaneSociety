@@ -4414,9 +4414,24 @@ a.contact-card-value:hover { color: var(--accent); }
   margin-top: var(--space-6);
 }
 .rh-tickets { display: grid; gap: var(--space-4); margin-top: var(--space-5); max-width: 520px; }
-.rh-hero .ticket { box-shadow: 0 14px 36px rgba(0,0,0,.4); }
-.rh-hero .ticket-navy { background: #26254d; outline: 1px solid rgba(255,255,255,.22); outline-offset: -1px; }
-.rh-hero .ticket-navy .ticket-stub { border-left-color: rgba(255,255,255,.4); }
+/* Entry tickets: frosted like the car panel, so the video shows through;
+   Raffle Plus keeps a yellow edge */
+.rh-tickets .ticket {
+  background: rgba(24,23,51,.45);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 14px 36px rgba(0,0,0,.3);
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.rh-tickets .ticket:hover { background: rgba(24,23,51,.6); }
+.rh-tickets .ticket-yellow { border: 2px solid var(--color-yellow); }
+.rh-tickets .ticket-tag { background: var(--color-yellow); color: var(--color-navy); }
+.rh-tickets .ticket-stub { color: var(--color-yellow); border-left-color: rgba(255,255,255,.4); }
+.rh-tickets .ticket::after { opacity: .2; }
+@media (max-width: 600px) {
+  .rh-tickets .ticket-stub { border-top-color: rgba(255,255,255,.4); }
+}
 
 /* Car buttons: a photo tile for each prize page, two to a row in a frosted
    panel that stretches to the height of the entry tickets beside it */
