@@ -4342,7 +4342,8 @@ a.contact-card-value:hover { color: var(--accent); }
 .give-way-tickets { display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1fr); width: max-content; max-width: 100%; }
 .give-way-tickets .ticket { width: 100%; }
 .give-way-link { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: var(--radius-pill); background: var(--accent); color: #fff; font-weight: 700; text-decoration: none; }
-.give-way-link:hover { filter: brightness(.92); color: #fff; }
+.give-way-link { transition: transform .15s ease, box-shadow .15s ease, filter .15s ease; }
+.give-way-link:hover { text-decoration: none; transform: translateY(-1px); box-shadow: var(--shadow-md); filter: brightness(.92); color: #fff; }
 
 @media (max-width: 1080px) {
   .donate-layout { grid-template-columns: 1fr; gap: var(--space-7); }
@@ -4364,3 +4365,224 @@ a.contact-card-value:hover { color: var(--accent); }
    ========================================================================== */
 .raffle-home-mission h2 { text-wrap: balance; }
 .raffle-home-mission .tips-closing-text + .tips-closing-text { margin-top: calc(-1 * var(--space-3)); }
+
+/* Video hero: the car video behind the ticket offers, the two ways to enter
+   and the car buttons, as on the current page */
+.rh-hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-navy);
+  color: #fff;
+  padding: var(--space-6) 0 var(--space-7);
+}
+.rh-hero > video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.rh-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(24,23,51,.3) 0%, rgba(24,23,51,.45) 55%, rgba(24,23,51,.8) 100%),
+    linear-gradient(90deg, rgba(24,23,51,.55) 0%, rgba(24,23,51,0) 65%);
+  z-index: 1;
+}
+.rh-hero-inner { position: relative; z-index: 2; }
+.rh-hero .breadcrumb, .rh-hero .breadcrumb a { color: rgba(255,255,255,.7); }
+.rh-hero .eyebrow { color: var(--color-yellow); }
+.rh-hero h1 {
+  color: #fff;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: 1.05;
+  margin-bottom: var(--space-3);
+  text-shadow: 0 2px 30px rgba(0,0,0,.3);
+}
+.rh-hero .lead { color: rgba(255,255,255,.9); max-width: 44ch; }
+
+/* Ticket offers: one wide yellow ticket, the three deals split by perforations */
+.rh-offers {
+  list-style: none;
+  margin: var(--space-7) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: var(--color-yellow);
+  color: var(--color-navy);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 14px 36px rgba(0,0,0,.35);
+}
+.rh-offer {
+  position: relative;
+  padding: var(--space-5) var(--space-4) var(--space-4);
+  text-align: center;
+}
+.rh-offer + .rh-offer { border-left: 2px dashed rgba(24,23,51,.4); }
+.rh-offer strong {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+  line-height: 1.1;
+}
+.rh-offer > span:last-child { display: block; margin-top: 4px; font-weight: 800; font-size: clamp(.95rem, 1.6vw, 1.15rem); }
+.rh-offer-badge {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -60%) rotate(-4deg);
+  background: var(--color-coral);
+  color: #fff;
+  font-family: var(--font-eyebrow);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 8px 12px 6px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  box-shadow: var(--shadow-md);
+}
+
+.rh-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: var(--space-7);
+  align-items: start;
+  margin-top: var(--space-8);
+}
+.rh-tickets { display: grid; gap: var(--space-4); margin-top: var(--space-5); max-width: 520px; }
+.rh-hero .ticket { box-shadow: 0 14px 36px rgba(0,0,0,.4); }
+.rh-hero .ticket-navy { background: #26254d; outline: 1px solid rgba(255,255,255,.22); outline-offset: -1px; }
+.rh-hero .ticket-navy .ticket-stub { border-left-color: rgba(255,255,255,.4); }
+
+/* Car buttons: a pill for each prize page, in a frosted panel */
+.rh-cars {
+  padding: var(--space-6);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: var(--radius-lg);
+  background: rgba(24,23,51,.45);
+  backdrop-filter: blur(6px);
+}
+.rh-cars h2 { color: #fff; font-size: 1.6rem; margin-bottom: var(--space-4); }
+.rh-cars-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.rh-car {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 6px var(--space-4) 6px 6px;
+  border-radius: var(--radius-pill);
+  background: var(--color-blue);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-decoration: none;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease, color .15s ease;
+}
+.rh-car:hover, .rh-car:focus-visible {
+  text-decoration: none;
+  background: var(--color-yellow);
+  color: var(--color-navy);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.rh-car-thumb {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #fff;
+  display: grid;
+  place-items: center;
+}
+.rh-car-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.rh-car.is-cash .rh-car-thumb { background: var(--color-yellow); color: var(--color-navy); font-family: var(--font-display); font-size: 1.3rem; }
+.rh-car.is-cash:hover .rh-car-thumb { background: var(--color-navy); color: var(--color-yellow); }
+.rh-car-name { flex: 1; }
+.rh-car-arrow { transition: transform .15s ease; }
+.rh-car:hover .rh-car-arrow { transform: translateX(4px); }
+.rh-hero .fact-strip { margin-top: var(--space-8); background: rgba(24,23,51,.45); backdrop-filter: blur(6px); }
+
+@media (max-width: 900px) {
+  .rh-grid { grid-template-columns: 1fr; margin-top: var(--space-7); }
+  .rh-tickets { max-width: none; }
+}
+@media (max-width: 600px) {
+  .rh-hero { padding-top: var(--space-5); }
+  .rh-offers { margin-top: var(--space-6); }
+  .rh-offer { padding: var(--space-5) var(--space-2) var(--space-3); }
+  .rh-offer-badge { font-size: .62rem; letter-spacing: .1em; padding: 6px 9px 4px; }
+  .rh-cars { padding: var(--space-5) var(--space-4); }
+  .rh-cars-list { grid-template-columns: 1fr 1fr; }
+  .rh-car { font-size: .92rem; gap: var(--space-2); padding-right: var(--space-3); }
+  .rh-car-thumb { width: 34px; height: 34px; }
+  .rh-car-arrow { display: none; }
+  .rh-cars-list li:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+/* Visitors who ask for reduced motion see the poster instead of the video */
+@media (prefers-reduced-motion: reduce) {
+  .rh-hero > video { display: none; }
+  .rh-hero { background: var(--color-navy) url('../video/cars-poster.jpg') center / cover no-repeat; }
+}
+
+/* "Enter Our Sweepstakes!" pop-up (SHOW_RAFFLE_POPUP in build.py) */
+.rh-popup {
+  position: fixed; inset: 0; z-index: 300;
+  display: grid; place-items: center;
+  padding: var(--space-5);
+  background: rgba(24,23,51,.78);
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.rh-popup[hidden] { display: none; }
+.rh-popup.is-open { opacity: 1; }
+.rh-popup-box {
+  position: relative;
+  width: min(520px, 100%);
+  padding: var(--space-7) var(--space-6) var(--space-6);
+  border-top: 6px solid var(--color-coral);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 30px 70px rgba(0,0,0,.45);
+  transform: translateY(16px) scale(.97);
+  transition: transform .3s cubic-bezier(.2, .8, .2, 1);
+}
+.rh-popup.is-open .rh-popup-box { transform: none; }
+.rh-popup-box h2 { font-size: clamp(1.8rem, 5vw, 2.4rem); margin-bottom: var(--space-3); }
+.rh-popup-text { font-size: 1.1rem; margin: 0 auto; max-width: 36ch; text-wrap: balance; }
+.rh-popup-logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-5);
+  margin: var(--space-5) 0;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-mist);
+}
+.rh-popup-logos img { height: 64px; width: auto; max-width: 30%; object-fit: contain; }
+.rh-popup-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); text-align: left; }
+.rh-popup-actions .ticket-main { min-width: 0; }
+.rh-popup-close {
+  position: absolute; top: 10px; right: 10px;
+  width: 40px; height: 40px; border-radius: 50%; border: 0;
+  background: var(--color-mist); color: var(--color-navy);
+  font-size: 1.6rem; line-height: 1;
+  cursor: pointer;
+}
+.rh-popup-close:hover { background: var(--color-border); }
+@media (max-width: 600px) {
+  .rh-popup-box { padding: var(--space-6) var(--space-4) var(--space-5); }
+  .rh-popup-logos { gap: var(--space-3); padding: var(--space-3); }
+  .rh-popup-logos img { height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rh-popup, .rh-popup-box { transition: none; }
+}

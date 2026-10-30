@@ -344,6 +344,34 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) close(); });
   }
 
+  // Raffle home page: the "Enter Our Sweepstakes!" pop-up opens a moment
+  // after the page loads, once per visit. Esc, the close button or a click
+  // outside closes it.
+  const rafflePopup = document.querySelector('[data-raffle-popup]');
+  if (rafflePopup) {
+    let seen = false;
+    try { seen = sessionStorage.getItem('nhs-raffle-popup-seen') === '1'; } catch (_) {}
+    let lastFocus = null;
+    const close = () => {
+      rafflePopup.classList.remove('is-open');
+      document.documentElement.classList.remove('menu-open');
+      setTimeout(() => { rafflePopup.hidden = true; }, 250);
+      if (lastFocus) lastFocus.focus();
+    };
+    if (!seen) {
+      setTimeout(() => {
+        lastFocus = document.activeElement;
+        rafflePopup.hidden = false;
+        document.documentElement.classList.add('menu-open');
+        requestAnimationFrame(() => rafflePopup.classList.add('is-open'));
+        rafflePopup.querySelector('.rh-popup-close').focus();
+        try { sessionStorage.setItem('nhs-raffle-popup-seen', '1'); } catch (_) {}
+      }, 1200);
+    }
+    rafflePopup.addEventListener('click', (e) => { if (e.target === rafflePopup || e.target.closest('.rh-popup-close')) close(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !rafflePopup.hidden) close(); });
+  }
+
   // Long stories (Donations Helping Animals): expand / collapse with a
   // smooth height animation. When collapsing, the page scrolls with it so the
   // button stays where it is under the pointer, instead of jumping.

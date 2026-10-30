@@ -1325,56 +1325,104 @@ RAFFLE_BODY = sweeps_hero(
 
 
 # --- RAFFLE HOME PAGE (landing page; /raffle-home-page on the current site) --
-# Not in the menus: on the current site it is a landing page reached from
-# links and ads. Raffle Plus comes first, as it does there.
-RAFFLE_HOME_CASH = [
-    cash_card("$100,000", "$100,000.00 Cash", "Raffle Plus: take the whole prize in cash."),
-    cash_card("$50,000", "$50,000.00 Cash", "Sweepstakes: take the cash instead of a car."),
+# Laid out like the current page (CJ, 2026-10-29): the car video behind the
+# ticket offers, the two ways to enter and a button for each car. Not in the
+# menus: it is a landing page reached from links and ads. Raffle Plus comes
+# first, as it does there.
+
+# The current page's "Enter Our Sweepstakes!" pop-up. It opens a moment after
+# the page loads, once per visit. Set this to False to turn it off.
+SHOW_RAFFLE_POPUP = True
+
+# The current page's car buttons, in its order: (label, prize page or None for cash)
+RAFFLE_HOME_CARS = [
+    ("Porsche", "new-porsche-sweepstakes.html"),
+    ("Corvette", "new-corvette-sweepstakes.html"),
+    ("Tesla", "tesla-sweepstakes.html"),
+    ("Rivian", "ev-sweepstakes.html"),
+    ("Lucid", "lucid.html"),
+    ("Cadillac", "cadillac-sweepstakes.html"),
+    ("$50,000.00 Cash", None),
+    ("1965 Porsche", "1965-porsche-sweepstakes.html"),
+    ("Classic Corvette", "classic-corvette-sweepstakes.html"),
 ]
 
-RAFFLE_HOME_BODY = sweeps_hero(
-    '<a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; Enter Today',
-    "Sweepstakes &amp; Raffle Plus",
-    'Enter today for a chance to win up to two new cars or <span class="hl">$100,000!</span>',
-    "Choose prizes ranging from Porsche, Corvettes, Teslas, and more! Every entry supports our mission. It's a win-win!",
-    0,
-    f"${C.TICKET_TIERS[0][2]} or ${C.TICKET_TIERS[0][3]} Raffle Plus",
-    actions_html=(
-        "        " + ticket("raffle-plus.html#enter", None, "Raffle Plus", None, "ticket-yellow ticket-compact ticket-lg") + "\n"
-        "        " + ticket("sweepstakes.html#enter", None, "Sweepstakes", None, "ticket-navy ticket-compact ticket-lg")
-    ),
-) + f"""
-<section class="section section-soft" id="tickets">
-  <div class="container">
-    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-5)">
-      <p class="eyebrow">Ticket offers</p>
-      <h2>Buy more tickets, get more free</h2>
+
+def raffle_home_offers():
+    cells = []
+    for bought, free, _sweeps, _plus, popular in C.TICKET_TIERS:
+        noun = "Ticket" if bought == 1 else "Tickets"
+        badge = '<span class="rh-offer-badge"><span aria-hidden="true">★</span> Most Popular</span>' if popular else ""
+        cls = "rh-offer is-popular" if popular else "rh-offer"
+        cells.append(f'      <li class="{cls}">{badge}<strong>Buy {bought} {noun}</strong><span>Get {free} Free!</span></li>')
+    return '    <ul class="rh-offers" aria-label="Ticket offers">\n' + "\n".join(cells) + "\n    </ul>"
+
+
+def raffle_home_car_buttons():
+    images = {p[0]: p[5] for p in C.PRIZES}
+    links = []
+    for label, page in RAFFLE_HOME_CARS:
+        if page:
+            thumb = f'<img src="assets/img/{images[page]}" alt="" decoding="async">'
+            href, cls = page, "rh-car"
+        else:
+            thumb = '<span aria-hidden="true">$</span>'
+            href, cls = "sweepstakes.html#prizes", "rh-car is-cash"
+        links.append(f'        <li><a class="{cls}" href="{href}"><span class="rh-car-thumb">{thumb}</span>'
+                     f'<span class="rh-car-name">{label}</span><span class="rh-car-arrow" aria-hidden="true">→</span></a></li>')
+    return '      <ul class="rh-cars-list">\n' + "\n".join(links) + "\n      </ul>"
+
+
+RAFFLE_HOME_POPUP = f"""
+<div class="rh-popup" data-raffle-popup hidden>
+  <div class="rh-popup-box" role="dialog" aria-modal="true" aria-labelledby="rh-popup-title">
+    <button type="button" class="rh-popup-close" aria-label="Close">×</button>
+    <p class="eyebrow">Enter today</p>
+    <h2 id="rh-popup-title">Enter Our Sweepstakes!</h2>
+    <p class="rh-popup-text">Enter today for a chance to win up to <strong>two new cars</strong> or <strong>$100,000</strong>.</p>
+    <div class="rh-popup-logos">
+      <img src="assets/img/logo-porsche.png" alt="Porsche">
+      <img src="assets/img/logo-corvette.png" alt="Corvette">
+      <img src="assets/img/logo-tesla.png" alt="Tesla">
     </div>
-    <div class="tier-switch" data-tier-switch>
-      <div class="tier-toggle" role="tablist" aria-label="Ticket type">
-        <button type="button" role="tab" aria-selected="true" data-tier="raffle-plus">Raffle Plus<small>Two cars or $100,000</small></button>
-        <button type="button" role="tab" aria-selected="false" data-tier="sweepstakes">Sweepstakes<small>One car or $50,000</small></button>
-      </div>
-      <div data-tier-panel="raffle-plus">
-{ticket_tiers("raffle-plus")}
-      </div>
-      <div data-tier-panel="sweepstakes" hidden>
-{ticket_tiers("sweepstakes")}
-      </div>
+    <div class="rh-popup-actions">
+      {ticket("raffle-plus.html#enter", None, "Raffle Plus", "Two cars or $100,000", "ticket-yellow ticket-compact")}
+      {ticket("sweepstakes.html#enter", None, "Sweepstakes", "One car or $50,000", "ticket-navy ticket-compact")}
     </div>
   </div>
-</section>
+</div>
+"""
 
-<section class="section" id="prizes">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">The prizes</p>
-        <h2>Choose your car, or take the cash</h2>
+RAFFLE_HOME_BODY = f"""
+<section class="rh-hero">
+  <video autoplay muted loop playsinline preload="metadata" poster="assets/video/cars-poster.jpg" aria-hidden="true">
+    <source src="assets/video/cars.mp4" type="video/mp4">
+  </video>
+  <div class="container rh-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; Enter Today</div>
+{raffle_home_offers()}
+    <div class="rh-grid">
+      <div class="rh-enter">
+        <p class="eyebrow">Sweepstakes &amp; Raffle Plus</p>
+        <h1>Two ways to win</h1>
+        <p class="lead">Pick a Porsche, Corvette, Tesla and more, or take the cash. Every entry supports our mission.</p>
+        <div class="rh-tickets">
+          {ticket("raffle-plus.html#enter", "Raffle Plus", "Win two cars or $100,000.00", f"Tickets from ${_ONE_TICKET[3]}", "ticket-yellow ticket-stacked")}
+          {ticket("sweepstakes.html#enter", "Sweepstakes", "Win one car or $50,000.00", f"Tickets from ${_ONE_TICKET[2]}", "ticket-navy ticket-stacked")}
+        </div>
+      </div>
+      <div class="rh-cars">
+        <p class="eyebrow">Choose your prize</p>
+        <h2>See each car</h2>
+{raffle_home_car_buttons()}
       </div>
     </div>
-{CAR_LINEUP}
-{prize_cards(cash=RAFFLE_HOME_CASH, cash_row=True)}
+    <div class="fact-strip">
+      <div><span class="fact-label">Next drawing</span><span class="fact-value">{C.DRAWING_DATE}</span></div>
+      <div><span class="fact-label">Tickets</span><span class="fact-value">${_ONE_TICKET[2]} or ${_ONE_TICKET[3]} Raffle Plus</span></div>
+      <div><span class="fact-label">To win</span><span class="fact-value">No need to be present</span></div>
+      <div><span class="fact-label">Ticket numbers</span><span class="fact-value">Emailed within 48 hours</span></div>
+    </div>
   </div>
 </section>
 
@@ -1389,7 +1437,7 @@ RAFFLE_HOME_BODY = sweeps_hero(
     </div>
   </div>
 </section>
-""" + winners_strip()
+""" + (RAFFLE_HOME_POPUP if SHOW_RAFFLE_POPUP else "")
 
 
 # --- PRIZE PAGES (one template, eight pages) --------------------------------
