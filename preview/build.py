@@ -1396,7 +1396,7 @@ RAFFLE_HOME_BODY = f"""
         </div>
       </div>
       <div class="rh-cars">
-        <h2>Explore each car</h2>
+        <h2>Explore the prizes</h2>
 {raffle_home_car_buttons()}
       </div>
     </div>
