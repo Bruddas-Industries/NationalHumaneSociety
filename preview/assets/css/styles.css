@@ -4408,9 +4408,9 @@ a.contact-card-value:hover { color: var(--accent); }
 
 .rh-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   gap: var(--space-8);
-  align-items: center;
+  align-items: stretch;
   margin-top: var(--space-6);
 }
 .rh-tickets { display: grid; gap: var(--space-4); margin-top: var(--space-5); max-width: 520px; }
@@ -4418,8 +4418,11 @@ a.contact-card-value:hover { color: var(--accent); }
 .rh-hero .ticket-navy { background: #26254d; outline: 1px solid rgba(255,255,255,.22); outline-offset: -1px; }
 .rh-hero .ticket-navy .ticket-stub { border-left-color: rgba(255,255,255,.4); }
 
-/* Car buttons: a pill for each prize page, two to a row in a frosted panel */
+/* Car buttons: a photo tile for each prize page, two to a row in a frosted
+   panel that stretches to the height of the entry tickets beside it */
 .rh-cars {
+  display: flex;
+  flex-direction: column;
   padding: var(--space-6);
   border: 1px solid rgba(255,255,255,.18);
   border-radius: var(--radius-lg);
@@ -4427,58 +4430,76 @@ a.contact-card-value:hover { color: var(--accent); }
   backdrop-filter: blur(6px);
 }
 .rh-cars h2 { color: #fff; font-size: 1.6rem; margin-bottom: var(--space-4); }
-.rh-cars-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 216px); gap: var(--space-3); }
+.rh-cars-list {
+  flex: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(96px, 1fr);
+  gap: var(--space-3);
+}
 .rh-car {
+  position: relative;
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,.2);
+  border-radius: var(--radius-lg);
+  background: var(--color-navy);
+  color: #fff;
+  text-decoration: none;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.rh-car img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .4s ease;
+}
+.rh-car::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(24,23,51,0) 35%, rgba(24,23,51,.85) 100%);
+}
+.rh-car-name {
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: 10px;
+  z-index: 1;
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: 5px var(--space-4) 5px 5px;
-  border: 2px solid rgba(255,255,255,.18);
-  border-radius: var(--radius-pill);
-  background: var(--color-blue);
-  color: #fff;
+  justify-content: space-between;
+  gap: var(--space-2);
   font-weight: 700;
-  font-size: 1rem;
-  text-decoration: none;
-  transition: transform .15s ease, box-shadow .15s ease, background .15s ease, color .15s ease;
+  font-size: 1.05rem;
+  line-height: 1.2;
 }
+.rh-car-arrow { color: var(--color-yellow); transition: transform .15s ease; }
 .rh-car:hover, .rh-car:focus-visible {
   text-decoration: none;
   border-color: var(--color-yellow);
-  background: var(--color-yellow);
-  color: var(--color-navy);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0,0,0,.4);
 }
-.rh-car-thumb {
-  flex: 0 0 auto;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: #fff;
-  box-shadow: 0 0 0 2px #fff;
-  display: grid;
-  place-items: center;
-}
-.rh-car-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.rh-car-name { flex: 1; white-space: nowrap; }
-.rh-car-arrow { transition: transform .15s ease; }
+.rh-car:hover img { transform: scale(1.06); }
 .rh-car:hover .rh-car-arrow { transform: translateX(4px); }
 .rh-hero .fact-strip { margin-top: var(--space-8); background: rgba(24,23,51,.45); backdrop-filter: blur(6px); }
 
 @media (max-width: 900px) {
   .rh-grid { grid-template-columns: 1fr; gap: var(--space-7); }
-  .rh-cars-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .rh-tickets { max-width: none; }
 }
 @media (max-width: 600px) {
   .rh-hero { padding-top: var(--space-5); }
   .rh-cars { padding: var(--space-5) var(--space-4); }
-  .rh-car { font-size: .92rem; gap: var(--space-2); padding-right: var(--space-3); }
-  .rh-car-thumb { width: 34px; height: 34px; }
-  .rh-car-arrow { display: none; }
-  .rh-car-name { white-space: normal; }
+  .rh-cars-list { grid-auto-rows: 104px; }
+  .rh-car-name { font-size: .95rem; left: 10px; right: 10px; bottom: 8px; }
 }
 /* Visitors who ask for reduced motion see the poster instead of the video */
 @media (prefers-reduced-motion: reduce) {

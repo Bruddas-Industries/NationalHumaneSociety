@@ -1275,7 +1275,7 @@ SWEEPSTAKES_BODY = sweeps_hero(
     'Win a new car or <span class="hl">$50,000.00!</span>',
     "Choose prizes ranging from Porsche, Corvettes, Teslas, and more! Every entry supports our mission. It's a win-win!",
     0,  # starts on the Porsche 911
-    "$25.00 each",
+    f"From ${C.TICKET_TIERS[0][2]}",
 ) + f"""
 <section class="section" id="prizes">
   <div class="container">
@@ -1353,9 +1353,8 @@ def raffle_home_car_buttons():
     images = {p[0]: p[5] for p in C.PRIZES}
     links = []
     for label, page in RAFFLE_HOME_CARS:
-        thumb = f'<img src="assets/img/{images[page]}" alt="" decoding="async">'
-        links.append(f'        <li><a class="rh-car" href="{page}"><span class="rh-car-thumb">{thumb}</span>'
-                     f'<span class="rh-car-name">{label}</span><span class="rh-car-arrow" aria-hidden="true">→</span></a></li>')
+        links.append(f'        <li><a class="rh-car" href="{page}"><img src="assets/img/{images[page]}" alt="" decoding="async">'
+                     f'<span class="rh-car-name">{label}<span class="rh-car-arrow" aria-hidden="true">→</span></span></a></li>')
     return '      <ul class="rh-cars-list">\n' + "\n".join(links) + "\n      </ul>"
 
 
@@ -1403,7 +1402,7 @@ RAFFLE_HOME_BODY = f"""
     </div>
     <div class="fact-strip">
       <div><span class="fact-label">Next drawing</span><span class="fact-value">{C.DRAWING_DATE}</span></div>
-      <div><span class="fact-label">Tickets</span><span class="fact-value">${_ONE_TICKET[2]} or ${_ONE_TICKET[3]} Raffle Plus</span></div>
+      <div><span class="fact-label">Tickets</span><span class="fact-value">From ${_ONE_TICKET[2]} or ${_ONE_TICKET[3]} Raffle Plus</span></div>
       <div><span class="fact-label">To win</span><span class="fact-value">No need to be present</span></div>
       <div><span class="fact-label">Ticket numbers</span><span class="fact-value">Emailed within 48 hours</span></div>
     </div>
