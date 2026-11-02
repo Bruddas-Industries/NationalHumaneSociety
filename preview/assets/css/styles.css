@@ -1189,7 +1189,7 @@ body.is-home .site-header.at-top .brand-logo {
 .footer-bottom {
   display: grid;
   grid-template-columns: 1fr auto;
-  grid-template-areas: "copy links" "credit links" "photos photos";
+  grid-template-areas: "copy links" "credit links";
   column-gap: var(--space-6);
   row-gap: var(--space-2);
   padding-top: var(--space-5);
@@ -1199,7 +1199,6 @@ body.is-home .site-header.at-top .brand-logo {
 .footer-copy { grid-area: copy; }
 .footer-links { grid-area: links; text-align: right; }
 .footer-credit { grid-area: credit; }
-.footer-photos { grid-area: photos; font-size: .72rem; }
 .footer-bottom a { color: rgba(255,255,255,.75); white-space: nowrap; }
 .footer-bottom a:hover { color: #fff; }
 .footer-credit a { font-weight: 600; }
@@ -1209,7 +1208,7 @@ body.is-home .site-header.at-top .brand-logo {
 }
 @media (max-width: 600px) {
   .footer-grid { grid-template-columns: 1fr; }
-  .footer-bottom { grid-template-columns: 1fr; grid-template-areas: "copy" "links" "credit" "photos"; }
+  .footer-bottom { grid-template-columns: 1fr; grid-template-areas: "copy" "links" "credit"; }
   .footer-links { text-align: left; }
 }
 

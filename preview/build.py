@@ -153,10 +153,6 @@ def render_footer():
         f'          <a href="{url}" target="_blank" rel="noopener" aria-label="{name}" title="{name}">{icons[name]}</a>'
         for name, url in C.SOCIAL
     )
-    photo_credits = " · ".join(
-        f'{what}: <a href="{page}" target="_blank" rel="noopener">{who}</a>, cropped, <a href="{lic_page}" target="_blank" rel="noopener">{lic}</a>'
-        for what, who, lic, page, lic_page in C.PHOTO_CREDITS
-    )
     address = "<br>".join(C.ADDRESS_LINES[1:])
     # Top-level links with no dropdown get no column above, so they go in the bottom row.
     standalone = " · ".join(
@@ -190,7 +186,6 @@ def render_footer():
       <div class="footer-copy">© 2026 National Humane Society. All rights reserved.</div>
       <div class="footer-links">501(c)(3) tax-exempt charity · {standalone}</div>
       <div class="footer-credit">Made with <span role="img" aria-label="love">❤️</span> by <a href="https://www.bruddasindustries.com/" target="_blank" rel="noopener">Brudda's Industries</a></div>
-      <div class="footer-photos">{photo_credits}</div>
     </div>
   </div>
 </footer>"""
