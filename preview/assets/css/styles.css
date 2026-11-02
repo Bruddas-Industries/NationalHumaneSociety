@@ -533,7 +533,19 @@ body.is-home .site-header.at-top .brand-logo {
 }
 
 @media (max-width: 700px) {
-  .hero-video { min-height: 85vh; }
+  /* The visible screen height, so the red bar clears the browser's address bar */
+  .hero-video { min-height: 100svh; }
+}
+/* The preview badge sits above the bar where it would cover Enter now */
+@media (max-width: 1300px) {
+  body.is-home .preview-flag { bottom: 124px; }
+}
+/* Short phones: tighter text and side-by-side buttons, so the bar stays on screen */
+@media (max-width: 700px) and (max-height: 760px) {
+  .hero-video h1 { font-size: 2.1rem; }
+  .hero-video .lead { font-size: 1rem; line-height: 1.5; }
+  .hero-video .btn-lg { padding: 12px 18px; font-size: .95rem; }
+  .hero-video:has(.hero-ticket-bar) .hero-content { padding-top: 84px; padding-bottom: 124px; }
 }
 
 /* Honor reduced-motion: hide the video and let the poster show through */
