@@ -388,7 +388,7 @@ def prize_choice(label, image, input_type, kind="car"):
     if image:
         thumb = f"<span class=\"choice-thumb\" style=\"background-image:url('assets/img/{image}')\"></span>"
     else:
-        amount = label.split(" ")[0].replace(".00", "")
+        amount = label.split(" ")[0]
         thumb = f'<span class="choice-thumb is-cash">{amount}</span>'
     return f"""            <label class="choice-card prize-choice">
               <input type="{input_type}" name="prize" value="{label}" data-kind="{kind}"{required}>
@@ -403,14 +403,14 @@ def entry_form(kind):
         title = "Sweepstakes Secure Form"
         heading = "Enter the Sweepstakes."
         prize_legend = "Choose your prize"
-        prize_help = "Select one car or $50,000.00."
+        prize_help = "Select one car or $50,000."
         prizes = "\n".join(prize_choice(label, image, "radio")
                            for label, image in C.SWEEPSTAKES_PRIZE_OPTIONS)
     else:
         title = "Raffle Plus Secure Form"
         heading = "Enter Raffle Plus."
         prize_legend = "Choose your prizes"
-        prize_help = 'Pick any two cars, $100,000.00, or one car and $50,000.00. <span class="prize-count" data-prize-count></span>'
+        prize_help = 'Pick any two cars, $100,000, or one car and $50,000. <span class="prize-count" data-prize-count></span>'
         prizes = "\n".join(prize_choice(label, image, "checkbox", option_kind)
                            for label, image, option_kind in C.RAFFLE_PLUS_PRIZE_OPTIONS)
     sources = "".join(f"<option>{s}</option>" for s in C.AD_SOURCES)
@@ -536,10 +536,10 @@ def cash_card(amount, title, text):
     </article>"""
 
 
-SWEEPS_CASH = [cash_card("$50,000", "$50,000.00 Cash", "Take the cash instead of a car.")]
+SWEEPS_CASH = [cash_card("$50,000", "$50,000 Cash", "Take the cash instead of a car.")]
 RAFFLE_CASH = [
-    cash_card("$50,000", "$50,000.00 Cash", "Pair it with any one car."),
-    cash_card("$100,000", "$100,000.00 Cash", "Take the whole prize in cash."),
+    cash_card("$50,000", "$50,000 Cash", "Pair it with any one car."),
+    cash_card("$100,000", "$100,000 Cash", "Take the whole prize in cash."),
 ]
 
 
@@ -910,7 +910,7 @@ HOME_HERO_TICKET_BAR = True
 HOME_TICKET_BAR = f"""  <a class="hero-ticket-bar" href="raffle-plus.html">
     <span class="container hero-ticket-bar-inner">
       <span class="ticket-tag">Raffle Plus</span>
-      <span class="hero-ticket-bar-text"><strong>Win two cars or $100,000</strong><small><span class="hero-ticket-bar-kind">Raffle Plus · </span>Drawing {C.DRAWING_DATE}</small></span>
+      <span class="hero-ticket-bar-text"><strong>Win two cars or $100,000</strong><small>Drawing {C.DRAWING_DATE}</small></span>
       <span class="hero-ticket-bar-stub">Enter now <span class="ticket-arrow" aria-hidden="true">→</span></span>
     </span>
   </a>"""
@@ -1291,7 +1291,7 @@ def upsell(eyebrow, text, label, href):
 SWEEPSTAKES_BODY = sweeps_hero(
     '<a href="index.html">Home</a> &nbsp;/&nbsp; Sweepstakes',
     "Sweepstakes",
-    'Win a new car or <span class="hl">$50,000.00!</span>',
+    'Win a new car or <span class="hl">$50,000!</span>',
     "Choose prizes ranging from Porsche, Corvettes, Teslas, and more! Every entry supports our mission. It's a win-win!",
     0,  # starts on the Porsche 911
     TICKET_FACT_LINK,
@@ -1301,7 +1301,7 @@ SWEEPSTAKES_BODY = sweeps_hero(
     <div class="section-head">
       <div>
         <p class="eyebrow">The prizes</p>
-        <h2>One winner. Your choice of car — or $50,000.00.</h2>
+        <h2>One winner. Your choice of car — or $50,000.</h2>
       </div>
     </div>
 {prize_cards(cash_row=True)}
@@ -1309,7 +1309,7 @@ SWEEPSTAKES_BODY = sweeps_hero(
 </section>
 """ + upsell(
     "Raffle Plus",
-    "Want two cars? A Raffle Plus ticket wins any two cars, $100,000.00, or one car and $50,000.00.",
+    "Want two cars? A Raffle Plus ticket wins any two cars, $100,000, or one car and $50,000.",
     "See Raffle Plus →",
     "raffle-plus.html",
 ) + entry_form("sweepstakes") + winners_strip()
@@ -1317,8 +1317,8 @@ SWEEPSTAKES_BODY = sweeps_hero(
 RAFFLE_BODY = sweeps_hero(
     '<a href="index.html">Home</a> &nbsp;/&nbsp; <a href="sweepstakes.html">Sweepstakes</a> &nbsp;/&nbsp; Raffle Plus',
     "Raffle Plus",
-    'Win two new cars or <span class="hl">$100,000.00!</span>',
-    "Pick any two cars, $100,000.00, or one car and $50,000.00. Every entry supports our mission.",
+    'Win two new cars or <span class="hl">$100,000!</span>',
+    "Pick any two cars, $100,000, or one car and $50,000. Every entry supports our mission.",
     4,  # starts on the Corvette
     TICKET_FACT_LINK,
 ) + f"""
@@ -1327,7 +1327,7 @@ RAFFLE_BODY = sweeps_hero(
     <div class="section-head">
       <div>
         <p class="eyebrow">The prizes</p>
-        <h2>One winner. Any two cars, one car and $50,000.00 — or $100,000.00.</h2>
+        <h2>One winner. Any two cars, one car and $50,000 — or $100,000.</h2>
       </div>
     </div>
 {prize_cards(cash=RAFFLE_CASH, cash_row=True)}
@@ -1335,7 +1335,7 @@ RAFFLE_BODY = sweeps_hero(
 </section>
 """ + upsell(
     "Sweepstakes",
-    "Happy with one car? Sweepstakes tickets are $25.00 and win one car or $50,000.00.",
+    f"Happy with one car? Sweepstakes tickets start at ${C.TICKET_TIERS[0][1]} and win one car or $50,000.",
     "See Sweepstakes →",
     "sweepstakes.html",
 ) + entry_form("raffle-plus") + winners_strip()
@@ -1408,8 +1408,8 @@ RAFFLE_HOME_BODY = f"""
         <h1>Two ways to win</h1>
         <p class="lead">Pick from Porsche, Corvette, Tesla and more, or take the cash. Every entry supports our mission.</p>
         <div class="rh-tickets">
-          {ticket("raffle-plus.html#enter", "Raffle Plus", "Win two cars or $100,000.00", f"Tickets from ${_ONE_TICKET[2]}", "ticket-yellow ticket-stacked")}
-          {ticket("sweepstakes.html#enter", "Sweepstakes", "Win one car or $50,000.00", f"Tickets from ${_ONE_TICKET[1]}", "ticket-navy ticket-stacked")}
+          {ticket("raffle-plus.html#enter", "Raffle Plus", "Win two cars or $100,000", f"Tickets from ${_ONE_TICKET[2]}", "ticket-yellow ticket-stacked")}
+          {ticket("sweepstakes.html#enter", "Sweepstakes", "Win one car or $50,000", f"Tickets from ${_ONE_TICKET[1]}", "ticket-navy ticket-stacked")}
         </div>
       </div>
       <div class="rh-cars">
@@ -1506,7 +1506,7 @@ def prize_body(prize):
     names = [car[0] for car in cars]
     # Either ticket wins these cars, so the copy and buttons offer both.
     both_ways = ("Win it with a Sweepstakes ticket, or with Raffle Plus pair it with "
-                 "a second car or $50,000.00.")
+                 "a second car or $50,000.")
     if len(names) > 1:
         choice = ", ".join(names[:-1]) + " or " + names[-1]
         lead = f"Choose the {choice}. {both_ways}"
@@ -1584,7 +1584,7 @@ HOW_IT_WORKS_BODY = page_hero(
 <section class="section">
   <div class="container-narrow prose">
     <h2>1. Choose your ticket.</h2>
-    <p><a href="sweepstakes.html">Sweepstakes</a> tickets are $25.00. The winner has a choice of either any one car, or $50,000.00 cash.</p>
+    <p><a href="sweepstakes.html">Sweepstakes</a> tickets are $25. The winner has a choice of either any one car, or $50,000 cash.</p>
     <p>With a <a href="raffle-plus.html">Raffle Plus</a> ticket the winner has their choice of any two cars, or one car and the cash prize.</p>
 
     <h2>2. Order online, by phone or by mail.</h2>

@@ -70,15 +70,15 @@ CAR_PRIZES = [
 
 # Sweepstakes: one car or the cash. (label, thumbnail or None for cash)
 SWEEPSTAKES_PRIZE_OPTIONS = [(label, image) for label, image, _page in CAR_PRIZES] + [
-    ("$50,000.00 Cash", None),
+    ("$50,000 Cash", None),
 ]
 
 # Raffle Plus: any two cars, or one car and $50,000, or $100,000 on its own.
 # (label, thumbnail or None for cash, kind)
 # kind: "car", "cash" ($50,000, pairs with one car) or "all" ($100,000, on its own)
 RAFFLE_PLUS_PRIZE_OPTIONS = [(label, image, "car") for label, image, _page in CAR_PRIZES] + [
-    ("$50,000.00 Cash", None, "cash"),
-    ("$100,000.00 Cash", None, "all"),
+    ("$50,000 Cash", None, "cash"),
+    ("$100,000 Cash", None, "all"),
 ]
 
 AD_SOURCES = ["Postcard", "Email", "Instagram", "Facebook", "Google Ad",
@@ -211,7 +211,8 @@ PRIZES = [
 # FAQ (added at CJ's request, 2026-10-18). Wording is verbatim except two
 # "it's" -> "its" fixes (CJ, 2026-10-19). The published rule 1 (ticket prices
 # and payment methods) is removed at the client's request (call with CJ,
-# 2026-10-29).
+# 2026-10-29). Cash amounts drop the cents, as everywhere else on the site (CJ,
+# 2026-11-01).
 RULES = [
     "Winner will be announced at time and place of drawing.",
     "All entries to \"the presenter\" will remain property of the presenter.",
@@ -226,7 +227,7 @@ RULES = [
     "The winner of the prize must enter into contract within 30 days of selection of the winner and agree to execute all the documents necessary to effect the intent of these rules and accomplish the transfer of title.",
     "Payment of all applicable federal, state and local taxes, fees and surcharges, tags and registrations fees are the responsibility of the winner, who must provide proof of insurance to take delivery.",
     "Failure of the winner to claim the prize within 30 days will result in forfeiture of the prize.",
-    "If the winner bought a Raffle Plus ticket they have their choice of any 2 cars or 1 car and the cash prize. Without Raffle Plus the winner has a choice of either any one car, or $50,000.00 cash. If the cash prize is selected it will be paid in 3 installments, 60 days apart.",
+    "If the winner bought a Raffle Plus ticket they have their choice of any 2 cars or 1 car and the cash prize. Without Raffle Plus the winner has a choice of either any one car, or $50,000 cash. If the cash prize is selected it will be paid in 3 installments, 60 days apart.",
     "The prize is not transferable.",
     "In the case of a dispute or a disqualification the decision of the \"presenter\" shall be deemed final, conclusive and not subject to review.",
     "NHS officials reserve the right to amend any of the rules including the postponement of the drawing at any time and are not subject to review.",
