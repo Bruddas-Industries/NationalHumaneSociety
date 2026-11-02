@@ -143,9 +143,19 @@ def render_footer():
 {links}
         </ul>
       </div>""")
+    icons = {
+        "Instagram": INSTAGRAM_ICON,
+        "LinkedIn": '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6.94 8.5H3.56V20h3.38V8.5zM5.25 3.25a1.96 1.96 0 1 0 0 3.92 1.96 1.96 0 0 0 0-3.92zM20.44 13.4c0-3.1-1.66-5.15-4.33-5.15-1.6 0-2.7.88-3.14 1.72h-.05V8.5H9.68V20h3.38v-5.7c0-1.5.28-2.95 2.14-2.95 1.84 0 1.86 1.72 1.86 3.05V20h3.38v-6.6z"/></svg>',
+        "Facebook": '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M14 8.5h2.2V5.2h-2.6C11 5.2 9.6 6.9 9.6 9.2v1.6H7.5V14h2.1v6.8H13V14h2.7l.5-3.2H13V9.3c0-.5.4-.8 1-.8z"/></svg>',
+        "X": X_ICON,
+    }
     social = "\n".join(
-        f'          <a href="{url}" target="_blank" rel="noopener">{name}</a>'
+        f'          <a href="{url}" target="_blank" rel="noopener" aria-label="{name}" title="{name}">{icons[name]}</a>'
         for name, url in C.SOCIAL
+    )
+    photo_credits = " · ".join(
+        f'{what}: <a href="{page}" target="_blank" rel="noopener">{who}</a>, cropped, <a href="{lic_page}" target="_blank" rel="noopener">{lic}</a>'
+        for what, who, lic, page, lic_page in C.PHOTO_CREDITS
     )
     address = "<br>".join(C.ADDRESS_LINES[1:])
     # Top-level links with no dropdown get no column above, so they go in the bottom row.
@@ -180,6 +190,7 @@ def render_footer():
       <div class="footer-copy">© 2026 National Humane Society. All rights reserved.</div>
       <div class="footer-links">501(c)(3) tax-exempt charity · {standalone}</div>
       <div class="footer-credit">Made with <span role="img" aria-label="love">❤️</span> by <a href="https://www.bruddasindustries.com/" target="_blank" rel="noopener">Brudda's Industries</a></div>
+      <div class="footer-photos">{photo_credits}</div>
     </div>
   </div>
 </footer>"""

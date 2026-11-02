@@ -23,6 +23,16 @@ SOCIAL = [
     ("Facebook", "https://www.facebook.com/nationalhumane"),
     ("X", "https://twitter.com/NationalHumane"),
 ]
+
+# Photos from Wikimedia Commons whose licences require a credit on the site.
+# (what, photographer, licence, file page, licence page)
+# prize-tesla-y.jpg needs none: "26 Tesla Model Y Long Range" by HJUdall, CC0,
+# https://commons.wikimedia.org/wiki/File:26_Tesla_Model_Y_Long_Range.jpg (cropped).
+PHOTO_CREDITS = [
+    ("Lucid Gravity photo", "Premeditated", "CC BY-SA 4.0",
+     "https://commons.wikimedia.org/wiki/File:Lucid_Gravity_at_Lucid_Studio_Oslo.jpg",
+     "https://creativecommons.org/licenses/by-sa/4.0/"),
+]
 LIVE_SITE = "https://www.nationalhumanesociety.org"
 
 # ---------------------------------------------------------------------------
