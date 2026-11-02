@@ -907,7 +907,7 @@ HOME_IMPACT_PLACEHOLDER = """
 # red bar across the bottom of the video, like the current site's red banner.
 # Set this to False for the yellow ticket under the buttons instead.
 HOME_HERO_TICKET_BAR = True
-HOME_TICKET_BAR = f"""  <a class="hero-ticket-bar" href="raffle-plus.html">
+HOME_TICKET_BAR = f"""  <a class="hero-ticket-bar" href="raffle-home-page.html">
     <span class="container hero-ticket-bar-inner">
       <span class="ticket-tag">Raffle Plus</span>
       <span class="hero-ticket-bar-text"><strong>Win two cars or $100,000</strong><small>Drawing {C.DRAWING_DATE}</small></span>
