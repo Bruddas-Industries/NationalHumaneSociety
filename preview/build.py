@@ -1522,7 +1522,7 @@ def prize_body(prize):
         title,
         lead,
         0,
-        f"${C.TICKET_TIERS[0][1]} or ${C.TICKET_TIERS[0][2]} Raffle Plus",
+        f"From ${C.TICKET_TIERS[0][1]} or ${C.TICKET_TIERS[0][2]} Raffle Plus",
         gallery_html=hero_gallery,
         actions_html="",  # the tickets sit with each car's specs (CJ, 2026-11-01)
     )
