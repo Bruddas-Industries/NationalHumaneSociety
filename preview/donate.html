@@ -104,7 +104,7 @@
         <p>Thank you for making the National Humane Society and the animals we serve a part of your life.</p>
       </blockquote>
     </div>
-    <form class="donate-widget donate-form" data-donate onsubmit="event.preventDefault(); alert('Preview only — donations are not submitted.');">
+    <form class="donate-widget donate-form" id="donation" data-donate onsubmit="event.preventDefault(); alert('Preview only — donations are not submitted.');">
         <div class="donate-step"><span class="step-num donate-step-num" aria-hidden="true">1</span><h3>Choose your donation</h3></div>
       <div class="donate-toggle">
         <button type="button" class="is-active" data-mode="monthly">Monthly</button>
@@ -115,7 +115,7 @@
         <button type="button" class="amount-btn is-active" data-amount="25">$25</button>
         <button type="button" class="amount-btn" data-amount="50">$50</button>
         <button type="button" class="amount-btn" data-amount="100">$100</button>
-        <button type="button" class="amount-btn" data-amount="500" data-monthly="500" data-one-time="250">$500</button>
+        <button type="button" class="amount-btn" data-amount="500">$500</button>
         <button type="button" class="amount-btn" data-amount="other">Other</button>
       </div>
       <div class="form-grid">

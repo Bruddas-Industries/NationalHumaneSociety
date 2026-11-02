@@ -57,9 +57,9 @@
     if (href === path) a.classList.add('is-active');
   });
 
-  // Donate widget interactions (preview only).
-  // Monthly and one-time share every preset except the largest, which carries
-  // both values in data-monthly / data-one-time and swaps with the toggle.
+  // Donate widget interactions (preview only). The boxes on other pages link to
+  // the Donate page with the chosen amount and frequency, and its form starts
+  // with them selected.
   document.querySelectorAll('.donate-widget').forEach((widget) => {
     const cta = widget.querySelector('.donate-cta');
     const mode = () => {
@@ -77,6 +77,9 @@
       (label || cta).textContent = amount && amount !== 'other'
         ? `Donate $${amount}${suffix}${arrow}`
         : `Donate${suffix}${arrow}`;
+      if (cta.tagName === 'A' && amount) {
+        cta.href = `donate.html?${new URLSearchParams({ amount, mode: mode() })}#donation`;
+      }
     };
     widget.querySelectorAll('.amount-btn').forEach((btn) => {
       btn.addEventListener('click', (e) => {
@@ -91,14 +94,21 @@
         e.preventDefault();
         widget.querySelectorAll('.donate-toggle button').forEach((b) => b.classList.remove('is-active'));
         btn.classList.add('is-active');
-        const key = mode() === 'monthly' ? 'monthly' : 'oneTime';
-        widget.querySelectorAll('.amount-btn[data-monthly]').forEach((b) => {
-          b.dataset.amount = b.dataset[key];
-          b.textContent = `$${b.dataset[key]}`;
-        });
         updateCta();
       });
     });
+    if (widget.matches('.donate-form')) {
+      const params = new URLSearchParams(location.search);
+      const preset = (selector, key, value) => {
+        const pick = [...widget.querySelectorAll(selector)].find((b) => b.dataset[key] === value);
+        if (!pick) return;
+        widget.querySelectorAll(selector).forEach((b) => b.classList.remove('is-active'));
+        pick.classList.add('is-active');
+      };
+      preset('.donate-toggle button', 'mode', params.get('mode'));
+      preset('.amount-btn', 'amount', params.get('amount'));
+    }
+    updateCta();
   });
 
   // Loading states for embedded videos and posts: the paw loader fades out

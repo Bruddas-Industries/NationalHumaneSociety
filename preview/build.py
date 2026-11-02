@@ -658,15 +658,10 @@ def winners_strip():
 
 
 def donate_amount_buttons(default=25):
-    """Monthly and one-time share every preset except the largest."""
-    shared = [a for a in C.DONATE_MONTHLY if a in C.DONATE_ONE_TIME]
-    top_monthly = [a for a in C.DONATE_MONTHLY if a not in shared][0]
-    top_one_time = [a for a in C.DONATE_ONE_TIME if a not in shared][0]
     buttons = []
-    for amount in shared:
+    for amount in C.DONATE_AMOUNTS:
         active = " is-active" if amount == default else ""
         buttons.append(f'        <button type="button" class="amount-btn{active}" data-amount="{amount}">${amount}</button>')
-    buttons.append(f'        <button type="button" class="amount-btn" data-amount="{top_monthly}" data-monthly="{top_monthly}" data-one-time="{top_one_time}">${top_monthly}</button>')
     buttons.append('        <button type="button" class="amount-btn" data-amount="other">Other</button>')
     return "\n".join(buttons)
 
@@ -1779,7 +1774,7 @@ DONATE_BODY = page_hero(
         <p>Thank you for making the National Humane Society and the animals we serve a part of your life.</p>
       </blockquote>
     </div>
-    <form class="donate-widget donate-form" data-donate onsubmit="event.preventDefault(); alert('Preview only — donations are not submitted.');">
+    <form class="donate-widget donate-form" id="donation" data-donate onsubmit="event.preventDefault(); alert('Preview only — donations are not submitted.');">
 {donate_step(1, "Choose your donation")}
 {DONATE_TOGGLE}
       <div class="amount-grid">

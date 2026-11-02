@@ -315,8 +315,9 @@ COVID_QA = [
 # ---------------------------------------------------------------------------
 # Donations
 # ---------------------------------------------------------------------------
-DONATE_MONTHLY = [10, 25, 50, 100, 500]
-DONATE_ONE_TIME = [10, 25, 50, 100, 250]
+# The same for monthly and one-time gifts (CJ, 2026-11-01; one-time topped out
+# at $250 on the current site).
+DONATE_AMOUNTS = [10, 25, 50, 100, 500]
 
 # Logos shown on /donations-helping-animals ("recently given money to").
 PARTNER_LOGOS = [
