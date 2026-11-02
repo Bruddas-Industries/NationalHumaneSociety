@@ -93,7 +93,7 @@ PRIZES = [
     ("new-porsche-sweepstakes.html", "Porsche", "Win a new Porsche",
      "911 Carrera Cabriolet, Taycan, Macan", "Accept No Substitute.",
      "prize-porsche-911.webp", [
-        ("Porsche 911 Cabriolet", "2026 Model", "prize-porsche-911.webp", [
+        ("Porsche 911 Cabriolet", "2027 Model", "prize-porsche-911.webp", [
             ("Engine", "DOHC 24-valve flat-6, aluminum block and heads, direct fuel injection"),
             ("Transmission", "6-speed manual, 7-speed dual-clutch automatic"),
             ("Horsepower", "388 hp @ 8400 rpm"),
@@ -101,7 +101,7 @@ PRIZES = [
             ("Top speed", "181 mph"),
             ("Acceleration", "60 mph: 3.9 sec"),
         ]),
-        ("Porsche Taycan S", "2026 Model", "prize-porsche-taycan.jpg", [
+        ("Porsche Taycan S", "2027 Model", "prize-porsche-taycan.jpg", [
             ("Electric motor", "560 kW, Overboost Power with Launch Control"),
             ("Transmission", "2-speed transmission on the rear axle"),
             ("Horsepower", "402 hp, Overboost Power with Launch Control"),
@@ -109,7 +109,7 @@ PRIZES = [
             ("Top speed", "143 mph"),
             ("Acceleration", "0–60 mph with Launch Control 5.1 s"),
         ]),
-        ("Porsche Macan", "2026 Model", "prize-porsche-macan.webp", [
+        ("Porsche Macan", "2027 Model", "prize-porsche-macan.webp", [
             ("Engine", "2.0-liter turbocharged 4-cylinder engine"),
             ("Transmission", "7-speed Porsche Doppelkupplung (PDK) transmission"),
             ("Horsepower", "261 hp"),
@@ -130,7 +130,7 @@ PRIZES = [
      ]),
     ("new-corvette-sweepstakes.html", "Corvette", "Win a new Corvette",
      "Stingray, EV E-Ray", "Ultimate Thrill", "prize-corvette-new.jpg", [
-        ("Corvette Stingray", "2026 Model", "prize-corvette-new.jpg", [
+        ("Corvette Stingray", "2027 Model", "prize-corvette-new.jpg", [
             ("Engine", "6.2-liter V8"),
             ("Transmission", "8-speed dual-clutch automatic"),
             ("Horsepower", "525 hp"),
@@ -138,7 +138,7 @@ PRIZES = [
             ("Top speed", "194 mph"),
             ("Acceleration", "0–60 in 3.3 seconds"),
         ]),
-        ("EV Corvette E-Ray", "2026 Model", "prize-corvette-eray.webp", [
+        ("EV Corvette E-Ray", "2027 Model", "prize-corvette-eray.webp", [
             ("Engine", "6.2-liter V8"),
             ("Transmission", "8-speed automatic transmission"),
             ("Horsepower", "655 hp"),
@@ -160,7 +160,7 @@ PRIZES = [
      ]),
     ("tesla-sweepstakes.html", "Tesla", "Win a new Tesla Y",
      "", "", "prize-tesla-y.jpg", [
-        ("Tesla Y (Long Range)", "2026 Model", "prize-tesla-y.jpg", [
+        ("Tesla Y (Long Range)", "2027 Model", "prize-tesla-y.jpg", [
             ("Engine", "Electric Dual Motor All-Wheel Drive, range 330 mi"),
             ("Transmission", "Single-speed"),
             ("Horsepower", "456 HP"),
@@ -171,13 +171,13 @@ PRIZES = [
      ]),
     ("ev-sweepstakes.html", "Rivian", "Win a new Rivian",
      "Rivian", "", "prize-rivian.jpg", [
-        ("Rivian R1T", "2026 Model", "prize-rivian.jpg", [
+        ("Rivian R1T", "2027 Model", "prize-rivian.jpg", [
             ("Range", "260 to 314 mi battery-only"),
             ("Towing capacity", "11,000 lbs"),
             ("Battery charge", "13h at 220V"),
             ("Horsepower", "600 to 835 hp"),
         ]),
-        ("Rivian R1S", "2026 Model", "prize-rivian-r1s.avif", [
+        ("Rivian R1S", "2027 Model", "prize-rivian-r1s.avif", [
             ("Range", "270 miles"),
             ("0–60", "4.5 sec"),
             ("Horsepower", "553 hp"),
@@ -185,12 +185,12 @@ PRIZES = [
      ]),
     ("lucid.html", "Lucid", "Win a new Lucid",
      "Lucid", "", "prize-lucid-gravity.jpg", [
-        ("Lucid Gravity", "2026 Model", "prize-lucid-gravity.jpg", [
+        ("Lucid Gravity", "2027 Model", "prize-lucid-gravity.jpg", [
             ("Range", "up to 450 mi"),
             ("0–60", "3.4 sec"),
             ("Horsepower", "828 hp"),
         ]),
-        ("Lucid Air", "2026 Model", "prize-lucid-air.webp", [
+        ("Lucid Air", "2027 Model", "prize-lucid-air.webp", [
             ("Range", "up to 420 miles"),
             ("0–60", "4.5 sec"),
             ("Horsepower", "430 hp"),
@@ -198,7 +198,7 @@ PRIZES = [
      ]),
     ("cadillac-sweepstakes.html", "Cadillac", "Win a new Cadillac",
      "", "Accept No Substitute.", "prize-cadillac-escalade.avif", [
-        ("Cadillac Escalade", "2026 Model", "prize-cadillac-escalade.avif", [
+        ("Cadillac Escalade", "2027 Model", "prize-cadillac-escalade.avif", [
             ("Engine", "6.2L V8 with premium gasoline"),
             ("Horsepower", "420 hp"),
             ("Torque", "460 lb-ft with premium gasoline"),

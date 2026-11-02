@@ -463,8 +463,8 @@ body.is-home .site-header.at-top .brand-logo {
 }
 
 /* Home hero: the Raffle Plus bar across the bottom of the video
-   (HOME_HERO_TICKET_BAR), red like the current site's banner: a yellow Raffle
-   Plus tag, the offer over its drawing date, and a yellow Enter now button
+   (HOME_HERO_TICKET_BAR), red like the current site's banner: a yellow tag
+   naming both ways to win, the offer over its drawing date, and a yellow Enter now button
    like .btn-yellow, on faint paws with a passing light */
 .hero-ticket-bar {
   position: absolute;
@@ -482,7 +482,7 @@ body.is-home .site-header.at-top .brand-logo {
 .hero-ticket-bar-inner { display: flex; align-items: center; gap: var(--space-5); padding-top: 14px; padding-bottom: 14px; }
 .hero-ticket-bar .ticket-tag { padding: 11px 16px 8px; background: var(--color-yellow); color: var(--color-navy); font-size: .85rem; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
 .hero-ticket-bar-text { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.hero-ticket-bar-text strong { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.25rem, 2.3vw, 1.7rem); line-height: 1.1; }
+.hero-ticket-bar-text strong { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.25rem, 2.3vw, 1.7rem); line-height: 1.1; text-wrap: balance; }
 .hero-ticket-bar-text small { font-family: var(--font-eyebrow); font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.92); }
 .hero-ticket-bar-stub {
   display: flex; align-items: center; gap: var(--space-2);

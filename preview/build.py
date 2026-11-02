@@ -905,12 +905,13 @@ HOME_IMPACT_PLACEHOLDER = """
 
 # Client (call with CJ, 2026-10-29): the hero's Raffle Plus ticket becomes a
 # red bar across the bottom of the video, like the current site's red banner.
+# It links to the raffle home page, so it names both ways to win (CJ, 2026-11-01).
 # Set this to False for the yellow ticket under the buttons instead.
 HOME_HERO_TICKET_BAR = True
 HOME_TICKET_BAR = f"""  <a class="hero-ticket-bar" href="raffle-home-page.html">
     <span class="container hero-ticket-bar-inner">
-      <span class="ticket-tag">Raffle Plus</span>
-      <span class="hero-ticket-bar-text"><strong>Win two cars or $100,000</strong><small>Drawing {C.DRAWING_DATE}</small></span>
+      <span class="ticket-tag">Sweepstakes &amp; Raffle Plus</span>
+      <span class="hero-ticket-bar-text"><strong>Win up to two cars or $100,000</strong><small>Drawing {C.DRAWING_DATE}</small></span>
       <span class="hero-ticket-bar-stub">Enter now <span class="ticket-arrow" aria-hidden="true">→</span></span>
     </span>
   </a>"""
