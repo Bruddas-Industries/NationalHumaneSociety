@@ -610,8 +610,8 @@ SWEEPS_CTA_SWEEPS_FIRST = f"""    <div class="cta-pair">
     </div>"""
 
 # Hidden on 2026-10-19 at CJ's request: the Enter now ticket pair at the bottom
-# of the car pages. The hero and every car already link to both entry forms,
-# so it was one set of buttons too many. The ticket switch and price cards
+# of the car pages. Every car already links to both entry forms, so it was one
+# set of buttons too many. The ticket switch and price cards
 # above it stay. Set this to True to bring the pair back.
 SHOW_PRIZE_PAGE_TICKET_PAIR = False
 PRIZE_PAGE_TICKET_PAIR = f"""    <div style="margin-top:var(--space-7)">
@@ -1241,9 +1241,11 @@ TICKET_FACT_LINK = '<a class="fact-link" href="#enter">See ticket options <span 
 def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact, gallery_html=None, actions=None, actions_html=None):
     """Navy hero for the entry pages and the prize pages, with the facts people
     ask about first. Entry pages show every prize car; prize pages pass their
-    own gallery and their own buttons (actions_html: ticket buttons)."""
+    own gallery and no buttons (each car below has its own), so they pass
+    actions_html="" (actions_html: ticket buttons)."""
     actions = actions or [("Enter Now", "#enter", "btn-primary"), ("See the prizes", "#prizes", "btn-ghost")]
-    buttons = actions_html or "\n".join(f'        <a class="btn {cls} btn-lg" href="{href}">{label}</a>' for label, href, cls in actions)
+    buttons = "\n".join(f'        <a class="btn {cls} btn-lg" href="{href}">{label}</a>' for label, href, cls in actions) if actions_html is None else actions_html
+    actions_block = f'\n      <div class="hero-actions">\n{buttons}\n      </div>' if buttons else ""
     return f"""
 <section class="sweeps-hero">
   <div class="container sweeps-hero-grid">
@@ -1251,10 +1253,7 @@ def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact, gallery_
       <div class="breadcrumb">{crumb}</div>
       <p class="eyebrow">{eyebrow}</p>
       <h1>{headline}</h1>
-      <p class="lead">{lead}</p>
-      <div class="hero-actions">
-{buttons}
-      </div>
+      <p class="lead">{lead}</p>{actions_block}
     </div>
 {gallery_html or car_lineup_gallery(first_car)}
   </div>
@@ -1525,10 +1524,7 @@ def prize_body(prize):
         0,
         f"${C.TICKET_TIERS[0][1]} or ${C.TICKET_TIERS[0][2]} Raffle Plus",
         gallery_html=hero_gallery,
-        actions_html=(
-            "        " + ticket("sweepstakes.html#enter", None, "Sweepstakes", None, "ticket-navy ticket-compact ticket-lg") + "\n"
-            "        " + ticket("raffle-plus.html#enter", None, "Raffle Plus", None, "ticket-yellow ticket-compact ticket-lg")
-        ),
+        actions_html="",  # the tickets sit with each car's specs (CJ, 2026-11-01)
     )
     return hero + f"""
 <section class="section" id="specs">
