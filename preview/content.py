@@ -23,6 +23,13 @@ SOCIAL = [
     ("Facebook", "https://www.facebook.com/nationalhumane"),
     ("X", "https://twitter.com/NationalHumane"),
 ]
+
+# Photos from Wikimedia Commons (both cropped):
+# prize-tesla-y.jpg: "26 Tesla Model Y Long Range" by HJUdall, CC0,
+#   https://commons.wikimedia.org/wiki/File:26_Tesla_Model_Y_Long_Range.jpg
+# prize-lucid-gravity.jpg: "Lucid Gravity at Lucid Studio Oslo" by Premeditated,
+#   CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Lucid_Gravity_at_Lucid_Studio_Oslo.jpg
+#   The credit is in the image file's metadata only, not on the page (CJ, 2026-11-01).
 LIVE_SITE = "https://www.nationalhumanesociety.org"
 
 # ---------------------------------------------------------------------------
@@ -33,11 +40,15 @@ LIVE_SITE = "https://www.nationalhumanesociety.org"
 # the entry forms, the Rules and the FAQ all read it from here.
 DRAWING_DATE = "December 31, 2026"
 
-# (tickets bought, free tickets, sweepstakes price, raffle plus price, most popular?)
+# (tickets, sweepstakes price, raffle plus price, most popular?)
+# New prices from the client (call with CJ, 2026-10-29). Each price buys that
+# many tickets outright (the current site's "Buy 1, get 50 free" style is gone).
+# Most Popular stays on the 2,500-ticket bundle, as on the current site.
 TICKET_TIERS = [
-    (1, "50", 25, 125, False),
-    (3, "2500", 75, 175, True),
-    (10, "6000", 250, 350, False),
+    (15, 25, 125, False),
+    (50, 35, 135, False),
+    (2500, 100, 200, True),
+    (6000, 250, 350, False),
 ]
 
 # Every car a winner can choose: the same list on both entry forms, in the
@@ -66,15 +77,15 @@ CAR_PRIZES = [
 
 # Sweepstakes: one car or the cash. (label, thumbnail or None for cash)
 SWEEPSTAKES_PRIZE_OPTIONS = [(label, image) for label, image, _page in CAR_PRIZES] + [
-    ("$50,000.00 Cash", None),
+    ("$50,000 Cash", None),
 ]
 
 # Raffle Plus: any two cars, or one car and $50,000, or $100,000 on its own.
 # (label, thumbnail or None for cash, kind)
 # kind: "car", "cash" ($50,000, pairs with one car) or "all" ($100,000, on its own)
 RAFFLE_PLUS_PRIZE_OPTIONS = [(label, image, "car") for label, image, _page in CAR_PRIZES] + [
-    ("$50,000.00 Cash", None, "cash"),
-    ("$100,000.00 Cash", None, "all"),
+    ("$50,000 Cash", None, "cash"),
+    ("$100,000 Cash", None, "all"),
 ]
 
 AD_SOURCES = ["Postcard", "Email", "Instagram", "Facebook", "Google Ad",
@@ -89,7 +100,7 @@ PRIZES = [
     ("new-porsche-sweepstakes.html", "Porsche", "Win a new Porsche",
      "911 Carrera Cabriolet, Taycan, Macan", "Accept No Substitute.",
      "prize-porsche-911.webp", [
-        ("Porsche 911 Cabriolet", "2026 Model", "prize-porsche-911.webp", [
+        ("Porsche 911 Cabriolet", "2027 Model", "prize-porsche-911.webp", [
             ("Engine", "DOHC 24-valve flat-6, aluminum block and heads, direct fuel injection"),
             ("Transmission", "6-speed manual, 7-speed dual-clutch automatic"),
             ("Horsepower", "388 hp @ 8400 rpm"),
@@ -97,7 +108,7 @@ PRIZES = [
             ("Top speed", "181 mph"),
             ("Acceleration", "60 mph: 3.9 sec"),
         ]),
-        ("Porsche Taycan S", "2026 Model", "prize-porsche-taycan.jpg", [
+        ("Porsche Taycan S", "2027 Model", "prize-porsche-taycan.jpg", [
             ("Electric motor", "560 kW, Overboost Power with Launch Control"),
             ("Transmission", "2-speed transmission on the rear axle"),
             ("Horsepower", "402 hp, Overboost Power with Launch Control"),
@@ -105,7 +116,7 @@ PRIZES = [
             ("Top speed", "143 mph"),
             ("Acceleration", "0–60 mph with Launch Control 5.1 s"),
         ]),
-        ("Porsche Macan", "2026 Model", "prize-porsche-macan.webp", [
+        ("Porsche Macan", "2027 Model", "prize-porsche-macan.webp", [
             ("Engine", "2.0-liter turbocharged 4-cylinder engine"),
             ("Transmission", "7-speed Porsche Doppelkupplung (PDK) transmission"),
             ("Horsepower", "261 hp"),
@@ -126,7 +137,7 @@ PRIZES = [
      ]),
     ("new-corvette-sweepstakes.html", "Corvette", "Win a new Corvette",
      "Stingray, EV E-Ray", "Ultimate Thrill", "prize-corvette-new.jpg", [
-        ("Corvette Stingray", "2026 Model", "prize-corvette-new.jpg", [
+        ("Corvette Stingray", "2027 Model", "prize-corvette-new.jpg", [
             ("Engine", "6.2-liter V8"),
             ("Transmission", "8-speed dual-clutch automatic"),
             ("Horsepower", "525 hp"),
@@ -134,7 +145,7 @@ PRIZES = [
             ("Top speed", "194 mph"),
             ("Acceleration", "0–60 in 3.3 seconds"),
         ]),
-        ("EV Corvette E-Ray", "2026 Model", "prize-corvette-eray.webp", [
+        ("EV Corvette E-Ray", "2027 Model", "prize-corvette-eray.webp", [
             ("Engine", "6.2-liter V8"),
             ("Transmission", "8-speed automatic transmission"),
             ("Horsepower", "655 hp"),
@@ -156,7 +167,7 @@ PRIZES = [
      ]),
     ("tesla-sweepstakes.html", "Tesla", "Win a new Tesla Y",
      "", "", "prize-tesla-y.jpg", [
-        ("Tesla Y (Long Range)", "2026 Model", "prize-tesla-y.jpg", [
+        ("Tesla Y (Long Range)", "2027 Model", "prize-tesla-y.jpg", [
             ("Engine", "Electric Dual Motor All-Wheel Drive, range 330 mi"),
             ("Transmission", "Single-speed"),
             ("Horsepower", "456 HP"),
@@ -167,13 +178,13 @@ PRIZES = [
      ]),
     ("ev-sweepstakes.html", "Rivian", "Win a new Rivian",
      "Rivian", "", "prize-rivian.jpg", [
-        ("Rivian R1T", "2026 Model", "prize-rivian.jpg", [
+        ("Rivian R1T", "2027 Model", "prize-rivian.jpg", [
             ("Range", "260 to 314 mi battery-only"),
             ("Towing capacity", "11,000 lbs"),
             ("Battery charge", "13h at 220V"),
             ("Horsepower", "600 to 835 hp"),
         ]),
-        ("Rivian R1S", "2026 Model", "prize-rivian-r1s.avif", [
+        ("Rivian R1S", "2027 Model", "prize-rivian-r1s.avif", [
             ("Range", "270 miles"),
             ("0–60", "4.5 sec"),
             ("Horsepower", "553 hp"),
@@ -181,12 +192,12 @@ PRIZES = [
      ]),
     ("lucid.html", "Lucid", "Win a new Lucid",
      "Lucid", "", "prize-lucid-gravity.jpg", [
-        ("Lucid Gravity", "2026 Model", "prize-lucid-gravity.jpg", [
+        ("Lucid Gravity", "2027 Model", "prize-lucid-gravity.jpg", [
             ("Range", "up to 450 mi"),
             ("0–60", "3.4 sec"),
             ("Horsepower", "828 hp"),
         ]),
-        ("Lucid Air", "2026 Model", "prize-lucid-air.webp", [
+        ("Lucid Air", "2027 Model", "prize-lucid-air.webp", [
             ("Range", "up to 420 miles"),
             ("0–60", "4.5 sec"),
             ("Horsepower", "430 hp"),
@@ -194,7 +205,7 @@ PRIZES = [
      ]),
     ("cadillac-sweepstakes.html", "Cadillac", "Win a new Cadillac",
      "", "Accept No Substitute.", "prize-cadillac-escalade.avif", [
-        ("Cadillac Escalade", "2026 Model", "prize-cadillac-escalade.avif", [
+        ("Cadillac Escalade", "2027 Model", "prize-cadillac-escalade.avif", [
             ("Engine", "6.2L V8 with premium gasoline"),
             ("Horsepower", "420 hp"),
             ("Torque", "460 lb-ft with premium gasoline"),
@@ -204,11 +215,12 @@ PRIZES = [
 ]
 
 # In the order published on /sweepstakes-rules, plus the 18+ age rule from the
-# FAQ (added at CJ's request, 2026-10-18). Wording is verbatim except rule 1
-# (both ticket prices) and two "it's" -> "its" fixes (CJ, 2026-10-19).
+# FAQ (added at CJ's request, 2026-10-18). Wording is verbatim except two
+# "it's" -> "its" fixes (CJ, 2026-10-19). The published rule 1 (ticket prices
+# and payment methods) is removed at the client's request (call with CJ,
+# 2026-10-29). Cash amounts drop the cents, as everywhere else on the site (CJ,
+# 2026-11-01).
 RULES = [
-    # Rule 1 named only the Sweepstakes price; both are given (CJ, 2026-10-19).
-    f"Tickets start at ${TICKET_TIERS[0][2]}.00 for the Sweepstakes and ${TICKET_TIERS[0][3]}.00 for Raffle Plus, and can be paid for by credit card, money order or check.",
     "Winner will be announced at time and place of drawing.",
     "All entries to \"the presenter\" will remain property of the presenter.",
     "All tickets will be sent within 48 hours via email or USPS.",
@@ -222,7 +234,7 @@ RULES = [
     "The winner of the prize must enter into contract within 30 days of selection of the winner and agree to execute all the documents necessary to effect the intent of these rules and accomplish the transfer of title.",
     "Payment of all applicable federal, state and local taxes, fees and surcharges, tags and registrations fees are the responsibility of the winner, who must provide proof of insurance to take delivery.",
     "Failure of the winner to claim the prize within 30 days will result in forfeiture of the prize.",
-    "If the winner bought a Raffle Plus ticket they have their choice of any 2 cars or 1 car and the cash prize. Without Raffle Plus the winner has a choice of either any one car, or $50,000.00 cash. If the cash prize is selected it will be paid in 3 installments, 60 days apart.",
+    "If the winner bought a Raffle Plus ticket they have their choice of any 2 cars or 1 car and the cash prize. Without Raffle Plus the winner has a choice of either any one car, or $50,000 cash. If the cash prize is selected it will be paid in 3 installments, 60 days apart.",
     "The prize is not transferable.",
     "In the case of a dispute or a disqualification the decision of the \"presenter\" shall be deemed final, conclusive and not subject to review.",
     "NHS officials reserve the right to amend any of the rules including the postponement of the drawing at any time and are not subject to review.",
@@ -310,8 +322,9 @@ COVID_QA = [
 # ---------------------------------------------------------------------------
 # Donations
 # ---------------------------------------------------------------------------
-DONATE_MONTHLY = [10, 25, 50, 100, 500]
-DONATE_ONE_TIME = [10, 25, 50, 100, 250]
+# The same for monthly and one-time gifts (CJ, 2026-11-01; one-time topped out
+# at $250 on the current site).
+DONATE_AMOUNTS = [10, 25, 50, 100, 500]
 
 # Logos shown on /donations-helping-animals ("recently given money to").
 PARTNER_LOGOS = [

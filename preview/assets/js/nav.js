@@ -57,9 +57,9 @@
     if (href === path) a.classList.add('is-active');
   });
 
-  // Donate widget interactions (preview only).
-  // Monthly and one-time share every preset except the largest, which carries
-  // both values in data-monthly / data-one-time and swaps with the toggle.
+  // Donate widget interactions (preview only). The boxes on other pages link to
+  // the Donate page with the chosen amount and frequency, and its form starts
+  // with them selected.
   document.querySelectorAll('.donate-widget').forEach((widget) => {
     const cta = widget.querySelector('.donate-cta');
     const mode = () => {
@@ -77,6 +77,9 @@
       (label || cta).textContent = amount && amount !== 'other'
         ? `Donate $${amount}${suffix}${arrow}`
         : `Donate${suffix}${arrow}`;
+      if (cta.tagName === 'A' && amount) {
+        cta.href = `donate.html?${new URLSearchParams({ amount, mode: mode() })}#donation`;
+      }
     };
     widget.querySelectorAll('.amount-btn').forEach((btn) => {
       btn.addEventListener('click', (e) => {
@@ -91,14 +94,21 @@
         e.preventDefault();
         widget.querySelectorAll('.donate-toggle button').forEach((b) => b.classList.remove('is-active'));
         btn.classList.add('is-active');
-        const key = mode() === 'monthly' ? 'monthly' : 'oneTime';
-        widget.querySelectorAll('.amount-btn[data-monthly]').forEach((b) => {
-          b.dataset.amount = b.dataset[key];
-          b.textContent = `$${b.dataset[key]}`;
-        });
         updateCta();
       });
     });
+    if (widget.matches('.donate-form')) {
+      const params = new URLSearchParams(location.search);
+      const preset = (selector, key, value) => {
+        const pick = [...widget.querySelectorAll(selector)].find((b) => b.dataset[key] === value);
+        if (!pick) return;
+        widget.querySelectorAll(selector).forEach((b) => b.classList.remove('is-active'));
+        pick.classList.add('is-active');
+      };
+      preset('.donate-toggle button', 'mode', params.get('mode'));
+      preset('.amount-btn', 'amount', params.get('amount'));
+    }
+    updateCta();
   });
 
   // Loading states for embedded videos and posts: the paw loader fades out
@@ -697,7 +707,25 @@
     };
     form.addEventListener('change', update);
 
-    // Links from the prize pages arrive with ?tickets=3 or ?prize=Rivian%20R1T:
+    // Phones: once a step is done (a ticket bundle picked; the prize, or both
+    // Raffle Plus prizes, picked) scroll on to the next step. Only for the
+    // visitor's own clicks, not the choices preset from a link.
+    const narrow = window.matchMedia('(max-width: 900px)');
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const steps = [...form.querySelectorAll('.entry-step')];
+    const advance = (input) => {
+      const next = steps[steps.indexOf(input.closest('.entry-step')) + 1];
+      if (!next) return;
+      setTimeout(() => next.scrollIntoView({ behavior: calm.matches ? 'instant' : 'smooth', block: 'start' }), 350);
+    };
+    form.addEventListener('change', (e) => {
+      const input = e.target;
+      if (!narrow.matches || !e.isTrusted || !input.checked) return;
+      if (input.name === 'tickets') advance(input);
+      else if (input.name === 'prize' && (input.type === 'radio' || total() === 2)) advance(input);
+    });
+
+    // Links from the prize pages arrive with ?tickets=2500 or ?prize=Rivian%20R1T:
     // start the form with that bundle / car already chosen.
     const params = new URLSearchParams(location.search);
     const preset = (name, value) => {
