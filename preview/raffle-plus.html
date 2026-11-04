@@ -114,7 +114,6 @@
   <div class="container">
     <div class="fact-strip">
       <div><span class="fact-label">Next drawing</span><span class="fact-value">December 31, 2026</span></div>
-      <div><span class="fact-label">Tickets</span><span class="fact-value"><a class="fact-link" href="#enter">See ticket options <span aria-hidden="true">↓</span></a></span></div>
       <div><span class="fact-label">To win</span><span class="fact-value">No need to be present</span></div>
       <div><span class="fact-label">Ticket numbers</span><span class="fact-value">Emailed within 48 hours</span></div>
     </div>
@@ -284,7 +283,7 @@
       <p class="eyebrow">Raffle Plus Secure Form</p>
       <h2>Enter Raffle Plus.</h2>
     </div>
-    <form class="entry-form" data-entry onsubmit="event.preventDefault(); alert('Preview only — entries are not submitted.');">
+    <form class="entry-form is-split" data-entry onsubmit="event.preventDefault(); alert('Preview only — entries are not submitted.');">
       <div class="entry-steps">
         <fieldset class="entry-step">
           <legend><span class="step-num">1</span> Select number of tickets</legend>
@@ -308,14 +307,13 @@
               <span class="ticket-price">$200</span>
             </label>
             <label class="choice-card ticket-choice">
-              <input type="radio" name="tickets" value="6000" data-price="350" data-label="6,000 tickets" required>
+              <input type="radio" name="tickets" value="6000" data-price="400" data-label="6,000 tickets" required>
               
               <span class="ticket-count">6,000<small>tickets</small></span>
-              <span class="ticket-price">$350</span>
+              <span class="ticket-price">$400</span>
             </label>
           </div>
         </fieldset>
-
         <fieldset class="entry-step">
           <legend><span class="step-num">2</span> Choose your prizes</legend>
           <p class="step-help">Pick any two cars, $100,000, or one car and $50,000. <span class="prize-count" data-prize-count></span></p>
@@ -397,7 +395,21 @@
             </label>
           </div>
         </fieldset>
-
+        <aside class="entry-summary">
+          <h3>Your entry</h3>
+          <dl>
+            <dt>Tickets</dt><dd data-sum="tickets">Not selected yet</dd>
+            <dt>Prize</dt><dd data-sum="prize">Not selected yet</dd>
+            <dt>Next drawing</dt><dd>December 31, 2026</dd>
+          </dl>
+          <div class="entry-total"><span>Total</span><strong data-sum="total">—</strong></div>
+          <ul class="entry-assurances">
+            <li>Ticket number(s) emailed within 48 hours</li>
+            <li>No need to be present to win</li>
+          </ul>
+        </aside>
+      </div>
+      <div class="entry-steps">
         <fieldset class="entry-step">
           <legend><span class="step-num">3</span> Your information</legend>
           <div class="form-grid form-wide">
@@ -418,7 +430,6 @@
             <div class="form-row"><label>Comment</label><textarea rows="3"></textarea></div>
           </div>
         </fieldset>
-
         <fieldset class="entry-step">
           <legend><span class="step-num">4</span> Your payment information</legend>
         <div class="payment-placeholder">
@@ -427,23 +438,11 @@
         </div>
           <label class="check-item" style="margin-top:var(--space-4)"><input type="checkbox"> I want to automatically be entered into future raffles with this payment information.</label>
         </fieldset>
+        <div class="entry-submit">
+          <button type="submit" class="btn btn-primary btn-lg">Enter Now</button>
+          <p class="form-footnote">Please remember to spay or neuter your pets. For any questions, please call us at <a href="tel:877-285-0710">877-285-0710</a>.</p>
+        </div>
       </div>
-
-      <aside class="entry-summary">
-        <h3>Your entry</h3>
-        <dl>
-          <dt>Tickets</dt><dd data-sum="tickets">Not selected yet</dd>
-          <dt>Prize</dt><dd data-sum="prize">Not selected yet</dd>
-          <dt>Next drawing</dt><dd>December 31, 2026</dd>
-        </dl>
-        <div class="entry-total"><span>Total</span><strong data-sum="total">—</strong></div>
-        <button type="submit" class="btn btn-primary btn-lg">Enter Now</button>
-        <ul class="entry-assurances">
-          <li>Ticket number(s) emailed within 48 hours</li>
-          <li>No need to be present to win</li>
-        </ul>
-        <p class="form-footnote">Please remember to spay or neuter your pets. For any questions, please call us at <a href="tel:877-285-0710">877-285-0710</a>.</p>
-      </aside>
     </form>
   </div>
 </section>

@@ -17,10 +17,10 @@
     }
   }
 
-  // Transparent-on-video header (homepage only).
+  // Transparent-on-video header (home and raffle home).
   // Header starts transparent over the video hero, then transitions to solid
   // white once the user scrolls past the threshold.
-  if (document.body.classList.contains('is-home')) {
+  if (document.body.classList.contains('header-over-hero')) {
     const header = document.querySelector('.site-header');
     if (header) {
       const THRESHOLD = 60;
@@ -44,7 +44,7 @@
       // When the mobile menu is open over the video hero, force the header
       // out of its transparent state so dropdown items remain readable.
       if (header.classList.contains('is-open')) header.classList.remove('at-top');
-      else if (document.body.classList.contains('is-home') && window.scrollY < 60) {
+      else if (document.body.classList.contains('header-over-hero') && window.scrollY < 60) {
         header.classList.add('at-top');
       }
     });

@@ -218,10 +218,17 @@ PAGE_SCRIPTS = {
 COLOURED_SECTIONS = {"section-soft", "section-cream", "section-navy"}
 
 
+# Pages whose header sits transparent over a full-width video until the page
+# is scrolled (raffle home added by the client, call with CJ, 2026-11-03).
+HEADER_OVER_HERO = {"index.html", "raffle-home-page.html"}
+
+
 def page(title, slug, body, status="live", description=None):
     """Returns the full html string for a single page."""
     desc = description or f"{title} — National Humane Society"
     body_class = "is-home" if slug == "index.html" else "is-interior"
+    if slug in HEADER_OVER_HERO:
+        body_class += " header-over-hero"
     extra_scripts = "".join(f'<script src="{src}" async></script>\n' if src.startswith("http") else f'<script src="{src}"></script>\n'
                             for src in PAGE_SCRIPTS.get(slug, []))
     # A page that ends on a coloured section runs straight into the footer,
@@ -403,6 +410,14 @@ def prize_choice(label, image, input_type, kind="car"):
             </label>"""
 
 
+# Client (call with CJ, 2026-11-03): "Your information" should be in view as
+# soon as the form is. True splits the form into two columns on desktop:
+# tickets, prizes and the entry summary on the left; your information, payment
+# and Enter Now on the right. False is the single column with the summary in
+# a sticky sidebar. (Phones stack either way.)
+ENTRY_FORM_SPLIT = True
+
+
 def entry_form(kind):
     """The live 'Secure Form' for Sweepstakes or Raffle Plus, minus raw card fields."""
     if kind == "sweepstakes":
@@ -420,31 +435,20 @@ def entry_form(kind):
         prizes = "\n".join(prize_choice(label, image, "checkbox", option_kind)
                            for label, image, option_kind in C.RAFFLE_PLUS_PRIZE_OPTIONS)
     sources = "".join(f"<option>{s}</option>" for s in C.AD_SOURCES)
-    return f"""
-<section class="section entry-section" id="enter">
-  <div class="container">
-    <div class="entry-head">
-      <p class="eyebrow">{title}</p>
-      <h2>{heading}</h2>
-    </div>
-    <form class="entry-form" data-entry onsubmit="event.preventDefault(); alert('Preview only — entries are not submitted.');">
-      <div class="entry-steps">
-        <fieldset class="entry-step">
+    step_tickets = f"""        <fieldset class="entry-step">
           <legend><span class="step-num">1</span> Select number of tickets</legend>
           <div class="choice-grid choice-tickets">
 {ticket_choices(kind)}
           </div>
-        </fieldset>
-
-        <fieldset class="entry-step">
+        </fieldset>"""
+    step_prizes = f"""        <fieldset class="entry-step">
           <legend><span class="step-num">2</span> {prize_legend}</legend>
           <p class="step-help">{prize_help}</p>
           <div class="choice-grid choice-prizes">
 {prizes}
           </div>
-        </fieldset>
-
-        <fieldset class="entry-step">
+        </fieldset>"""
+    step_info = f"""        <fieldset class="entry-step">
           <legend><span class="step-num">3</span> Your information</legend>
           <div class="form-grid form-wide">
 {PERSON_FIELDS}
@@ -453,34 +457,71 @@ def entry_form(kind):
             </div>
             <div class="form-row"><label>Comment</label><textarea rows="3"></textarea></div>
           </div>
-        </fieldset>
-
-        <fieldset class="entry-step">
+        </fieldset>"""
+    step_payment = f"""        <fieldset class="entry-step">
           <legend><span class="step-num">4</span> Your payment information</legend>
 {PAYMENT_BLOCK}
           <label class="check-item" style="margin-top:var(--space-4)"><input type="checkbox"> I want to automatically be entered into future raffles with this payment information.</label>
-        </fieldset>
+        </fieldset>"""
+    summary = f"""          <h3>Your entry</h3>
+          <dl>
+            <dt>Tickets</dt><dd data-sum="tickets">Not selected yet</dd>
+            <dt>Prize</dt><dd data-sum="prize">Not selected yet</dd>
+            <dt>Next drawing</dt><dd>{C.DRAWING_DATE}</dd>
+          </dl>
+          <div class="entry-total"><span>Total</span><strong data-sum="total">—</strong></div>"""
+    submit = '          <button type="submit" class="btn btn-primary btn-lg">Enter Now</button>'
+    assurances = """          <ul class="entry-assurances">
+            <li>Ticket number(s) emailed within 48 hours</li>
+            <li>No need to be present to win</li>
+          </ul>"""
+    footnote = f'          <p class="form-footnote">Please remember to spay or neuter your pets. For any questions, please call us at <a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a>.</p>'
+    if ENTRY_FORM_SPLIT:
+        form_class = "entry-form is-split"
+        layout = f"""      <div class="entry-steps">
+{step_tickets}
+{step_prizes}
+        <aside class="entry-summary">
+{summary}
+{assurances}
+        </aside>
       </div>
-
+      <div class="entry-steps">
+{step_info}
+{step_payment}
+        <div class="entry-submit">
+{submit}
+{footnote}
+        </div>
+      </div>"""
+    else:
+        form_class = "entry-form"
+        layout = f"""      <div class="entry-steps">
+{step_tickets}
+{step_prizes}
+{step_info}
+{step_payment}
+      </div>
       <aside class="entry-summary">
-        <h3>Your entry</h3>
-        <dl>
-          <dt>Tickets</dt><dd data-sum="tickets">Not selected yet</dd>
-          <dt>Prize</dt><dd data-sum="prize">Not selected yet</dd>
-          <dt>Next drawing</dt><dd>{C.DRAWING_DATE}</dd>
-        </dl>
-        <div class="entry-total"><span>Total</span><strong data-sum="total">—</strong></div>
-        <button type="submit" class="btn btn-primary btn-lg">Enter Now</button>
-        <ul class="entry-assurances">
-          <li>Ticket number(s) emailed within 48 hours</li>
-          <li>No need to be present to win</li>
-        </ul>
-        <p class="form-footnote">Please remember to spay or neuter your pets. For any questions, please call us at <a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a>.</p>
-      </aside>
+{summary}
+{submit}
+{assurances}
+{footnote}
+      </aside>"""
+    return f"""
+<section class="section entry-section" id="enter">
+  <div class="container">
+    <div class="entry-head">
+      <p class="eyebrow">{title}</p>
+      <h2>{heading}</h2>
+    </div>
+    <form class="{form_class}" data-entry onsubmit="event.preventDefault(); alert('Preview only — entries are not submitted.');">
+{layout}
     </form>
   </div>
 </section>
 """
+
 
 
 def gallery(slides, count_label=None, autoplay=None, cls="prize-gallery"):
@@ -628,13 +669,18 @@ PRIZE_PAGE_TICKET_PAIR = f"""    <div style="margin-top:var(--space-7)">
 # Colours for winners with no photo, in turn (the Educational Messages palette)
 WINNER_TILE_COLOURS = ["navy", "coral", "teal", "blue", "orange"]
 
+# Client (call with CJ, 2026-11-03): only winners with a photo are shown. True
+# brings back the others as initials tiles.
+SHOW_WINNERS_WITHOUT_PHOTOS = False
+SHOWN_WINNERS = C.WINNERS if SHOW_WINNERS_WITHOUT_PHOTOS else [w for w in C.WINNERS if w[2]]
+
 
 def winners_wall(winners=None):
     """Winner cards (the Previous Winners page, and the row on the entry, FAQ
     and Rules pages). Winners with no photo get a colour-coded paw-print tile
     with their initials."""
     cards, blank = [], 0
-    for name, state, image in (C.WINNERS if winners is None else winners):
+    for name, state, image in (SHOWN_WINNERS if winners is None else winners):
         if image:
             pic = f"""<div class="winner-pic"><img src="assets/img/{image}" alt="{name}, {state}" loading="lazy" decoding="async"></div>"""
         else:
@@ -906,13 +952,13 @@ HOME_IMPACT_PLACEHOLDER = """
 
 # Client (call with CJ, 2026-10-29): the hero's Raffle Plus ticket becomes a
 # red bar across the bottom of the video, like the current site's red banner.
-# It links to the raffle home page, so it names both ways to win (CJ, 2026-11-01).
+# It links to the raffle home page. Just the offer and a big Enter now button:
+# no tag or drawing date (client, call with CJ, 2026-11-03).
 # Set this to False for the yellow ticket under the buttons instead.
 HOME_HERO_TICKET_BAR = True
 HOME_TICKET_BAR = f"""  <a class="hero-ticket-bar" href="raffle-home-page.html">
     <span class="container hero-ticket-bar-inner">
-      <span class="ticket-tag">Sweepstakes &amp; Raffle Plus</span>
-      <span class="hero-ticket-bar-text"><strong>Win up to two cars or $100,000</strong><small>Drawing {C.DRAWING_DATE}</small></span>
+      <span class="hero-ticket-bar-text"><strong>Win two cars or $100,000</strong></span>
       <span class="hero-ticket-bar-stub">Enter now <span class="ticket-arrow" aria-hidden="true">→</span></span>
     </span>
   </a>"""
@@ -1239,12 +1285,9 @@ DONATIONS_BODY = page_hero(
 # The plain-text prize list under "The prizes" heading was removed at the
 # client's request (call with CJ, 2026-10-29); the prize cards list every car.
 
-# Client (call with CJ, 2026-10-29): the hero's ticket fact on the entry pages
-# links down to the entry form instead of giving a price.
-TICKET_FACT_LINK = '<a class="fact-link" href="#enter">See ticket options <span aria-hidden="true">↓</span></a>'
 
 
-def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact, gallery_html=None, actions=None, actions_html=None):
+def sweeps_hero(crumb, eyebrow, headline, lead, first_car, gallery_html=None, actions=None, actions_html=None):
     """Navy hero for the entry pages and the prize pages, with the facts people
     ask about first. Entry pages show every prize car; prize pages pass their
     own gallery and no buttons (each car below has its own), so they pass
@@ -1266,7 +1309,6 @@ def sweeps_hero(crumb, eyebrow, headline, lead, first_car, ticket_fact, gallery_
   <div class="container">
     <div class="fact-strip">
       <div><span class="fact-label">Next drawing</span><span class="fact-value">{C.DRAWING_DATE}</span></div>
-      <div><span class="fact-label">Tickets</span><span class="fact-value">{ticket_fact}</span></div>
       <div><span class="fact-label">To win</span><span class="fact-value">No need to be present</span></div>
       <div><span class="fact-label">Ticket numbers</span><span class="fact-value">Emailed within 48 hours</span></div>
     </div>
@@ -1295,7 +1337,6 @@ SWEEPSTAKES_BODY = sweeps_hero(
     'Win a new car or <span class="hl">$50,000!</span>',
     "Choose prizes ranging from Porsche, Corvettes, Teslas, and more! Every entry supports our mission. It's a win-win!",
     0,  # starts on the Porsche 911
-    TICKET_FACT_LINK,
 ) + f"""
 <section class="section" id="prizes">
   <div class="container">
@@ -1321,7 +1362,6 @@ RAFFLE_BODY = sweeps_hero(
     'Win two new cars or <span class="hl">$100,000!</span>',
     "Pick any two cars, $100,000, or one car and $50,000. Every entry supports our mission.",
     4,  # starts on the Corvette
-    TICKET_FACT_LINK,
 ) + f"""
 <section class="section" id="prizes">
   <div class="container">
@@ -1368,11 +1408,10 @@ RAFFLE_HOME_CARS = [
 
 
 def raffle_home_car_buttons():
-    images = {p[0]: p[5] for p in C.PRIZES}
     links = []
     for label, page in RAFFLE_HOME_CARS:
-        links.append(f'        <li><a class="rh-car" href="{page}"><img src="assets/img/{images[page]}" alt="" decoding="async">'
-                     f'<span class="rh-car-name">{label}<span class="rh-car-arrow" aria-hidden="true">→</span></span></a></li>')
+        links.append(f'        <li><a class="rh-car" href="{page}"><span class="rh-car-name">{label}</span>'
+                     f'<span class="rh-car-arrow" aria-hidden="true">→</span></a></li>')
     return '      <ul class="rh-cars-list">\n' + "\n".join(links) + "\n      </ul>"
 
 
@@ -1382,7 +1421,7 @@ RAFFLE_HOME_POPUP = f"""
     <button type="button" class="rh-popup-close" aria-label="Close">×</button>
     <p class="eyebrow">Enter today</p>
     <h2 id="rh-popup-title">Enter Our Sweepstakes!</h2>
-    <p class="rh-popup-text">Enter today for a chance to win up to <strong>two new cars</strong> or <strong>$100,000</strong>.</p>
+    <p class="rh-popup-text">Enter today for a chance to win <strong>two new cars</strong> or <strong>$100,000</strong>.</p>
     <div class="rh-popup-logos">
       <img src="assets/img/logo-porsche.png" alt="Porsche">
       <img src="assets/img/logo-corvette.png" alt="Corvette">
@@ -1420,7 +1459,6 @@ RAFFLE_HOME_BODY = f"""
     </div>
     <div class="fact-strip">
       <div><span class="fact-label">Next drawing</span><span class="fact-value">{C.DRAWING_DATE}</span></div>
-      <div><span class="fact-label">Tickets</span><span class="fact-value">From ${_ONE_TICKET[1]} or ${_ONE_TICKET[2]} Raffle Plus</span></div>
       <div><span class="fact-label">To win</span><span class="fact-value">No need to be present</span></div>
       <div><span class="fact-label">Ticket numbers</span><span class="fact-value">Emailed within 48 hours</span></div>
     </div>
@@ -1528,7 +1566,6 @@ def prize_body(prize):
         title,
         lead,
         0,
-        f"From ${C.TICKET_TIERS[0][1]} or ${C.TICKET_TIERS[0][2]} Raffle Plus",
         gallery_html=hero_gallery,
         actions_html="",  # the tickets sit with each car's specs (CJ, 2026-11-01)
     )
@@ -1715,7 +1752,7 @@ WINNERS_BODY = page_hero(
 ) + f"""
 <section class="section section-soft">
   <div class="container">
-    <p class="eyebrow winners-count">{len(C.WINNERS)} winners and counting</p>
+    <p class="eyebrow winners-count">{len(SHOWN_WINNERS)} winners and counting</p>
 {winners_wall()}
   </div>
 </section>
