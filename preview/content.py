@@ -44,11 +44,12 @@ DRAWING_DATE = "December 31, 2026"
 # New prices from the client (call with CJ, 2026-10-29). Each price buys that
 # many tickets outright (the current site's "Buy 1, get 50 free" style is gone).
 # Most Popular stays on the 2,500-ticket bundle, as on the current site.
+# 6,000 tickets: $300 / $400 (client, call with CJ, 2026-11-03).
 TICKET_TIERS = [
     (15, 25, 125, False),
     (50, 35, 135, False),
     (2500, 100, 200, True),
-    (6000, 250, 350, False),
+    (6000, 300, 400, False),
 ]
 
 # Every car a winner can choose: the same list on both entry forms, in the
