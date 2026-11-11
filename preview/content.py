@@ -24,12 +24,9 @@ SOCIAL = [
     ("X", "https://twitter.com/NationalHumane"),
 ]
 
-# Photos from Wikimedia Commons (both cropped):
-# prize-tesla-y.jpg: "26 Tesla Model Y Long Range" by HJUdall, CC0,
-#   https://commons.wikimedia.org/wiki/File:26_Tesla_Model_Y_Long_Range.jpg
-# prize-lucid-gravity.jpg: "Lucid Gravity at Lucid Studio Oslo" by Premeditated,
-#   CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Lucid_Gravity_at_Lucid_Studio_Oslo.jpg
-#   The credit is in the image file's metadata only, not on the page (CJ, 2026-11-01).
+# prize-tesla-y.jpg is from Wikimedia Commons (cropped): "26 Tesla Model Y Long
+#   Range" by HJUdall, CC0, https://commons.wikimedia.org/wiki/File:26_Tesla_Model_Y_Long_Range.jpg
+# prize-lucid-gravity.jpg is the current site's photo again (client, 2026-11-10).
 LIVE_SITE = "https://www.nationalhumanesociety.org"
 
 # ---------------------------------------------------------------------------

@@ -406,7 +406,7 @@ body.header-over-hero .site-header.at-top .brand-logo {
   font-size: 1.3rem;
   line-height: 1.15;
 }
-.ticket-text small { display: block; font-size: .88rem; font-weight: 600; margin-top: 2px; }
+.ticket-text small { display: block; font-size: 1rem; font-weight: 700; margin-top: 2px; }
 .ticket-stub {
   display: flex;
   align-items: center;
@@ -2292,9 +2292,9 @@ a.tier-card:hover .tier-cta span { transform: translateX(4px); }
   border: 0;
   background: transparent;
   border-radius: var(--radius-pill);
-  padding: 10px 26px;
+  padding: 14px 34px;
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: 1.25rem;
   color: var(--color-navy);
   line-height: 1.2;
   transition: background .15s ease, color .15s ease;
@@ -2310,7 +2310,7 @@ a.tier-card:hover .tier-cta span { transform: translateX(4px); }
 .tier-toggle button[aria-selected="true"] small { color: var(--color-yellow); }
 .tier-toggle button[data-tier="raffle-plus"][aria-selected="true"] { background: var(--color-yellow); color: var(--color-navy); }
 .tier-toggle button[data-tier="raffle-plus"][aria-selected="true"] small { color: var(--color-navy); }
-@media (max-width: 600px) { .tier-toggle button { padding: 8px 16px; font-size: .95rem; } }
+@media (max-width: 600px) { .tier-toggle button { padding: 11px 18px; font-size: 1.08rem; } .tier-toggle button small { font-size: .82rem; } }
 
 /* ==========================================================================
    FAQ: questions grouped by topic as cards that open to show the answer,
@@ -2453,7 +2453,7 @@ a.tier-card:hover .tier-cta span { transform: translateX(4px); }
   .hero-actions:has(.ticket) { grid-template-columns: 1fr; }
   .car-sheet-actions { grid-template-columns: 1fr; }
 }
-.ticket-compact .ticket-text small { margin-top: 0; font-size: .82rem; opacity: .85; }
+.ticket-compact .ticket-text small { margin-top: 0; font-size: .98rem; opacity: .95; }
 .sweeps-hero .ticket-navy .ticket-stub { border-left-color: rgba(255,255,255,.4); }
 
 /* ==========================================================================
@@ -4759,4 +4759,119 @@ body.header-over-hero .rh-hero::before {
 }
 @media (prefers-reduced-motion: reduce) {
   .rh-popup, .rh-popup-box { transition: none; }
+}
+
+/* Bigger "Pick your tickets" switch text (client, 2026-11-10) */
+.tier-toggle button small { font-size: .95rem; }
+
+/* Car pages: each model's Sweepstakes and Raffle Plus tickets, bigger
+   (client, 2026-11-10) and as wide as the spec tiles allow */
+.car-sheet-actions { grid-template-columns: minmax(0, 480px); gap: var(--space-3); }
+.car-sheet-actions .ticket-main { padding: 18px var(--space-5); }
+.car-sheet-actions .ticket-text strong { font-size: 1.45rem; }
+.car-sheet-actions .ticket-text small { font-size: 1.05rem; }
+.car-sheet-actions .ticket-stub { padding: 0 var(--space-5); font-size: 1.1rem; }
+@media (max-width: 600px) {
+  .car-sheet-actions { grid-template-columns: 1fr; }
+  .car-sheet-actions .ticket-main { padding: 16px var(--space-4); }
+  .car-sheet-actions .ticket-text strong { font-size: 1.25rem; }
+}
+
+/* ==========================================================================
+   How It Works
+   ========================================================================== */
+.hiw-ways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); max-width: 980px; margin: 0 auto; }
+.hiw-way {
+  display: flex; flex-direction: column; align-items: flex-start;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-top: 6px solid var(--color-navy);
+  box-shadow: var(--shadow-md);
+}
+.hiw-way.is-plus { border-top-color: var(--color-yellow); box-shadow: 0 0 0 4px rgba(251,255,0,.25), var(--shadow-md); }
+.hiw-way h3 { margin: var(--space-4) 0 var(--space-3); font-size: 1.7rem; }
+.hiw-way .list-check { margin-bottom: var(--space-5); }
+.hiw-way .ticket { margin-top: auto; width: 100%; }
+.hiw-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-5); counter-reset: none; }
+.hiw-step { position: relative; padding: var(--space-6) var(--space-5) var(--space-5); border-radius: var(--radius-lg); background: var(--color-mist); }
+.hiw-step .step-num { position: absolute; top: calc(-1 * var(--space-4)); left: var(--space-5); box-shadow: 0 0 0 4px #fff; }
+.hiw-step-icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: #fff; color: var(--color-coral); margin-bottom: var(--space-4); box-shadow: var(--shadow-sm); }
+.hiw-step-icon svg { width: 26px; height: 26px; }
+.hiw-step h3 { font-size: 1.25rem; margin: 0 0 var(--space-2); }
+.hiw-step p { margin: 0; color: var(--color-text-muted); line-height: 1.65; font-size: .95rem; }
+.hiw-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); margin-top: var(--space-5); }
+@media (max-width: 1024px) { .hiw-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--space-7); } }
+@media (max-width: 700px) {
+  .hiw-ways { grid-template-columns: 1fr; }
+  .hiw-steps { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   Monthly Giving
+   ========================================================================== */
+.mg-layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--space-8); align-items: center; }
+.mg-points { list-style: none; margin: var(--space-5) 0 0; padding: 0; display: grid; gap: var(--space-4); }
+.mg-points li { display: flex; gap: var(--space-4); align-items: flex-start; }
+.mg-point-icon { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: #fff0ef; color: var(--color-coral); }
+.mg-point-icon svg { width: 24px; height: 24px; }
+.mg-points strong { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.15rem; color: var(--color-navy); }
+.mg-points p { margin: 2px 0 0; color: var(--color-text-muted); }
+.mg-article {
+  display: grid; grid-template-columns: 240px minmax(0, 1fr);
+  max-width: 860px; margin: 0 auto;
+  border-radius: var(--radius-lg); overflow: hidden;
+  background: #fff; border: 1px solid var(--color-border); box-shadow: var(--shadow-md);
+  color: inherit; text-decoration: none;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.mg-article:hover { text-decoration: none; transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.mg-article-cover.post-cover { aspect-ratio: auto; min-height: 170px; padding: 0; }
+.mg-article-text { display: flex; flex-direction: column; justify-content: center; gap: var(--space-2); padding: var(--space-5) var(--space-6); }
+.mg-article-text strong { font-family: var(--font-display); font-weight: 400; font-size: 1.45rem; line-height: 1.2; color: var(--color-navy); }
+.mg-article-link { font-weight: 700; color: var(--color-coral-dark); }
+.mg-article-link span { display: inline-block; transition: transform .15s ease; }
+.mg-article:hover .mg-article-link span { transform: translateX(4px); }
+.mg-article + .review-note { max-width: 860px; margin: var(--space-6) auto 0; }
+@media (max-width: 900px) { .mg-layout { grid-template-columns: 1fr; gap: var(--space-7); } }
+@media (max-width: 600px) { .mg-article { grid-template-columns: 1fr; } .mg-article-cover { min-height: 120px; } }
+
+/* ==========================================================================
+   Volunteer
+   ========================================================================== */
+.vl-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: var(--space-8); align-items: start; }
+.vl-intro .review-note { margin-top: var(--space-6); }
+.vl-tasks { list-style: none; margin: var(--space-4) 0 var(--space-5); padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.vl-tasks li { padding: 8px 14px; border-radius: var(--radius-pill); background: #fff; border: 1px solid var(--color-border); font-weight: 700; font-size: .92rem; color: var(--color-navy); }
+.vl-guide { --accent: var(--color-navy); }
+.vl-form { padding: var(--space-7); background: #fff; border-radius: var(--radius-lg); border-top: 6px solid var(--color-coral); box-shadow: var(--shadow-lg); }
+.vl-form h3 { margin: 0; font-size: 1.6rem; }
+.vl-form-lead { margin: var(--space-2) 0 var(--space-5); color: var(--color-text-muted); }
+.vl-form .grid { gap: var(--space-4); margin-bottom: var(--space-4); }
+.vl-form .grid > * { min-width: 0; }
+.vl-form .form-row { margin-bottom: var(--space-4); }
+.vl-form .grid .form-row { margin-bottom: 0; }
+.vl-form .form-row input, .vl-form .form-row select, .vl-form .form-row textarea { width: 100%; min-width: 0; }
+.vl-form .btn { width: 100%; justify-content: center; }
+.vl-options { margin: 0 0 var(--space-5); padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.vl-options legend { margin-bottom: var(--space-3); font-family: var(--font-eyebrow); font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--color-text-muted); }
+.vl-option { position: relative; cursor: pointer; }
+.vl-option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.vl-option span {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: var(--radius-pill);
+  border: 2px solid var(--color-border); background: #fff;
+  font-weight: 700; font-size: .92rem; color: var(--color-navy);
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
+}
+.vl-option span::before { content: "+"; font-weight: 700; color: var(--color-coral); }
+.vl-option:hover span { border-color: var(--color-coral); }
+.vl-option input:checked + span { border-color: var(--color-coral); background: var(--color-coral); color: #fff; }
+.vl-option input:checked + span::before { content: "✓"; color: #fff; }
+.vl-option input:focus-visible + span { outline: 3px solid var(--color-navy); outline-offset: 2px; }
+@media (max-width: 900px) { .vl-layout { grid-template-columns: 1fr; gap: var(--space-7); } }
+@media (max-width: 600px) {
+  .vl-form { padding: var(--space-5) var(--space-4); }
+  .vl-form .grid-2 { grid-template-columns: 1fr; }
 }
