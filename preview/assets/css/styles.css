@@ -4548,7 +4548,14 @@ a.contact-card-value:hover { color: var(--accent); }
   background: var(--color-navy);
   color: #fff;
   padding: var(--space-6) 0 var(--space-7);
+  /* Always the full screen, so the next section never peeks in below the
+     video (CJ, 2026-11-11); the content sits in the middle */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
+@media (max-width: 700px) { .rh-hero { min-height: 100svh; } }
 .rh-hero > video {
   position: absolute;
   inset: 0;
@@ -4802,6 +4809,18 @@ body.header-over-hero .rh-hero::before {
 .hiw-step h3 { font-size: 1.25rem; margin: 0 0 var(--space-2); }
 .hiw-step p { margin: 0; color: var(--color-text-muted); line-height: 1.65; font-size: .95rem; }
 .hiw-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); margin-top: var(--space-5); }
+/* Prize partners line under the two ways to win */
+.hiw-partners {
+  display: flex; align-items: center; gap: var(--space-4);
+  max-width: 980px; margin: var(--space-6) auto 0;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-mist);
+}
+.hiw-partners-icon { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: #fff; color: var(--color-coral); box-shadow: var(--shadow-sm); }
+.hiw-partners-icon svg { width: 28px; height: 28px; }
+.hiw-partners strong { display: block; font-family: var(--font-eyebrow); font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--color-coral-dark); }
+.hiw-partners p { margin: 2px 0 0; font-size: 1.05rem; font-weight: 600; color: var(--color-navy); }
 @media (max-width: 1024px) { .hiw-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--space-7); } }
 @media (max-width: 700px) {
   .hiw-ways { grid-template-columns: 1fr; }
@@ -4834,16 +4853,42 @@ body.header-over-hero .rh-hero::before {
 .mg-article-link span { display: inline-block; transition: transform .15s ease; }
 .mg-article:hover .mg-article-link span { transform: translateX(4px); }
 .mg-article + .review-note { max-width: 860px; margin: var(--space-6) auto 0; }
+/* Closing: Customer Service and Email cards */
+.mg-contact { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); text-align: left; max-width: 640px; margin: 0 auto; }
+.mg-contact .contact-card { background: var(--color-mist); box-shadow: none; }
+.mg-contact .contact-card:hover { box-shadow: var(--shadow-md); }
+.mg-contact .contact-card-icon { background: #fff; }
+.tips-closing-card .mg-contact + .hiw-actions { margin-top: var(--space-6); }
 @media (max-width: 900px) { .mg-layout { grid-template-columns: 1fr; gap: var(--space-7); } }
-@media (max-width: 600px) { .mg-article { grid-template-columns: 1fr; } .mg-article-cover { min-height: 120px; } }
+@media (max-width: 600px) {
+  .mg-article { grid-template-columns: 1fr; } .mg-article-cover { min-height: 120px; }
+  .mg-contact { grid-template-columns: 1fr; }
+}
 
 /* ==========================================================================
    Volunteer
    ========================================================================== */
 .vl-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: var(--space-8); align-items: start; }
 .vl-intro .review-note { margin-top: var(--space-6); }
-.vl-tasks { list-style: none; margin: var(--space-4) 0 var(--space-5); padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.vl-tasks li { padding: 8px 14px; border-radius: var(--radius-pill); background: #fff; border: 1px solid var(--color-border); font-weight: 700; font-size: .92rem; color: var(--color-navy); }
+/* Where help is needed: small icon tiles, accent colours in turn */
+.vl-tasks { list-style: none; margin: var(--space-5) 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.vl-tasks li {
+  --accent: var(--color-coral); --tint: #fff0ef;
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff;
+  border-left: 4px solid var(--accent);
+  box-shadow: var(--shadow-sm);
+  font-weight: 700; font-size: .98rem; line-height: 1.3; color: var(--color-navy);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.vl-tasks li:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.vl-tasks li:nth-child(4n+2) { --accent: var(--color-teal); --tint: #e6f3f1; }
+.vl-tasks li:nth-child(4n+3) { --accent: var(--color-orange); --tint: #fdf2e3; }
+.vl-tasks li:nth-child(4n+4) { --accent: var(--color-blue); --tint: #e7f3f6; }
+.vl-task-icon { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--tint); color: var(--accent); }
+.vl-task-icon svg { width: 22px; height: 22px; }
 .vl-guide { --accent: var(--color-navy); }
 .vl-form { padding: var(--space-7); background: #fff; border-radius: var(--radius-lg); border-top: 6px solid var(--color-coral); box-shadow: var(--shadow-lg); }
 .vl-form h3 { margin: 0; font-size: 1.6rem; }
@@ -4870,8 +4915,34 @@ body.header-over-hero .rh-hero::before {
 .vl-option input:checked + span { border-color: var(--color-coral); background: var(--color-coral); color: #fff; }
 .vl-option input:checked + span::before { content: "✓"; color: #fff; }
 .vl-option input:focus-visible + span { outline: 3px solid var(--color-navy); outline-offset: 2px; }
+/* Availability: a days x times grid of tick boxes */
+.vl-avail-group { margin: 0 0 var(--space-5); padding: 0; border: 0; min-width: 0; }
+.vl-avail-group legend { margin-bottom: var(--space-1); font-family: var(--font-eyebrow); font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--color-text-muted); }
+.vl-hint { margin: 0 0 var(--space-3); font-size: .9rem; color: var(--color-text-muted); }
+.vl-avail { display: grid; grid-template-columns: auto repeat(3, minmax(0, 1fr)); gap: var(--space-2); align-items: center; margin-bottom: var(--space-3); }
+.vl-avail-time { text-align: center; font-weight: 700; font-size: .85rem; color: var(--color-navy); }
+.vl-avail-day { padding-right: var(--space-2); font-weight: 700; font-size: .92rem; color: var(--color-navy); }
+.vl-slot { position: relative; cursor: pointer; display: block; }
+.vl-slot input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.vl-slot span {
+  display: grid; place-items: center; height: 44px;
+  border-radius: 12px;
+  border: 2px solid var(--color-border); background: var(--color-mist);
+  font-size: 0; font-weight: 700;
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
+}
+.vl-slot span::before { content: "+"; font-size: 1.15rem; color: var(--color-coral); }
+.vl-slot:hover span { border-color: var(--color-coral); }
+.vl-slot input:checked + span { border-color: var(--color-coral); background: var(--color-coral); }
+.vl-slot input:checked + span::before { content: "✓"; color: #fff; }
+.vl-slot input:focus-visible + span { outline: 3px solid var(--color-navy); outline-offset: 2px; }
+.vl-varies { display: inline-block; }
 @media (max-width: 900px) { .vl-layout { grid-template-columns: 1fr; gap: var(--space-7); } }
 @media (max-width: 600px) {
   .vl-form { padding: var(--space-5) var(--space-4); }
+  .vl-tasks { gap: var(--space-2); }
+  .vl-tasks li { padding: 10px; gap: 10px; font-size: .9rem; hyphens: none; }
+  .vl-task-icon { width: 34px; height: 34px; border-radius: 10px; }
+  .vl-task-icon svg { width: 19px; height: 19px; }
   .vl-form .grid-2 { grid-template-columns: 1fr; }
 }

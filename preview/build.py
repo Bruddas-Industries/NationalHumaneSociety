@@ -62,7 +62,9 @@ NAV = [
     ("Contact", "contact.html", []),
 ]
 
-STATUS_TAG = {"new": "New", "proposed": "Proposed"}
+# "new" pages are tagged Proposed too, like the others (CJ, 2026-11-11); only
+# the banner says they are written from facts on the current site.
+STATUS_TAG = {"new": "Proposed", "proposed": "Proposed"}
 
 # Hidden at CJ's request (2026-10-13 and 2026-10-15) until NHS supplies real
 # figures and ratings: the home page stat band, trust strip and impact
@@ -192,7 +194,7 @@ def status_banner(status):
     if status == "proposed":
         return """<div class="status-banner is-proposed"><div class="container"><strong>Proposed addition.</strong> This page is not on the current site. Its content is placeholder for discussion and has not been confirmed by NHS.</div></div>"""
     if status == "new":
-        return """<div class="status-banner is-new"><div class="container"><strong>New page.</strong> Not on the current site, but written only from facts in the current Rules and FAQ.</div></div>"""
+        return """<div class="status-banner is-proposed"><div class="container"><strong>Proposed addition.</strong> This page is not on the current site, but it is written only from facts in the current Rules and FAQ.</div></div>"""
     return ""
 
 
@@ -1626,6 +1628,13 @@ PAGE_ICONS = {k: _PI + v + "</svg>" for k, v in {
     "clock": '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
     "home": '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
     "users": '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>',
+    "car": '<path d="M5 11l1.6-4.2A2 2 0 0 1 8.5 5.5h7a2 2 0 0 1 1.9 1.3L19 11"/><rect x="3" y="11" width="18" height="6" rx="2"/><path d="M6 17v2M18 17v2"/><circle cx="7.5" cy="14" r="1"/><circle cx="16.5" cy="14" r="1"/>',
+    "paw": '<circle cx="5.5" cy="10" r="2"/><circle cx="9" cy="5.5" r="2"/><circle cx="15" cy="5.5" r="2"/><circle cx="18.5" cy="10" r="2"/><path d="M12 12c-3 0-6 3.5-6 6a2.5 2.5 0 0 0 3.5 2.2c1.6-.7 3.4-.7 5 0A2.5 2.5 0 0 0 18 18c0-2.5-3-6-6-6z"/>',
+    "yarn": '<circle cx="12" cy="12" r="9"/><path d="M5 8c4 0 9 3 11 10M8 4.2c3 2 6.5 7 7 14.8M12.5 3c-1.2 4 1.8 10 8.3 11"/>',
+    "drop": '<path d="M12 2.7l5.7 6.6a7.5 7.5 0 1 1-11.4 0z"/>',
+    "camera": '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+    "pen": '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+    "box": '<path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7z"/><path d="M3.3 7L12 12l8.7-5M12 22V12"/>',
 }.items()}
 
 
@@ -1666,6 +1675,9 @@ _HIW_STEP_CARDS = "\n".join(
         <p>{text}</p>
       </li>""" for n, (icon, title, text) in enumerate(HIW_STEPS, 1))
 
+# Who provides the cars: the FAQ's answer, word for word (CJ, 2026-11-11).
+PRIZE_PARTNERS = next(a for q, a in C.FAQ if q == "Who provides the prizes?")
+
 HOW_IT_WORKS_BODY = page_hero(
     "How It Works",
     "One drawing, one winner, and the winner chooses the prize. Here\'s how the Sweepstakes and Raffle Plus work, start to finish.",
@@ -1676,7 +1688,7 @@ HOW_IT_WORKS_BODY = page_hero(
   <div class="container">
     <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
       <p class="eyebrow">Two ways to win</p>
-      <h2>Choose your ticket</h2>
+      <h2>Sweepstakes or Raffle Plus</h2>
     </div>
     <div class="hiw-ways">
       <article class="hiw-way">
@@ -1698,6 +1710,10 @@ HOW_IT_WORKS_BODY = page_hero(
         </ul>
         {ticket("raffle-plus.html#enter", None, "Raffle Plus", f"From ${C.TICKET_TIERS[0][2]}", "ticket-yellow ticket-compact")}
       </article>
+    </div>
+    <div class="hiw-partners">
+      <span class="hiw-partners-icon">{PAGE_ICONS["car"]}</span>
+      <div><strong>Our prize partners</strong>{PRIZE_PARTNERS}</div>
     </div>
   </div>
 </section>
@@ -3107,7 +3123,7 @@ def contact_copy(text, label, aria):
             f'<span aria-hidden="true">{WILLS_ICONS["copy"]}</span><span class="bequest-copy-label">{label}</span></button>')
 
 
-CONTACT_CARDS = "\n".join([
+CONTACT_CARD_LIST = [
     f"""      <article class="contact-card is-coral">
         <span class="contact-card-icon" aria-hidden="true">{PHONE_ICON}</span>
         <h3>Order Line</h3>
@@ -3132,7 +3148,8 @@ CONTACT_CARDS = "\n".join([
         <address class="contact-card-value contact-card-address">{"<br>".join(CONTACT_ADDRESS)}</address>
         <div class="contact-card-actions">{contact_copy(", ".join(CONTACT_ADDRESS), "Copy address", "Copy mailing address")}</div>
       </article>""",
-])
+]
+CONTACT_CARDS = "\n".join(CONTACT_CARD_LIST)
 
 CONTACT_BODY = page_hero(
     "Contact",
@@ -3293,7 +3310,11 @@ MONTHLY_BODY = page_hero(
     <div class="tips-closing-card">
       <p class="eyebrow">Questions?</p>
       <h2>We\'re happy to help</h2>
-      <p class="tips-closing-text">Call Customer Service at <a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a> or email <a href="mailto:{C.EMAIL}">{C.EMAIL}</a>.</p>
+      <p class="tips-closing-text">Questions about a monthly gift? Call or email us and we\'ll take care of it.</p>
+      <div class="mg-contact">
+{CONTACT_CARD_LIST[1]}
+{CONTACT_CARD_LIST[2]}
+      </div>
       <div class="hiw-actions">
         <a class="btn btn-secondary" href="donate.html?mode=one-time#donation">Make a one-time gift instead</a>
       </div>
@@ -3306,10 +3327,23 @@ MONTHLY_BODY = page_hero(
 # Kept and filled out (client, call with CJ, 2026-11-10). The three ways to
 # help and the list of tasks come from the Pet Tips article on the current
 # site; which roles NHS offers is in the review note.
-VOLUNTEER_TASKS = ["Dog walking", "Cat enrichment", "Laundry &amp; dishes", "Adoption-day greeters",
-                   "Photo &amp; video", "Pet bios &amp; admin", "Supply drives", "Rescue events"]
-VOLUNTEER_INTERESTS = ["Hands-on shelter help", "Fostering", "Events", "Photo &amp; video",
-                       "Writing &amp; social media", "Admin support"]
+VOLUNTEER_TASKS = [("paw", "Dog walking"), ("yarn", "Cat enrichment"), ("drop", "Laundry &amp; dishes"),
+                   ("users", "Adoption-day greeters"), ("camera", "Photo &amp; video"),
+                   ("pen", "Pet bios &amp; admin"), ("box", "Supply drives"), ("calendar", "Rescue events")]
+VOLUNTEER_INTERESTS = ["Dog walking &amp; exercise", "Cat care &amp; socializing", "Fostering",
+                       "Adoption events", "Fundraising events", "Supply drives",
+                       "Driving animals to the vet or adoptions", "Cleaning &amp; laundry",
+                       "Photo &amp; video", "Writing &amp; social media", "Admin &amp; office help",
+                       "Something else"]
+VOLUNTEER_DAYS = ["Weekdays", "Weekends"]
+VOLUNTEER_TIMES = ["Mornings", "Afternoons", "Evenings"]
+VOLUNTEER_HOW_OFTEN = ["A few hours a month", "About once a week", "Several times a week",
+                       "One-off events only", "Not sure yet"]
+_VOLUNTEER_SLOTS = "\n".join(
+    f'          <span class="vl-avail-day">{d}</span>\n' + "\n".join(
+        f'          <label class="vl-slot"><input type="checkbox" name="availability" value="{d} {t.lower()}" aria-label="{d}, {t.lower()}"><span>✓</span></label>'
+        for t in VOLUNTEER_TIMES)
+    for d in VOLUNTEER_DAYS)
 _VOLUNTEER_WAYS = [
     ("clock", "is-coral", C.PET_TIPS_THREE_WAYS[0], ("#volunteer-form", "I\'m interested")),
     ("home", "is-teal", C.PET_TIPS_THREE_WAYS[1], ("pet-tips.html", "Fostering tips")),
@@ -3320,7 +3354,10 @@ _VOLUNTEER_WAY_CARDS = "\n".join(
         <span class="give-way-icon" aria-hidden="true">{PAGE_ICONS[icon]}</span>
         <h3>{title}</h3>
         <p>{text}</p>
-        <div class="give-way-actions"><a class="give-way-link" href="{href}">{label} <span class="give-way-arrow" aria-hidden="true">→</span></a></div>
+        <div class="give-way-actions">{
+            f'<a class="btn btn-primary btn-donate" href="{href}"><span class="donate-heart" aria-hidden="true">♥</span>{label}</a>'
+            if label == "Donate" else
+            f'<a class="give-way-link" href="{href}">{label} <span class="give-way-arrow" aria-hidden="true">→</span></a>'}</div>
       </article>""" for icon, cls, (title, text), (href, label) in _VOLUNTEER_WAYS)
 
 VOLUNTEER_BODY = page_hero(
@@ -3348,7 +3385,7 @@ VOLUNTEER_BODY = page_hero(
       <h2>Ways to pitch in</h2>
       <p>Shelters and rescues need all kinds of help, often for just a couple of hours a week.</p>
       <ul class="vl-tasks">
-{chr(10).join(f'        <li>{t}</li>' for t in VOLUNTEER_TASKS)}
+{chr(10).join(f'        <li><span class="vl-task-icon">{PAGE_ICONS[i]}</span>{t}</li>' for i, t in VOLUNTEER_TASKS)}
       </ul>
       <p><a class="give-way-link vl-guide" href="pet-tips.html">Read the full guide in Pet Tips <span class="give-way-arrow" aria-hidden="true">→</span></a></p>
       {review_note("<p>Who should receive this form, and which volunteer roles does NHS offer directly (or does it point volunteers to the shelters it funds)? Any age or location requirements to mention?</p>")}
@@ -3372,8 +3409,18 @@ VOLUNTEER_BODY = page_hero(
         <legend>How would you like to help?</legend>
 {chr(10).join(f'        <label class="vl-option"><input type="checkbox" name="interest" value="{i}"><span>{i}</span></label>' for i in VOLUNTEER_INTERESTS)}
       </fieldset>
-      <div class="form-row"><label>When are you usually free?</label>
-        <select><option value="">Select one...</option><option>Weekdays</option><option>Weekends</option><option>Evenings</option><option>It varies</option></select>
+      <fieldset class="vl-avail-group">
+        <legend>When are you usually free?</legend>
+        <p class="vl-hint">Tick every time that works for you.</p>
+        <div class="vl-avail">
+          <span></span>
+{chr(10).join(f'          <span class="vl-avail-time">{t}</span>' for t in VOLUNTEER_TIMES)}
+{_VOLUNTEER_SLOTS}
+        </div>
+        <label class="vl-option vl-varies"><input type="checkbox" name="availability" value="It varies"><span>My schedule varies</span></label>
+      </fieldset>
+      <div class="form-row"><label>How often could you help?</label>
+        <select><option value="">Select one...</option>{"".join(f"<option>{o}</option>" for o in VOLUNTEER_HOW_OFTEN)}</select>
       </div>
       <div class="form-row"><label>Anything else we should know?</label><textarea rows="4"></textarea></div>
       <button class="btn btn-primary btn-lg" type="submit">Send my interest <span aria-hidden="true">→</span></button>
