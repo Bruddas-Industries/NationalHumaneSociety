@@ -16,6 +16,9 @@ EIN = "58-2399783"
 ADDRESS_LINES = ["National Humane Society", "406 Suburban DR #364", "Newark, DE 19711"]
 ORDER_LINE = "844-807-4052"
 CUSTOMER_SERVICE = "877-285-0710"
+# The current site's second customer service number: the FAQ gives it next to
+# 877-285-0710, and the Donate form's note gives it on its own.
+CUSTOMER_SERVICE_LOCAL = "302-369-6532"
 EMAIL = "info@nationalhumanesociety.org"
 SOCIAL = [
     ("Instagram", "https://www.instagram.com/nationalhumane/"),
@@ -24,12 +27,9 @@ SOCIAL = [
     ("X", "https://twitter.com/NationalHumane"),
 ]
 
-# Photos from Wikimedia Commons (both cropped):
-# prize-tesla-y.jpg: "26 Tesla Model Y Long Range" by HJUdall, CC0,
-#   https://commons.wikimedia.org/wiki/File:26_Tesla_Model_Y_Long_Range.jpg
-# prize-lucid-gravity.jpg: "Lucid Gravity at Lucid Studio Oslo" by Premeditated,
-#   CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Lucid_Gravity_at_Lucid_Studio_Oslo.jpg
-#   The credit is in the image file's metadata only, not on the page (CJ, 2026-11-01).
+# prize-tesla-y.jpg is from Wikimedia Commons (cropped): "26 Tesla Model Y Long
+#   Range" by HJUdall, CC0, https://commons.wikimedia.org/wiki/File:26_Tesla_Model_Y_Long_Range.jpg
+# prize-lucid-gravity.jpg is the current site's photo again (client, 2026-11-10).
 LIVE_SITE = "https://www.nationalhumanesociety.org"
 
 # ---------------------------------------------------------------------------
@@ -277,7 +277,7 @@ FAQ = [
     ("Who provides the prizes?",
      "<p>Cars are provided by Winner Automobile Group of Delaware and Porsche of Delaware.</p>"),
     ("If I still have questions about the National Humane Society's Sweepstakes or Raffle Plus, who do I contact?",
-     "<p>Send an e-mail to <a href=\"mailto:info@nationalhumanesociety.org\">info@nationalhumanesociety.org</a> or call us at 877-285-0710 and we will gladly clear up any questions you may have!</p>"),
+     "<p>Send an e-mail to <a href=\"mailto:info@nationalhumanesociety.org\">info@nationalhumanesociety.org</a> or call us at 877-285-0710 or 302-369-6532 and we will gladly clear up any questions you may have!</p>"),
 ]
 
 # (name, state, image file or None) in the order shown on /previous-winners.

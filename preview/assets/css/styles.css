@@ -406,7 +406,7 @@ body.header-over-hero .site-header.at-top .brand-logo {
   font-size: 1.3rem;
   line-height: 1.15;
 }
-.ticket-text small { display: block; font-size: .88rem; font-weight: 600; margin-top: 2px; }
+.ticket-text small { display: block; font-size: 1rem; font-weight: 700; margin-top: 2px; }
 .ticket-stub {
   display: flex;
   align-items: center;
@@ -1386,6 +1386,48 @@ body.header-over-hero .site-header.at-top .brand-logo {
 }
 .payment-placeholder strong { display: block; margin-bottom: var(--space-2); }
 .payment-placeholder p { margin: 0; color: var(--color-text-muted); }
+/* Auto-enter future drawings: a card with a switch so it isn't missed */
+.auto-enter {
+  position: relative;
+  display: flex; align-items: center; gap: var(--space-4);
+  margin-top: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 2px solid #f2e3a0;
+  background: #fffbe0;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+.auto-enter:hover { border-color: var(--color-navy); }
+.auto-enter input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+.auto-enter-icon { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: var(--color-yellow); color: var(--color-navy); }
+.auto-enter-icon svg { width: 24px; height: 24px; }
+.auto-enter-text { flex: 1; min-width: 0; }
+.auto-enter-text strong { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.2rem; color: var(--color-navy); }
+.auto-enter-text span { display: block; margin-top: 2px; font-size: .95rem; line-height: 1.5; color: #2b2a45; }
+.auto-enter-switch {
+  flex: none; position: relative;
+  width: 56px; height: 32px; border-radius: 999px;
+  background: #cfd3dc;
+  transition: background .2s ease;
+}
+.auto-enter-switch::after {
+  content: ""; position: absolute; top: 4px; left: 4px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  transition: transform .2s ease;
+}
+.auto-enter input:checked ~ .auto-enter-switch { background: var(--color-coral); }
+.auto-enter input:checked ~ .auto-enter-switch::after { transform: translateX(24px); }
+.auto-enter:has(input:checked) { border-color: var(--color-coral); background: #fff0ef; box-shadow: 0 0 0 4px rgba(250,89,83,.12); }
+.auto-enter:has(input:checked) .auto-enter-icon { background: var(--color-coral); color: #fff; }
+.auto-enter input:focus-visible ~ .auto-enter-switch { outline: 3px solid var(--color-navy); outline-offset: 3px; }
+@media (max-width: 600px) {
+  .auto-enter { padding: var(--space-4); gap: var(--space-3); align-items: flex-start; }
+  .auto-enter-icon { width: 40px; height: 40px; border-radius: 12px; }
+  .auto-enter-icon svg { width: 20px; height: 20px; }
+  .auto-enter-switch { margin-top: 4px; }
+}
 
 /* Winners */
 
@@ -2292,9 +2334,9 @@ a.tier-card:hover .tier-cta span { transform: translateX(4px); }
   border: 0;
   background: transparent;
   border-radius: var(--radius-pill);
-  padding: 10px 26px;
+  padding: 14px 34px;
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: 1.25rem;
   color: var(--color-navy);
   line-height: 1.2;
   transition: background .15s ease, color .15s ease;
@@ -2310,7 +2352,7 @@ a.tier-card:hover .tier-cta span { transform: translateX(4px); }
 .tier-toggle button[aria-selected="true"] small { color: var(--color-yellow); }
 .tier-toggle button[data-tier="raffle-plus"][aria-selected="true"] { background: var(--color-yellow); color: var(--color-navy); }
 .tier-toggle button[data-tier="raffle-plus"][aria-selected="true"] small { color: var(--color-navy); }
-@media (max-width: 600px) { .tier-toggle button { padding: 8px 16px; font-size: .95rem; } }
+@media (max-width: 600px) { .tier-toggle button { padding: 11px 18px; font-size: 1.08rem; } .tier-toggle button small { font-size: .82rem; } }
 
 /* ==========================================================================
    FAQ: questions grouped by topic as cards that open to show the answer,
@@ -2453,7 +2495,7 @@ a.tier-card:hover .tier-cta span { transform: translateX(4px); }
   .hero-actions:has(.ticket) { grid-template-columns: 1fr; }
   .car-sheet-actions { grid-template-columns: 1fr; }
 }
-.ticket-compact .ticket-text small { margin-top: 0; font-size: .82rem; opacity: .85; }
+.ticket-compact .ticket-text small { margin-top: 0; font-size: .98rem; opacity: .95; }
 .sweeps-hero .ticket-navy .ticket-stub { border-left-color: rgba(255,255,255,.4); }
 
 /* ==========================================================================
@@ -4387,6 +4429,11 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
 }
 a.contact-card-value:hover { color: var(--accent); }
 .contact-card-email { font-family: var(--font-body); font-weight: 700; font-size: 1.05rem; }
+/* Second number under the main one (Customer Service's 302 line) */
+.contact-card-alt { display: flex; align-items: baseline; gap: 8px; margin: 4px 0 0; }
+.contact-card-alt span { font-size: .9rem; color: var(--color-text-muted); }
+.contact-card-alt a { font-family: var(--font-display); font-size: 1.15rem; color: var(--color-navy); text-decoration: none; font-variant-numeric: tabular-nums; }
+.contact-card-alt a:hover { color: var(--accent); }
 .contact-card-address { font-family: var(--font-body); font-weight: 600; font-size: 1.1rem; line-height: 1.5; }
 .contact-card-actions { margin-top: auto; padding-top: var(--space-5); display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .contact-action {
@@ -4548,7 +4595,14 @@ a.contact-card-value:hover { color: var(--accent); }
   background: var(--color-navy);
   color: #fff;
   padding: var(--space-6) 0 var(--space-7);
+  /* Always the full screen, so the next section never peeks in below the
+     video (CJ, 2026-11-11); the content sits in the middle */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
+@media (max-width: 700px) { .rh-hero { min-height: 100svh; } }
 .rh-hero > video {
   position: absolute;
   inset: 0;
@@ -4759,4 +4813,203 @@ body.header-over-hero .rh-hero::before {
 }
 @media (prefers-reduced-motion: reduce) {
   .rh-popup, .rh-popup-box { transition: none; }
+}
+
+/* Bigger "Pick your tickets" switch text (client, 2026-11-10) */
+.tier-toggle button small { font-size: .95rem; }
+
+/* Car pages: each model's Sweepstakes and Raffle Plus tickets, bigger
+   (client, 2026-11-10) and as wide as the spec tiles allow */
+.car-sheet-actions { grid-template-columns: minmax(0, 480px); gap: var(--space-3); }
+.car-sheet-actions .ticket-main { padding: 18px var(--space-5); }
+.car-sheet-actions .ticket-text strong { font-size: 1.45rem; }
+.car-sheet-actions .ticket-text small { font-size: 1.05rem; }
+.car-sheet-actions .ticket-stub { padding: 0 var(--space-5); font-size: 1.1rem; }
+@media (max-width: 600px) {
+  .car-sheet-actions { grid-template-columns: 1fr; }
+  .car-sheet-actions .ticket-main { padding: 16px var(--space-4); }
+  .car-sheet-actions .ticket-text strong { font-size: 1.25rem; }
+}
+
+/* ==========================================================================
+   How It Works
+   ========================================================================== */
+.hiw-ways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); max-width: 980px; margin: 0 auto; }
+.hiw-way {
+  display: flex; flex-direction: column; align-items: flex-start;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-top: 6px solid var(--color-navy);
+  box-shadow: var(--shadow-md);
+}
+.hiw-way.is-plus { border-top-color: var(--color-yellow); box-shadow: 0 0 0 4px rgba(251,255,0,.25), var(--shadow-md); }
+.hiw-way h3 { margin: var(--space-4) 0 var(--space-3); font-size: 1.7rem; }
+.hiw-way .list-check { margin-bottom: var(--space-5); }
+.hiw-way .ticket { margin-top: auto; width: 100%; }
+.hiw-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-5); counter-reset: none; }
+.hiw-step { position: relative; padding: var(--space-6) var(--space-5) var(--space-5); border-radius: var(--radius-lg); background: var(--color-mist); }
+.hiw-step .step-num { position: absolute; top: calc(-1 * var(--space-4)); left: var(--space-5); box-shadow: 0 0 0 4px #fff; }
+.hiw-step-icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: #fff; color: var(--color-coral); margin-bottom: var(--space-4); box-shadow: var(--shadow-sm); }
+.hiw-step-icon svg { width: 26px; height: 26px; }
+.hiw-step h3 { font-size: 1.25rem; margin: 0 0 var(--space-2); }
+.hiw-step p { margin: 0; color: var(--color-text-muted); line-height: 1.65; font-size: .95rem; }
+.hiw-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); margin-top: var(--space-5); }
+/* Prize partners line under the two ways to win */
+.hiw-partners {
+  display: flex; align-items: center; gap: var(--space-4);
+  max-width: 980px; margin: var(--space-6) auto 0;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-mist);
+}
+.hiw-partners-icon { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: #fff; color: var(--color-coral); box-shadow: var(--shadow-sm); }
+.hiw-partners-icon svg { width: 28px; height: 28px; }
+.hiw-partners strong { display: block; font-family: var(--font-eyebrow); font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--color-coral-dark); }
+.hiw-partners p { margin: 2px 0 0; font-size: 1.05rem; font-weight: 600; color: var(--color-navy); }
+@media (max-width: 1024px) { .hiw-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--space-7); } }
+@media (max-width: 700px) {
+  .hiw-ways { grid-template-columns: 1fr; }
+  .hiw-steps { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   Monthly Giving
+   ========================================================================== */
+.mg-layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--space-8); align-items: center; }
+.mg-points { list-style: none; margin: var(--space-5) 0 0; padding: 0; display: grid; gap: var(--space-4); }
+.mg-points li { display: flex; gap: var(--space-4); align-items: flex-start; }
+.mg-point-icon { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: #fff0ef; color: var(--color-coral); }
+.mg-point-icon svg { width: 24px; height: 24px; }
+.mg-points strong { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.15rem; color: var(--color-navy); }
+.mg-points p { margin: 2px 0 0; color: var(--color-text-muted); }
+.mg-article {
+  display: grid; grid-template-columns: 240px minmax(0, 1fr);
+  max-width: 860px; margin: 0 auto;
+  border-radius: var(--radius-lg); overflow: hidden;
+  background: #fff; border: 1px solid var(--color-border); box-shadow: var(--shadow-md);
+  color: inherit; text-decoration: none;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.mg-article:hover { text-decoration: none; transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.mg-article-cover.post-cover { aspect-ratio: auto; min-height: 170px; padding: 0; }
+.mg-article-text { display: flex; flex-direction: column; justify-content: center; gap: var(--space-2); padding: var(--space-5) var(--space-6); }
+.mg-article-text strong { font-family: var(--font-display); font-weight: 400; font-size: 1.45rem; line-height: 1.2; color: var(--color-navy); }
+.mg-article-link { font-weight: 700; color: var(--color-coral-dark); }
+.mg-article-link span { display: inline-block; transition: transform .15s ease; }
+.mg-article:hover .mg-article-link span { transform: translateX(4px); }
+.mg-article + .review-note { max-width: 860px; margin: var(--space-6) auto 0; }
+/* Closing: Customer Service and Email cards */
+.mg-contact { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); text-align: left; max-width: 640px; margin: 0 auto; }
+.mg-contact .contact-card { background: var(--color-mist); box-shadow: none; }
+.mg-contact .contact-card:hover { box-shadow: var(--shadow-md); }
+.mg-contact .contact-card-icon { background: #fff; }
+.tips-closing-card .mg-contact + .hiw-actions { margin-top: var(--space-6); }
+@media (max-width: 900px) { .mg-layout { grid-template-columns: 1fr; gap: var(--space-7); } }
+@media (max-width: 600px) {
+  .mg-article { grid-template-columns: 1fr; } .mg-article-cover { min-height: 120px; }
+  .mg-contact { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   Volunteer
+   ========================================================================== */
+.vl-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: var(--space-8); align-items: start; }
+.vl-intro .review-note { margin-top: var(--space-6); }
+/* Where help is needed: small icon tiles, accent colours in turn */
+.vl-tasks { list-style: none; margin: var(--space-5) 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.vl-tasks li {
+  --accent: var(--color-coral); --tint: #fff0ef;
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff;
+  border-left: 4px solid var(--accent);
+  box-shadow: var(--shadow-sm);
+  font-weight: 700; font-size: .98rem; line-height: 1.3; color: var(--color-navy);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.vl-tasks li:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.vl-tasks li:nth-child(4n+2) { --accent: var(--color-teal); --tint: #e6f3f1; }
+.vl-tasks li:nth-child(4n+3) { --accent: var(--color-orange); --tint: #fdf2e3; }
+.vl-tasks li:nth-child(4n+4) { --accent: var(--color-blue); --tint: #e7f3f6; }
+.vl-task-icon { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--tint); color: var(--accent); }
+.vl-task-icon svg { width: 22px; height: 22px; }
+.vl-guide { --accent: var(--color-navy); }
+.vl-form { padding: var(--space-7); background: #fff; border-radius: var(--radius-lg); border-top: 6px solid var(--color-coral); box-shadow: var(--shadow-lg); }
+.vl-form h3 { margin: 0; font-size: 1.6rem; }
+.vl-form-lead { margin: var(--space-2) 0 var(--space-5); color: var(--color-text-muted); }
+.vl-form .grid { gap: var(--space-4); margin-bottom: var(--space-4); }
+.vl-form .grid > * { min-width: 0; }
+.vl-form .form-row { margin-bottom: var(--space-4); }
+.vl-form .grid .form-row { margin-bottom: 0; }
+.vl-form .form-row input, .vl-form .form-row select, .vl-form .form-row textarea { width: 100%; min-width: 0; }
+.vl-form .btn { width: 100%; justify-content: center; }
+/* Form options: cards with an icon that tick when chosen */
+.vl-group { margin: 0 0 var(--space-6); padding: 0; border: 0; min-width: 0; }
+.vl-group legend { margin-bottom: var(--space-1); font-family: var(--font-eyebrow); font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--color-text-muted); }
+.vl-hint { margin: 0 0 var(--space-3); font-size: .9rem; color: var(--color-text-muted); }
+.vl-interests { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+.vl-check { position: relative; display: block; cursor: pointer; min-width: 0; }
+.vl-check input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+.vl-check-card {
+  position: relative;
+  display: flex; align-items: center; gap: 10px;
+  height: 100%;
+  padding: 10px 34px 10px 10px;
+  border-radius: 12px;
+  border: 2px solid var(--color-border);
+  background: #fff;
+  font-weight: 700; font-size: .92rem; line-height: 1.25; color: var(--color-navy);
+  transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+.vl-check-card::after {
+  content: ""; position: absolute; right: 10px; top: 50%;
+  width: 18px; height: 18px; margin-top: -9px;
+  border-radius: 50%; border: 2px solid var(--color-border); background: #fff;
+  display: grid; place-items: center;
+  font-size: .7rem; line-height: 1; color: #fff;
+}
+.vl-check-icon { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--color-mist); color: var(--color-navy); transition: background .15s ease, color .15s ease; }
+.vl-check-icon svg { width: 19px; height: 19px; }
+.vl-check:hover .vl-check-card { border-color: var(--color-coral); }
+.vl-check input:checked + .vl-check-card { border-color: var(--color-coral); background: #fff0ef; box-shadow: 0 2px 10px rgba(250,89,83,.15); }
+.vl-check input:checked + .vl-check-card .vl-check-icon { background: var(--color-coral); color: #fff; }
+.vl-check input:checked + .vl-check-card::after { content: "✓"; border-color: var(--color-coral); background: var(--color-coral); }
+.vl-check input:focus-visible + .vl-check-card { outline: 3px solid var(--color-navy); outline-offset: 2px; }
+/* Availability: a row per weekdays / weekends, three time cards in each */
+.vl-avail-row { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: var(--space-3); align-items: center; }
+.vl-avail-row + .vl-avail-row { margin-top: var(--space-2); }
+.vl-avail-day { font-weight: 700; font-size: .95rem; color: var(--color-navy); }
+.vl-avail-slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); }
+.vl-check.is-slot .vl-check-card { flex-direction: column; justify-content: center; gap: 6px; padding: 12px 6px; text-align: center; font-size: .85rem; }
+.vl-check.is-slot .vl-check-card::after { top: 6px; right: 6px; margin-top: 0; width: 16px; height: 16px; }
+@media (max-width: 600px) {
+  .vl-avail-row { grid-template-columns: 1fr; gap: var(--space-2); }
+  .vl-avail-row + .vl-avail-row { margin-top: var(--space-3); }
+}
+@media (max-width: 900px) { .vl-layout { grid-template-columns: 1fr; gap: var(--space-7); } }
+@media (max-width: 600px) {
+  .vl-form { padding: var(--space-5) var(--space-4); }
+  .vl-tasks { gap: var(--space-2); }
+  .vl-tasks li { padding: 10px; gap: 10px; font-size: .9rem; hyphens: none; }
+  .vl-task-icon { width: 34px; height: 34px; border-radius: 10px; }
+  .vl-task-icon svg { width: 19px; height: 19px; }
+  .vl-form .grid-2 { grid-template-columns: 1fr; }
+}
+
+/* Phone numbers never break across lines */
+a[href^="tel:"] { white-space: nowrap; }
+@media (max-width: 600px) {
+  /* Volunteer options: icon over the label, so two cards fit side by side */
+  .vl-check-card { flex-direction: column; justify-content: center; gap: 6px; padding: 14px 8px 12px; text-align: center; font-size: .88rem; }
+  .vl-check-card::after { top: 6px; right: 6px; margin-top: 0; width: 16px; height: 16px; }
+  /* Auto-enter: icon, title and switch on one row, the sentence under them */
+  .auto-enter { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "icon title switch" "text text text"; align-items: center; row-gap: var(--space-3); }
+  .auto-enter-icon { grid-area: icon; }
+  .auto-enter-text { display: contents; }
+  .auto-enter-text strong { grid-area: title; font-size: 1.1rem; line-height: 1.2; }
+  .auto-enter-text span { grid-area: text; margin: 0; }
+  .auto-enter-switch { grid-area: switch; margin-top: 0; }
 }
