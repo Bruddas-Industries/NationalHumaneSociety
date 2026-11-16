@@ -40,15 +40,15 @@ NAV = [
     ("Sweepstakes", "sweepstakes.html", [
         ("Sweepstakes", "sweepstakes.html", "live"),
         ("Raffle Plus", "raffle-plus.html", "live"),
-        ("How It Works", "how-it-works.html", "new"),
+        ("How It Works", "how-it-works.html", "live"),
         ("FAQ", "faq.html", "live"),
         ("Rules", "sweepstakes-rules.html", "live"),
         ("Previous Winners", "previous-winners.html", "live"),
     ]),
     ("Get Involved", "donate.html", [
         ("Donate", "donate.html", "live"),
-        ("Monthly Giving", "monthly-giving.html", "proposed"),
-        ("Volunteer", "volunteer.html", "proposed"),
+        ("Monthly Giving", "monthly-giving.html", "live"),
+        ("Volunteer", "volunteer.html", "live"),
     ]),
     ("Wills &amp; Estates", "wills-estates.html", []),
     ("Resources", "blog.html", [
@@ -3470,14 +3470,16 @@ PAGES = [
 ] + [
     (f"{p[1]} Sweepstakes", p[0], prize_body(p), "live") for p in C.PRIZES
 ] + [
-    ("How It Works", "how-it-works.html", HOW_IT_WORKS_BODY, "new"),
+    # NHS confirmed How It Works, Monthly Giving and Volunteer are staying
+    # (2026-11-16), so they are no longer tagged Proposed.
+    ("How It Works", "how-it-works.html", HOW_IT_WORKS_BODY, "live"),
     ("FAQ", "faq.html", FAQ_BODY, "live"),
     ("Sweepstakes & Raffle Rules", "sweepstakes-rules.html", RULES_BODY, "live"),
     ("Previous Winners", "previous-winners.html", WINNERS_BODY, "live"),
     ("Donate", "donate.html", DONATE_BODY, "live"),
-    ("Monthly Giving", "monthly-giving.html", MONTHLY_BODY, "proposed"),
+    ("Monthly Giving", "monthly-giving.html", MONTHLY_BODY, "live"),
     ("Wills & Estates", "wills-estates.html", WILLS_BODY, "live"),
-    ("Volunteer", "volunteer.html", VOLUNTEER_BODY, "proposed"),
+    ("Volunteer", "volunteer.html", VOLUNTEER_BODY, "live"),
     ("Educational Messages", "blog.html", BLOG_BODY, "live"),
     ("How Your $10 Monthly Donation Really Helps Shelter Animals", "blog-post.html", BLOG_POST_BODY, "live"),
     ("Videos and More", "videos-and-more.html", VIDEOS_BODY, "live"),
