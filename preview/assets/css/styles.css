@@ -1386,6 +1386,48 @@ body.header-over-hero .site-header.at-top .brand-logo {
 }
 .payment-placeholder strong { display: block; margin-bottom: var(--space-2); }
 .payment-placeholder p { margin: 0; color: var(--color-text-muted); }
+/* Auto-enter future drawings: a card with a switch so it isn't missed */
+.auto-enter {
+  position: relative;
+  display: flex; align-items: center; gap: var(--space-4);
+  margin-top: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 2px solid #f2e3a0;
+  background: #fffbe0;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+.auto-enter:hover { border-color: var(--color-navy); }
+.auto-enter input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+.auto-enter-icon { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: var(--color-yellow); color: var(--color-navy); }
+.auto-enter-icon svg { width: 24px; height: 24px; }
+.auto-enter-text { flex: 1; min-width: 0; }
+.auto-enter-text strong { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.2rem; color: var(--color-navy); }
+.auto-enter-text span { display: block; margin-top: 2px; font-size: .95rem; line-height: 1.5; color: #2b2a45; }
+.auto-enter-switch {
+  flex: none; position: relative;
+  width: 56px; height: 32px; border-radius: 999px;
+  background: #cfd3dc;
+  transition: background .2s ease;
+}
+.auto-enter-switch::after {
+  content: ""; position: absolute; top: 4px; left: 4px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  transition: transform .2s ease;
+}
+.auto-enter input:checked ~ .auto-enter-switch { background: var(--color-coral); }
+.auto-enter input:checked ~ .auto-enter-switch::after { transform: translateX(24px); }
+.auto-enter:has(input:checked) { border-color: var(--color-coral); background: #fff0ef; box-shadow: 0 0 0 4px rgba(250,89,83,.12); }
+.auto-enter:has(input:checked) .auto-enter-icon { background: var(--color-coral); color: #fff; }
+.auto-enter input:focus-visible ~ .auto-enter-switch { outline: 3px solid var(--color-navy); outline-offset: 3px; }
+@media (max-width: 600px) {
+  .auto-enter { padding: var(--space-4); gap: var(--space-3); align-items: flex-start; }
+  .auto-enter-icon { width: 40px; height: 40px; border-radius: 12px; }
+  .auto-enter-icon svg { width: 20px; height: 20px; }
+  .auto-enter-switch { margin-top: 4px; }
+}
 
 /* Winners */
 
@@ -4387,6 +4429,11 @@ a.short-card:not(.thumb-ready)::after { opacity: 0; }
 }
 a.contact-card-value:hover { color: var(--accent); }
 .contact-card-email { font-family: var(--font-body); font-weight: 700; font-size: 1.05rem; }
+/* Second number under the main one (Customer Service's 302 line) */
+.contact-card-alt { display: flex; align-items: baseline; gap: 8px; margin: 4px 0 0; }
+.contact-card-alt span { font-size: .9rem; color: var(--color-text-muted); }
+.contact-card-alt a { font-family: var(--font-display); font-size: 1.15rem; color: var(--color-navy); text-decoration: none; font-variant-numeric: tabular-nums; }
+.contact-card-alt a:hover { color: var(--accent); }
 .contact-card-address { font-family: var(--font-body); font-weight: 600; font-size: 1.1rem; line-height: 1.5; }
 .contact-card-actions { margin-top: auto; padding-top: var(--space-5); display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .contact-action {
@@ -4899,44 +4946,49 @@ body.header-over-hero .rh-hero::before {
 .vl-form .grid .form-row { margin-bottom: 0; }
 .vl-form .form-row input, .vl-form .form-row select, .vl-form .form-row textarea { width: 100%; min-width: 0; }
 .vl-form .btn { width: 100%; justify-content: center; }
-.vl-options { margin: 0 0 var(--space-5); padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.vl-options legend { margin-bottom: var(--space-3); font-family: var(--font-eyebrow); font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--color-text-muted); }
-.vl-option { position: relative; cursor: pointer; }
-.vl-option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.vl-option span {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 9px 16px; border-radius: var(--radius-pill);
-  border: 2px solid var(--color-border); background: #fff;
-  font-weight: 700; font-size: .92rem; color: var(--color-navy);
-  transition: border-color .15s ease, background .15s ease, color .15s ease;
-}
-.vl-option span::before { content: "+"; font-weight: 700; color: var(--color-coral); }
-.vl-option:hover span { border-color: var(--color-coral); }
-.vl-option input:checked + span { border-color: var(--color-coral); background: var(--color-coral); color: #fff; }
-.vl-option input:checked + span::before { content: "✓"; color: #fff; }
-.vl-option input:focus-visible + span { outline: 3px solid var(--color-navy); outline-offset: 2px; }
-/* Availability: a days x times grid of tick boxes */
-.vl-avail-group { margin: 0 0 var(--space-5); padding: 0; border: 0; min-width: 0; }
-.vl-avail-group legend { margin-bottom: var(--space-1); font-family: var(--font-eyebrow); font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--color-text-muted); }
+/* Form options: cards with an icon that tick when chosen */
+.vl-group { margin: 0 0 var(--space-6); padding: 0; border: 0; min-width: 0; }
+.vl-group legend { margin-bottom: var(--space-1); font-family: var(--font-eyebrow); font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--color-text-muted); }
 .vl-hint { margin: 0 0 var(--space-3); font-size: .9rem; color: var(--color-text-muted); }
-.vl-avail { display: grid; grid-template-columns: auto repeat(3, minmax(0, 1fr)); gap: var(--space-2); align-items: center; margin-bottom: var(--space-3); }
-.vl-avail-time { text-align: center; font-weight: 700; font-size: .85rem; color: var(--color-navy); }
-.vl-avail-day { padding-right: var(--space-2); font-weight: 700; font-size: .92rem; color: var(--color-navy); }
-.vl-slot { position: relative; cursor: pointer; display: block; }
-.vl-slot input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.vl-slot span {
-  display: grid; place-items: center; height: 44px;
+.vl-interests { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+.vl-check { position: relative; display: block; cursor: pointer; min-width: 0; }
+.vl-check input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+.vl-check-card {
+  position: relative;
+  display: flex; align-items: center; gap: 10px;
+  height: 100%;
+  padding: 10px 34px 10px 10px;
   border-radius: 12px;
-  border: 2px solid var(--color-border); background: var(--color-mist);
-  font-size: 0; font-weight: 700;
-  transition: border-color .15s ease, background .15s ease, color .15s ease;
+  border: 2px solid var(--color-border);
+  background: #fff;
+  font-weight: 700; font-size: .92rem; line-height: 1.25; color: var(--color-navy);
+  transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
 }
-.vl-slot span::before { content: "+"; font-size: 1.15rem; color: var(--color-coral); }
-.vl-slot:hover span { border-color: var(--color-coral); }
-.vl-slot input:checked + span { border-color: var(--color-coral); background: var(--color-coral); }
-.vl-slot input:checked + span::before { content: "✓"; color: #fff; }
-.vl-slot input:focus-visible + span { outline: 3px solid var(--color-navy); outline-offset: 2px; }
-.vl-varies { display: inline-block; }
+.vl-check-card::after {
+  content: ""; position: absolute; right: 10px; top: 50%;
+  width: 18px; height: 18px; margin-top: -9px;
+  border-radius: 50%; border: 2px solid var(--color-border); background: #fff;
+  display: grid; place-items: center;
+  font-size: .7rem; line-height: 1; color: #fff;
+}
+.vl-check-icon { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--color-mist); color: var(--color-navy); transition: background .15s ease, color .15s ease; }
+.vl-check-icon svg { width: 19px; height: 19px; }
+.vl-check:hover .vl-check-card { border-color: var(--color-coral); }
+.vl-check input:checked + .vl-check-card { border-color: var(--color-coral); background: #fff0ef; box-shadow: 0 2px 10px rgba(250,89,83,.15); }
+.vl-check input:checked + .vl-check-card .vl-check-icon { background: var(--color-coral); color: #fff; }
+.vl-check input:checked + .vl-check-card::after { content: "✓"; border-color: var(--color-coral); background: var(--color-coral); }
+.vl-check input:focus-visible + .vl-check-card { outline: 3px solid var(--color-navy); outline-offset: 2px; }
+/* Availability: a row per weekdays / weekends, three time cards in each */
+.vl-avail-row { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: var(--space-3); align-items: center; }
+.vl-avail-row + .vl-avail-row { margin-top: var(--space-2); }
+.vl-avail-day { font-weight: 700; font-size: .95rem; color: var(--color-navy); }
+.vl-avail-slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); }
+.vl-check.is-slot .vl-check-card { flex-direction: column; justify-content: center; gap: 6px; padding: 12px 6px; text-align: center; font-size: .85rem; }
+.vl-check.is-slot .vl-check-card::after { top: 6px; right: 6px; margin-top: 0; width: 16px; height: 16px; }
+@media (max-width: 600px) {
+  .vl-avail-row { grid-template-columns: 1fr; gap: var(--space-2); }
+  .vl-avail-row + .vl-avail-row { margin-top: var(--space-3); }
+}
 @media (max-width: 900px) { .vl-layout { grid-template-columns: 1fr; gap: var(--space-7); } }
 @media (max-width: 600px) {
   .vl-form { padding: var(--space-5) var(--space-4); }
@@ -4945,4 +4997,19 @@ body.header-over-hero .rh-hero::before {
   .vl-task-icon { width: 34px; height: 34px; border-radius: 10px; }
   .vl-task-icon svg { width: 19px; height: 19px; }
   .vl-form .grid-2 { grid-template-columns: 1fr; }
+}
+
+/* Phone numbers never break across lines */
+a[href^="tel:"] { white-space: nowrap; }
+@media (max-width: 600px) {
+  /* Volunteer options: icon over the label, so two cards fit side by side */
+  .vl-check-card { flex-direction: column; justify-content: center; gap: 6px; padding: 14px 8px 12px; text-align: center; font-size: .88rem; }
+  .vl-check-card::after { top: 6px; right: 6px; margin-top: 0; width: 16px; height: 16px; }
+  /* Auto-enter: icon, title and switch on one row, the sentence under them */
+  .auto-enter { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "icon title switch" "text text text"; align-items: center; row-gap: var(--space-3); }
+  .auto-enter-icon { grid-area: icon; }
+  .auto-enter-text { display: contents; }
+  .auto-enter-text strong { grid-area: title; font-size: 1.1rem; line-height: 1.2; }
+  .auto-enter-text span { grid-area: text; margin: 0; }
+  .auto-enter-switch { grid-area: switch; margin-top: 0; }
 }

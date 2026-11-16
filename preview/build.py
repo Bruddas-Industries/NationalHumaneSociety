@@ -64,6 +64,12 @@ NAV = [
 
 # "new" pages are tagged Proposed too, like the others (CJ, 2026-11-11); only
 # the banner says they are written from facts on the current site.
+def cs_numbers():
+    """Both customer service numbers, as links, for use inside a sentence."""
+    return (f'<a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a> or '
+            f'<a href="{tel(C.CUSTOMER_SERVICE_LOCAL)}">{C.CUSTOMER_SERVICE_LOCAL}</a>')
+
+
 STATUS_TAG = {"new": "Proposed", "proposed": "Proposed"}
 
 # Hidden at CJ's request (2026-10-13 and 2026-10-15) until NHS supplies real
@@ -171,7 +177,7 @@ def render_footer():
         <p style="font-size:.9rem; color:rgba(255,255,255,.7)">A 501(c)(3) non-profit, tax-exempt charity dedicated to improving the lives of rescue animals across America.</p>
         <p style="font-size:.85rem; margin-top:1rem">
           Order Line: <a href="{tel(C.ORDER_LINE)}">{C.ORDER_LINE}</a><br>
-          Customer Service: <a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a><br>
+          Customer Service: {cs_numbers()}<br>
           <a href="mailto:{C.EMAIL}">{C.EMAIL}</a>
         </p>
         <p style="font-size:.85rem">{address}</p>
@@ -460,7 +466,15 @@ def entry_form(kind):
     step_payment = f"""        <fieldset class="entry-step">
           <legend><span class="step-num">4</span> Your payment information</legend>
 {PAYMENT_BLOCK}
-          <label class="check-item" style="margin-top:var(--space-4)"><input type="checkbox"> I want to automatically be entered into future raffles with this payment information.</label>
+          <label class="auto-enter">
+            <input type="checkbox" name="auto_enter">
+            <span class="auto-enter-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg></span>
+            <span class="auto-enter-text">
+              <strong>Never miss a drawing</strong>
+              <span>I want to automatically be entered into future raffles with this payment information.</span>
+            </span>
+            <span class="auto-enter-switch" aria-hidden="true"></span>
+          </label>
         </fieldset>"""
     summary = f"""          <h3>Your entry</h3>
           <dl>
@@ -474,7 +488,7 @@ def entry_form(kind):
             <li>Ticket number(s) emailed within 48 hours</li>
             <li>No need to be present to win</li>
           </ul>"""
-    footnote = f'          <p class="form-footnote">Please remember to spay or neuter your pets. For any questions, please call us at <a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a>.</p>'
+    footnote = f'          <p class="form-footnote">Please remember to spay or neuter your pets. For any questions, please call us at {cs_numbers()}.</p>'
     if ENTRY_FORM_SPLIT:
         form_class = "entry-form is-split"
         layout = f"""      <div class="entry-steps">
@@ -1635,6 +1649,10 @@ PAGE_ICONS = {k: _PI + v + "</svg>" for k, v in {
     "camera": '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
     "pen": '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
     "box": '<path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7z"/><path d="M3.3 7L12 12l8.7-5M12 22V12"/>',
+    "sunrise": '<path d="M17 18a5 5 0 0 0-10 0"/><path d="M12 2v7M4.2 10.2l1.4 1.4M1 18h2M21 18h2M18.4 11.6l1.4-1.4M23 22H1M8 6l4-4 4 4"/>',
+    "sun": '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>',
+    "moon": '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+    "dots": '<circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/>',
 }.items()}
 
 
@@ -1806,7 +1824,7 @@ FAQ_BODY = page_hero(
       <h3>Still have questions?</h3>
       <p>We will gladly clear up any questions you may have.</p>
       <ul class="faq-contacts">
-        <li><span>Customer Service</span><a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a></li>
+        <li><span>Customer Service</span><a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a><a href="{tel(C.CUSTOMER_SERVICE_LOCAL)}">{C.CUSTOMER_SERVICE_LOCAL}</a></li>
         <li><span>Order Line</span><a href="{tel(C.ORDER_LINE)}">{C.ORDER_LINE}</a></li>
         <li><span>Email</span><a href="mailto:{C.EMAIL}">{C.EMAIL}</a></li>
       </ul>
@@ -1845,7 +1863,7 @@ RULES_BODY = page_hero(
         <li><span>To enter</span><strong>18 or older</strong></li>
         <li><span>To win</span><strong>No need to be present</strong></li>
       </ul>
-      <p>Questions about the rules? Call Customer Service at <a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a>.</p>
+      <p>Questions about the rules? Call Customer Service at {cs_numbers()}.</p>
       <div class="faq-help-actions">
       {ticket("sweepstakes.html#enter", None, "Sweepstakes", None, "ticket-navy ticket-compact")}
       {ticket("raffle-plus.html#enter", None, "Raffle Plus", None, "ticket-yellow ticket-compact")}
@@ -1946,7 +1964,7 @@ DONATE_BODY = page_hero(
 {PAYMENT_BLOCK}
         </div>
         <button type="submit" class="btn btn-primary btn-lg btn-donate donate-cta donate-submit"><span class="donate-heart" aria-hidden="true">♥</span><span class="donate-cta-label">Donate $25 monthly</span></button>
-        <p class="form-footnote">Tax-deductible · 501(c)(3). Please remember to spay or neuter your pets. For any questions, please call us at <a href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a>.</p>
+        <p class="form-footnote">Tax-deductible · 501(c)(3). Please remember to spay or neuter your pets. For any questions, please call us at {cs_numbers()}.</p>
       </div>
     </form>
   </div>
@@ -3134,6 +3152,7 @@ CONTACT_CARD_LIST = [
         <span class="contact-card-icon" aria-hidden="true">{CONTACT_ICONS["headset"]}</span>
         <h3>Customer Service</h3>
         <a class="contact-card-value" href="{tel(C.CUSTOMER_SERVICE)}">{C.CUSTOMER_SERVICE}</a>
+        <p class="contact-card-alt"><span>or</span><a href="{tel(C.CUSTOMER_SERVICE_LOCAL)}">{C.CUSTOMER_SERVICE_LOCAL}</a></p>
         <div class="contact-card-actions"><a class="contact-action" href="{tel(C.CUSTOMER_SERVICE)}">Call now</a></div>
       </article>""",
     f"""      <article class="contact-card is-blue">
@@ -3330,20 +3349,33 @@ MONTHLY_BODY = page_hero(
 VOLUNTEER_TASKS = [("paw", "Dog walking"), ("yarn", "Cat enrichment"), ("drop", "Laundry &amp; dishes"),
                    ("users", "Adoption-day greeters"), ("camera", "Photo &amp; video"),
                    ("pen", "Pet bios &amp; admin"), ("box", "Supply drives"), ("calendar", "Rescue events")]
-VOLUNTEER_INTERESTS = ["Dog walking &amp; exercise", "Cat care &amp; socializing", "Fostering",
-                       "Adoption events", "Fundraising events", "Supply drives",
-                       "Driving animals to the vet or adoptions", "Cleaning &amp; laundry",
-                       "Photo &amp; video", "Writing &amp; social media", "Admin &amp; office help",
-                       "Something else"]
-VOLUNTEER_DAYS = ["Weekdays", "Weekends"]
-VOLUNTEER_TIMES = ["Mornings", "Afternoons", "Evenings"]
-VOLUNTEER_HOW_OFTEN = ["A few hours a month", "About once a week", "Several times a week",
-                       "One-off events only", "Not sure yet"]
-_VOLUNTEER_SLOTS = "\n".join(
-    f'          <span class="vl-avail-day">{d}</span>\n' + "\n".join(
-        f'          <label class="vl-slot"><input type="checkbox" name="availability" value="{d} {t.lower()}" aria-label="{d}, {t.lower()}"><span>✓</span></label>'
-        for t in VOLUNTEER_TIMES)
-    for d in VOLUNTEER_DAYS)
+VOLUNTEER_INTERESTS = [("paw", "Dog walking &amp; exercise"), ("yarn", "Cat care &amp; socializing"),
+                       ("home", "Fostering"), ("users", "Adoption events"), ("heart", "Fundraising events"),
+                       ("box", "Supply drives"), ("car", "Animal transport"), ("drop", "Cleaning &amp; laundry"),
+                       ("camera", "Photo &amp; video"), ("pen", "Writing &amp; social media"),
+                       ("order", "Admin &amp; office help"), ("dots", "Something else")]
+# One availability question (CJ, 2026-11-15: "how often" and "my schedule
+# varies" felt redundant next to it).
+VOLUNTEER_DAYS = [("Weekdays", "Weekday"), ("Weekends", "Weekend")]
+VOLUNTEER_TIMES = [("sunrise", "Mornings"), ("sun", "Afternoons"), ("moon", "Evenings")]
+
+
+def vl_check(name, value, icon, label, cls=""):
+    """A volunteer-form option: a card with an icon that ticks when chosen."""
+    return (f'<label class="vl-check{cls}"><input type="checkbox" name="{name}" value="{value}">'
+            f'<span class="vl-check-card"><span class="vl-check-icon">{PAGE_ICONS[icon]}</span>'
+            f'<span class="vl-check-label">{label}</span></span></label>')
+
+
+_VOLUNTEER_INTEREST_CARDS = "\n".join(
+    f"          {vl_check('interest', label, icon, label)}" for icon, label in VOLUNTEER_INTERESTS)
+_VOLUNTEER_AVAIL_ROWS = "\n".join(
+    f"""        <div class="vl-avail-row">
+          <span class="vl-avail-day">{day}</span>
+          <div class="vl-avail-slots">
+""" + "\n".join(f"            {vl_check('availability', f'{one} {t.lower()}', icon, t, ' is-slot')}" for icon, t in VOLUNTEER_TIMES) + """
+          </div>
+        </div>""" for day, one in VOLUNTEER_DAYS)
 _VOLUNTEER_WAYS = [
     ("clock", "is-coral", C.PET_TIPS_THREE_WAYS[0], ("#volunteer-form", "I\'m interested")),
     ("home", "is-teal", C.PET_TIPS_THREE_WAYS[1], ("pet-tips.html", "Fostering tips")),
@@ -3405,23 +3437,18 @@ VOLUNTEER_BODY = page_hero(
         <div class="form-row"><label>City</label><input type="text" autocomplete="address-level2" required></div>
         <div class="form-row"><label>State</label><input type="text" autocomplete="address-level1" required></div>
       </div>
-      <fieldset class="vl-options">
+      <fieldset class="vl-group">
         <legend>How would you like to help?</legend>
-{chr(10).join(f'        <label class="vl-option"><input type="checkbox" name="interest" value="{i}"><span>{i}</span></label>' for i in VOLUNTEER_INTERESTS)}
-      </fieldset>
-      <fieldset class="vl-avail-group">
-        <legend>When are you usually free?</legend>
-        <p class="vl-hint">Tick every time that works for you.</p>
-        <div class="vl-avail">
-          <span></span>
-{chr(10).join(f'          <span class="vl-avail-time">{t}</span>' for t in VOLUNTEER_TIMES)}
-{_VOLUNTEER_SLOTS}
+        <p class="vl-hint">Choose as many as you like.</p>
+        <div class="vl-interests">
+{_VOLUNTEER_INTEREST_CARDS}
         </div>
-        <label class="vl-option vl-varies"><input type="checkbox" name="availability" value="It varies"><span>My schedule varies</span></label>
       </fieldset>
-      <div class="form-row"><label>How often could you help?</label>
-        <select><option value="">Select one...</option>{"".join(f"<option>{o}</option>" for o in VOLUNTEER_HOW_OFTEN)}</select>
-      </div>
+      <fieldset class="vl-group">
+        <legend>When are you usually free?</legend>
+        <p class="vl-hint">Choose every time that works. Not sure yet? Skip this and tell us below.</p>
+{_VOLUNTEER_AVAIL_ROWS}
+      </fieldset>
       <div class="form-row"><label>Anything else we should know?</label><textarea rows="4"></textarea></div>
       <button class="btn btn-primary btn-lg" type="submit">Send my interest <span aria-hidden="true">→</span></button>
     </form>

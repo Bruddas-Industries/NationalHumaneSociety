@@ -16,6 +16,9 @@ EIN = "58-2399783"
 ADDRESS_LINES = ["National Humane Society", "406 Suburban DR #364", "Newark, DE 19711"]
 ORDER_LINE = "844-807-4052"
 CUSTOMER_SERVICE = "877-285-0710"
+# The current site's second customer service number: the FAQ gives it next to
+# 877-285-0710, and the Donate form's note gives it on its own.
+CUSTOMER_SERVICE_LOCAL = "302-369-6532"
 EMAIL = "info@nationalhumanesociety.org"
 SOCIAL = [
     ("Instagram", "https://www.instagram.com/nationalhumane/"),
@@ -274,7 +277,7 @@ FAQ = [
     ("Who provides the prizes?",
      "<p>Cars are provided by Winner Automobile Group of Delaware and Porsche of Delaware.</p>"),
     ("If I still have questions about the National Humane Society's Sweepstakes or Raffle Plus, who do I contact?",
-     "<p>Send an e-mail to <a href=\"mailto:info@nationalhumanesociety.org\">info@nationalhumanesociety.org</a> or call us at 877-285-0710 and we will gladly clear up any questions you may have!</p>"),
+     "<p>Send an e-mail to <a href=\"mailto:info@nationalhumanesociety.org\">info@nationalhumanesociety.org</a> or call us at 877-285-0710 or 302-369-6532 and we will gladly clear up any questions you may have!</p>"),
 ]
 
 # (name, state, image file or None) in the order shown on /previous-winners.
