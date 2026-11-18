@@ -40,16 +40,15 @@ LIVE_SITE = "https://www.nationalhumanesociety.org"
 # the entry forms, the Rules and the FAQ all read it from here.
 DRAWING_DATE = "December 31, 2026"
 
-# (tickets, sweepstakes price, raffle plus price, most popular?)
-# New prices from the client (call with CJ, 2026-10-29). Each price buys that
-# many tickets outright (the current site's "Buy 1, get 50 free" style is gone).
-# Most Popular stays on the 2,500-ticket bundle, as on the current site.
-# 6,000 tickets: $300 / $400 (client, call with CJ, 2026-11-03).
+# (tickets, bonus tickets, sweepstakes price, raffle plus price, most popular?)
+# Client, call with CJ (2026-11-17): each bundle is paid tickets plus bonus
+# tickets, and Raffle Plus costs $100 more than Sweepstakes for the same bundle.
+# Most Popular is the middle bundle (3 tickets + 2,500 bonus), the one with the
+# 2,500 tickets that was Most Popular before.
 TICKET_TIERS = [
-    (15, 25, 125, False),
-    (50, 35, 135, False),
-    (2500, 100, 200, True),
-    (6000, 300, 400, False),
+    (1, 50, 25, 125, False),
+    (3, 2500, 75, 175, True),
+    (10, 6000, 250, 350, False),
 ]
 
 # Every car a winner can choose: the same list on both entry forms, in the

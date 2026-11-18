@@ -738,3 +738,39 @@
     update();
   });
 })();
+
+// Phone fields format themselves as (826) 555-5555 while typing (client,
+// 2026-11-17). Formatting is partial ("(826) 55") so Backspace always removes
+// a digit, and the caret stays after the same digit when editing mid-number.
+(function () {
+  const format = (digits) => {
+    if (!digits) return '';
+    if (digits.length <= 3) return `(${digits}`;
+    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+  };
+  const clean = (value) => {
+    let digits = value.replace(/\D/g, '');
+    if (digits.length === 11 && digits[0] === '1') digits = digits.slice(1);
+    return digits.slice(0, 10);
+  };
+  document.querySelectorAll('input[type="tel"]').forEach((input) => {
+    input.setAttribute('inputmode', 'tel');
+    input.setAttribute('maxlength', '14');
+    if (!input.placeholder) input.placeholder = '(555) 555-5555';
+    input.setAttribute('pattern', '\\(\\d{3}\\) \\d{3}-\\d{4}');
+    input.setAttribute('title', 'Phone number, like (555) 555-5555');
+    input.addEventListener('input', () => {
+      const caret = input.selectionStart || 0;
+      const digitsBefore = clean(input.value.slice(0, caret)).length;
+      const formatted = format(clean(input.value));
+      input.value = formatted;
+      let pos = 0, seen = 0;
+      while (pos < formatted.length && seen < digitsBefore) {
+        if (/\d/.test(formatted[pos])) seen++;
+        pos++;
+      }
+      if (document.activeElement === input) input.setSelectionRange(pos, pos);
+    });
+  });
+})();

@@ -5013,3 +5013,99 @@ a[href^="tel:"] { white-space: nowrap; }
   .auto-enter-text span { grid-area: text; margin: 0; }
   .auto-enter-switch { grid-area: switch; margin-top: 0; }
 }
+
+/* ==========================================================================
+   Client call 4 (2026-11-17)
+   ========================================================================== */
+/* Three ticket bundles, each with its bonus tickets; bigger numbers and
+   "tickets" word on the price cards and the entry forms */
+.tier-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 960px; margin-left: auto; margin-right: auto; }
+.tier-card h3 { font-size: clamp(2.4rem, 4vw, 3rem); line-height: 1; }
+.tier-card h3 small { margin-top: 6px; font-size: 1.2rem; }
+.tier-free, .ticket-free { display: block; margin: var(--space-2) 0 0; font-weight: 700; font-size: 1rem; line-height: 1.3; color: var(--color-coral-dark); }
+.choice-tickets, .entry-form.is-split .choice-tickets { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ticket-count { font-size: 2.4rem; line-height: 1; }
+.ticket-count small { margin-top: 6px; font-size: 1.1rem; }
+@media (min-width: 1025px) { .entry-form.is-split .choice-tickets { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .tier-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); } }
+@media (max-width: 600px) {
+  .tier-grid, .choice-tickets { gap: var(--space-5) var(--space-2); }
+  .tier-card, .ticket-choice { padding-left: 8px; padding-right: 8px; }
+  .tier-card h3, .ticket-count { font-size: 2rem; }
+  .tier-card h3 small, .ticket-count small { font-size: 1rem; }
+  .tier-free, .ticket-free { font-size: .82rem; }
+  .tier-price, .ticket-price { font-size: 1.6rem; }
+  .tier-card.is-popular .tier-price, .ticket-choice.is-popular .ticket-price { font-size: 1.8rem; }
+  .tier-card .tier-cta { font-size: .9rem; }
+}
+
+/* Most Popular bundle colour (POPULAR_TIER_STYLE in build.py) */
+body.popular-teal .ticket-choice.is-popular,
+body.popular-teal .tier-card.is-popular {
+  background:
+    radial-gradient(circle at 50% -10%, rgba(255,255,255,.25), transparent 62%),
+    linear-gradient(165deg, #33a592, var(--color-teal));
+  box-shadow: 0 0 0 5px rgba(43,137,121,.22), 0 20px 44px rgba(43,137,121,.35);
+}
+body.popular-teal a.tier-card.is-popular:hover { box-shadow: 0 0 0 6px rgba(43,137,121,.3), 0 24px 50px rgba(43,137,121,.4); }
+body.popular-sunny .ticket-choice.is-popular,
+body.popular-sunny .tier-card.is-popular {
+  background: linear-gradient(180deg, #fffde6, #fff6a8);
+  border-color: #e6d600;
+  box-shadow: 0 0 0 5px rgba(251,255,0,.35), 0 20px 44px rgba(24,23,51,.16);
+}
+body.popular-sunny .ticket-choice.is-popular::before,
+body.popular-sunny .tier-card.is-popular::before { border-color: rgba(24,23,51,.18); }
+body.popular-sunny .ticket-choice.is-popular .ticket-count,
+body.popular-sunny .tier-card.is-popular h3 { color: var(--color-navy); }
+body.popular-sunny .ticket-choice.is-popular .ticket-count small,
+body.popular-sunny .tier-card.is-popular h3 small,
+body.popular-sunny .ticket-choice.is-popular .ticket-free,
+body.popular-sunny .tier-card.is-popular .tier-free,
+body.popular-sunny .tier-card.is-popular .tier-cta { color: var(--color-coral-dark); }
+body.popular-sunny .ticket-choice.is-popular .ticket-price,
+body.popular-sunny .tier-card.is-popular .tier-price { color: var(--color-navy); }
+body.popular-sunny .ticket-choice.is-popular .choice-badge,
+body.popular-sunny .tier-card.is-popular .tier-badge { background: var(--color-navy); color: var(--color-yellow); }
+
+/* Raffle home: Sweepstakes gets its own coral highlight, so it is as easy to
+   spot as the yellow Raffle Plus, and the two are the same height */
+.rh-tickets { grid-auto-rows: 1fr; }
+.rh-tickets .ticket-navy {
+  background: linear-gradient(135deg, rgba(250,89,83,.3), rgba(24,23,51,.5) 70%);
+  border: 2px solid var(--color-coral);
+  box-shadow: 0 0 0 4px rgba(250,89,83,.18), 0 14px 40px rgba(250,89,83,.2);
+}
+.rh-tickets .ticket-navy:hover {
+  background: linear-gradient(135deg, rgba(250,89,83,.4), rgba(24,23,51,.6) 70%);
+  box-shadow: 0 0 0 5px rgba(250,89,83,.26), 0 18px 46px rgba(250,89,83,.26);
+}
+.rh-tickets .ticket-navy .ticket-tag { background: var(--color-coral); color: #fff; }
+.rh-tickets .ticket-navy .ticket-stub { background: rgba(250,89,83,.2); color: #fff; border-left: 2px dashed rgba(255,255,255,.55); }
+.rh-tickets .ticket-navy::after { opacity: .3; }
+@media (max-width: 600px) {
+  .rh-tickets .ticket-navy .ticket-stub { border-left: 0; border-top: 2px dashed rgba(255,255,255,.55); }
+}
+
+/* Car pages: each model's tickets bigger again, as wide as the specs */
+.car-sheet-actions { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+.car-sheet-actions .ticket-main { padding: 26px var(--space-6); }
+.car-sheet-actions .ticket-text strong { font-size: 1.9rem; }
+.car-sheet-actions .ticket-stub { padding: 0 var(--space-6); font-size: 1.3rem; }
+@media (max-width: 600px) {
+  .car-sheet-actions .ticket-main { padding: 22px var(--space-4); }
+  .car-sheet-actions .ticket-text strong { font-size: 1.55rem; }
+  .car-sheet-actions .ticket-stub { padding: 0 var(--space-4); font-size: 1.15rem; }
+}
+
+/* How It Works: "No purchase is necessary" in the body font, not bold */
+.hiw-light-title { font-family: var(--font-body); font-weight: 500; letter-spacing: -.01em; }
+
+/* Monthly Giving: "Your monthly gift" cards, then the article */
+.give-ways.mg-manage { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 860px; margin: 0 auto; }
+.mg-manage + .mg-article { margin-top: var(--space-8); }
+@media (max-width: 700px) { .give-ways.mg-manage { grid-template-columns: 1fr; } }
+
+/* Volunteer: facts under the task tiles; note under the submit button */
+.vl-facts { margin-top: var(--space-6); }
+.vl-form-note { margin: var(--space-3) 0 0; text-align: center; }
