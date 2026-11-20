@@ -70,6 +70,11 @@ def cs_numbers():
             f'<a href="{tel(C.CUSTOMER_SERVICE_LOCAL)}">{C.CUSTOMER_SERVICE_LOCAL}</a>')
 
 
+# Colour of the Most Popular ticket bundle (price cards and entry forms). The
+# client found the navy too dark for a "most popular" pick (call with CJ,
+# 2026-11-17). "teal" (default), "sunny" (pale yellow) or "navy" (as before).
+POPULAR_TIER_STYLE = "sunny"
+
 STATUS_TAG = {"new": "Proposed", "proposed": "Proposed"}
 
 # Hidden at CJ's request (2026-10-13 and 2026-10-15) until NHS supplies real
@@ -232,6 +237,8 @@ def page(title, slug, body, status="live", description=None):
     """Returns the full html string for a single page."""
     desc = description or f"{title} — National Humane Society"
     body_class = "is-home" if slug == "index.html" else "is-interior"
+    if POPULAR_TIER_STYLE != "navy":
+        body_class += f" popular-{POPULAR_TIER_STYLE}"
     if slug in HEADER_OVER_HERO:
         body_class += " header-over-hero"
     extra_scripts = "".join(f'<script src="{src}" async></script>\n' if src.startswith("http") else f'<script src="{src}"></script>\n'
@@ -253,7 +260,7 @@ def page(title, slug, body, status="live", description=None):
 <link rel="icon" type="image/png" href="assets/img/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Gayathri:wght@400;700&family=Paytone+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Gayathri:wght@400;700&family=Paytone+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body class="{body_class}">
@@ -335,19 +342,24 @@ def bullet_list(items, cls="list-check"):
     return f'      <ul class="{cls}">\n{lis}\n      </ul>'
 
 
+def ticket_word(n):
+    return "ticket" if n == 1 else "tickets"
+
+
 def ticket_tiers(kind):
     """kind: 'sweepstakes' or 'raffle-plus' — picks the price column and the
     entry page. Each card links to that page's entry form with the bundle
     already selected (nav.js reads ?tickets=)."""
     page = "sweepstakes.html" if kind == "sweepstakes" else "raffle-plus.html"
     cards = []
-    for tickets, sweeps_price, plus_price, popular in C.TICKET_TIERS:
+    for tickets, bonus, sweeps_price, plus_price, popular in C.TICKET_TIERS:
         price = sweeps_price if kind == "sweepstakes" else plus_price
         badge = '<span class="tier-badge"><span aria-hidden="true">★</span> Most Popular</span>' if popular else ""
         cls = "tier-card is-popular" if popular else "tier-card"
         cards.append(f"""      <a class="{cls}" href="{page}?tickets={tickets}#enter">
         {badge}
-        <h3>{tickets:,}<small>tickets</small></h3>
+        <h3>{tickets:,}<small>{ticket_word(tickets)}</small></h3>
+        <p class="tier-free">+ {bonus:,} bonus tickets</p>
         <p class="tier-price">${price}</p>
         <span class="tier-cta">Choose <span aria-hidden="true">→</span></span>
       </a>""")
@@ -375,14 +387,15 @@ PERSON_FIELDS = """        <div class="form-row"><label>Full name</label><input 
 def ticket_choices(kind):
     """Ticket bundles as selectable cards (radio inputs) for the entry form."""
     cards = []
-    for tickets, sweeps_price, plus_price, popular in C.TICKET_TIERS:
+    for tickets, bonus, sweeps_price, plus_price, popular in C.TICKET_TIERS:
         price = sweeps_price if kind == "sweepstakes" else plus_price
         badge = '<span class="choice-badge"><span aria-hidden="true">★</span> Most Popular</span>' if popular else ""
         cls = "choice-card ticket-choice is-popular" if popular else "choice-card ticket-choice"
         cards.append(f"""            <label class="{cls}">
-              <input type="radio" name="tickets" value="{tickets}" data-price="{price}" data-label="{tickets:,} tickets" required>
+              <input type="radio" name="tickets" value="{tickets}" data-price="{price}" data-label="{tickets:,} {ticket_word(tickets)} + {bonus:,} bonus tickets" required>
               {badge}
-              <span class="ticket-count">{tickets:,}<small>tickets</small></span>
+              <span class="ticket-count">{tickets:,}<small>{ticket_word(tickets)}</small></span>
+              <span class="ticket-free">+ {bonus:,} bonus tickets</span>
               <span class="ticket-price">${price}</span>
             </label>""")
     return "\n".join(cards)
@@ -637,7 +650,8 @@ def prize_cards(cash=SWEEPS_CASH, slugs=None, cash_row=False):
 
 def ticket(href, tag, title, detail, variant):
     """A call-to-action shaped like a raffle ticket: the "Enter now" stub is
-    split off by a perforation. variant: 'ticket-yellow' or 'ticket-navy',
+    split off by a perforation. No ticket shows a "Tickets from $x" line any
+    more (client, call with CJ, 2026-11-17); detail is None or other text. variant: 'ticket-yellow' or 'ticket-navy',
     plus 'ticket-hero' (sits on the video) or 'ticket-stacked' (tag above title)."""
     tag_html = f'<span class="ticket-tag">{tag}</span>\n        ' if tag else ""
     detail_html = f"<small>{detail}</small>" if detail else ""
@@ -649,14 +663,14 @@ def ticket(href, tag, title, detail, variant):
     </a>"""
 
 
-_ONE_TICKET = C.TICKET_TIERS[0]  # (tickets, sweepstakes $, raffle plus $, popular)
+_ONE_TICKET = C.TICKET_TIERS[0]  # (tickets, bonus, sweepstakes $, raffle plus $, popular)
 # Used on Previous Winners, whose section heading already gives the drawing
 # date, so the tickets leave it out (CJ, 2026-10-19).
 SWEEPS_CTA = f"""    <div class="cta-pair">
     {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000",
-            f"Tickets from ${_ONE_TICKET[2]}", "ticket-yellow ticket-stacked")}
+            None, "ticket-yellow ticket-stacked")}
     {ticket("sweepstakes.html", "Sweepstakes", "Win one car or $50,000",
-            f"Tickets from ${_ONE_TICKET[1]}", "ticket-navy ticket-stacked")}
+            None, "ticket-navy ticket-stacked")}
     </div>"""
 
 # Prize pages list Sweepstakes before Raffle Plus everywhere (hero buttons,
@@ -664,9 +678,9 @@ SWEEPS_CTA = f"""    <div class="cta-pair">
 # it stacks Sweepstakes first on small screens too. Other pages keep SWEEPS_CTA.
 SWEEPS_CTA_SWEEPS_FIRST = f"""    <div class="cta-pair">
     {ticket("sweepstakes.html", "Sweepstakes", "Win one car or $50,000",
-            f"Tickets from ${_ONE_TICKET[1]} · Drawing {C.DRAWING_DATE}", "ticket-navy ticket-stacked")}
+            f"Drawing {C.DRAWING_DATE}", "ticket-navy ticket-stacked")}
     {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000",
-            f"Tickets from ${_ONE_TICKET[2]} · Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-stacked")}
+            f"Drawing {C.DRAWING_DATE}", "ticket-yellow ticket-stacked")}
     </div>"""
 
 # Hidden on 2026-10-19 at CJ's request: the Enter now ticket pair at the bottom
@@ -1025,9 +1039,9 @@ HOME_BODY = f"""
     </div>
     <div class="cta-pair">
     {ticket("raffle-plus.html", "Raffle Plus", "Win two cars or $100,000",
-            f"Tickets from ${_ONE_TICKET[2]}", "ticket-yellow ticket-stacked ticket-featured")}
+            None, "ticket-yellow ticket-stacked ticket-featured")}
     {ticket("sweepstakes.html", "Sweepstakes", "Win one car or $50,000",
-            f"Tickets from ${_ONE_TICKET[1]}", "ticket-navy ticket-stacked")}
+            None, "ticket-navy ticket-stacked")}
     </div>
     <div style="margin-top:var(--space-7)">
 {prize_cards(cash=RAFFLE_CASH, slugs=HOME_PRIZES)}
@@ -1284,7 +1298,6 @@ DONATIONS_BODY = page_hero(
       <h2>Below are some of the recent animals your generous donations have helped.</h2>
       <a class="btn btn-primary btn-lg btn-donate" href="donate.html" style="margin-top:var(--space-4)"><span class="donate-heart" aria-hidden="true">♥</span>Donate Today</a>
     </div>
-    {review_note("<p>Cupcake's letter is published on the current site alongside a photo of the family's credit statement. The photo is left out here, and the letter itself is a request for help rather than an outcome — worth deciding whether it stays.</p>")}
     <div class="story-list">
 {chr(10).join(story_long(st, i) for i, st in enumerate(C.STORIES))}
     </div>
@@ -1390,7 +1403,7 @@ RAFFLE_BODY = sweeps_hero(
 </section>
 """ + upsell(
     "Sweepstakes",
-    f"Happy with one car? Sweepstakes tickets start at ${C.TICKET_TIERS[0][1]} and win one car or $50,000.",
+    f"Happy with one car? Sweepstakes tickets start at ${C.TICKET_TIERS[0][2]} and win one car or $50,000.",
     "See Sweepstakes →",
     "sweepstakes.html",
 ) + entry_form("raffle-plus") + winners_strip()
@@ -1463,8 +1476,8 @@ RAFFLE_HOME_BODY = f"""
         <h1>Two ways to win</h1>
         <p class="lead">Pick from Porsche, Corvette, Tesla and more, or take the cash. Every entry supports our mission.</p>
         <div class="rh-tickets">
-          {ticket("raffle-plus.html#enter", "Raffle Plus", "Win two cars or $100,000", f"Tickets from ${_ONE_TICKET[2]}", "ticket-yellow ticket-stacked")}
-          {ticket("sweepstakes.html#enter", "Sweepstakes", "Win one car or $50,000", f"Tickets from ${_ONE_TICKET[1]}", "ticket-navy ticket-stacked")}
+          {ticket("raffle-plus.html#enter", "Raffle Plus", "Win two cars or $100,000", None, "ticket-yellow ticket-stacked")}
+          {ticket("sweepstakes.html#enter", "Sweepstakes", "Win one car or $50,000", None, "ticket-navy ticket-stacked")}
         </div>
       </div>
       <div class="rh-cars">
@@ -1545,8 +1558,8 @@ def car_sheet(i, name, year, image, specs):
         </dl>
         <p class="car-sheet-win">Win this car with</p>
         <div class="car-sheet-actions">
-          {ticket(f"sweepstakes.html{pick}#enter", None, "Sweepstakes", f"From ${C.TICKET_TIERS[0][1]}", "ticket-navy ticket-compact")}
-          {ticket(f"raffle-plus.html{pick}#enter", None, "Raffle Plus", f"From ${C.TICKET_TIERS[0][2]}", "ticket-yellow ticket-compact")}
+          {ticket(f"sweepstakes.html{pick}#enter", None, "Sweepstakes", None, "ticket-navy ticket-compact")}
+          {ticket(f"raffle-plus.html{pick}#enter", None, "Raffle Plus", None, "ticket-yellow ticket-compact")}
         </div>
       </div>
     </article>"""
@@ -1652,6 +1665,7 @@ PAGE_ICONS = {k: _PI + v + "</svg>" for k, v in {
     "sunrise": '<path d="M17 18a5 5 0 0 0-10 0"/><path d="M12 2v7M4.2 10.2l1.4 1.4M1 18h2M21 18h2M18.4 11.6l1.4-1.4M23 22H1M8 6l4-4 4 4"/>',
     "sun": '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>',
     "moon": '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+    "park": '<path d="M12 2l6 9h-3l4 6H5l4-6H6z"/><path d="M12 17v5"/>',
     "dots": '<circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/>',
 }.items()}
 
@@ -1716,7 +1730,7 @@ HOW_IT_WORKS_BODY = page_hero(
           <li>Any one car from the prize list</li>
           <li>Or $50,000 cash instead</li>
         </ul>
-        {ticket("sweepstakes.html#enter", None, "Sweepstakes", f"From ${C.TICKET_TIERS[0][1]}", "ticket-navy ticket-compact")}
+        {ticket("sweepstakes.html#enter", None, "Sweepstakes", None, "ticket-navy ticket-compact")}
       </article>
       <article class="hiw-way is-plus">
         <span class="ticket-tag">Raffle Plus</span>
@@ -1726,7 +1740,7 @@ HOW_IT_WORKS_BODY = page_hero(
           <li>Or one car and $50,000</li>
           <li>Or $100,000 cash</li>
         </ul>
-        {ticket("raffle-plus.html#enter", None, "Raffle Plus", f"From ${C.TICKET_TIERS[0][2]}", "ticket-yellow ticket-compact")}
+        {ticket("raffle-plus.html#enter", None, "Raffle Plus", None, "ticket-yellow ticket-compact")}
       </article>
     </div>
     <div class="hiw-partners">
@@ -1763,7 +1777,7 @@ HOW_IT_WORKS_BODY = page_hero(
   <div class="container">
     <div class="tips-closing-card">
       <p class="eyebrow">Good to know</p>
-      <h2>No purchase is necessary</h2>
+      <h2 class="hiw-light-title">No purchase is necessary</h2>
       <p class="tips-closing-text">To enter without buying a ticket, send a self-addressed stamped envelope to NHS, {", ".join(C.ADDRESS_LINES[1:])}.</p>
       <div class="hiw-actions">
         <a class="btn btn-primary" href="sweepstakes-rules.html">Read the full rules</a>
@@ -1859,7 +1873,7 @@ RULES_BODY = page_hero(
       <h3>At a glance</h3>
       <ul class="faq-contacts">
         <li><span>Next drawing</span><strong>{C.DRAWING_DATE}</strong></li>
-        <li><span>Tickets</span><strong>From ${C.TICKET_TIERS[0][1]} · Raffle Plus from ${C.TICKET_TIERS[0][2]}</strong></li>
+        <li><span>Tickets</span><strong>From ${C.TICKET_TIERS[0][2]} · Raffle Plus from ${C.TICKET_TIERS[0][3]}</strong></li>
         <li><span>To enter</span><strong>18 or older</strong></li>
         <li><span>To win</span><strong>No need to be present</strong></li>
       </ul>
@@ -3242,7 +3256,9 @@ CONTACT_BODY = page_hero(
 # Bracketed values are placeholders that need real numbers from NHS.
 # ---------------------------------------------------------------------------
 
-# --- MONTHLY GIVING (proposed) ----------------------------------------------
+# --- MONTHLY GIVING ----------------------------------------------------------
+# Thank-you email each month; change, cancel or ask by phone or by mail
+# (client, call with CJ, 2026-11-17).
 # Kept and filled out (client, call with CJ, 2026-11-10). Facts from the
 # Donate page, the mission and the Educational Messages article; what NHS has
 # to confirm is in the review note.
@@ -3264,7 +3280,7 @@ MONTHLY_BODY = page_hero(
   <div class="container mg-layout">
     <div>
       <p class="eyebrow">Why give monthly</p>
-      <h2>Steady support for animals in need</h2>
+      <h2>Ongoing support for animals in need</h2>
       <p class="lead">For over 25 years, the National Humane Society has worked to put an end to animal abuse and neglect. A monthly gift is support we can count on, month after month.</p>
       <ul class="mg-points">
 {_MONTHLY_POINTS}
@@ -3312,6 +3328,23 @@ MONTHLY_BODY = page_hero(
 
 <section class="section">
   <div class="container">
+    <div class="text-center" style="max-width:760px; margin:0 auto var(--space-6)">
+      <p class="eyebrow">Good to know</p>
+      <h2>Your monthly gift</h2>
+    </div>
+    <div class="give-ways mg-manage">
+      <article class="give-way is-teal">
+        <span class="give-way-icon" aria-hidden="true">{PAGE_ICONS["mail"]}</span>
+        <h3>A thank-you every month</h3>
+        <p>Each month we email you a thank-you confirming that month\'s donation.</p>
+      </article>
+      <article class="give-way is-coral">
+        <span class="give-way-icon" aria-hidden="true">{PAGE_ICONS["repeat"]}</span>
+        <h3>Change or cancel anytime</h3>
+        <p>Call Customer Service at {cs_numbers()}, or send us a letter by mail.</p>
+        <div class="give-way-actions"><a class="give-way-link" href="#mg-help">Ways to reach us <span class="give-way-arrow" aria-hidden="true">→</span></a></div>
+      </article>
+    </div>
     <a class="mg-article" href="blog-post.html">
       <span class="mg-article-cover post-cover is-coral" aria-hidden="true"></span>
       <span class="mg-article-text">
@@ -3320,19 +3353,18 @@ MONTHLY_BODY = page_hero(
         <span class="mg-article-link">Read the article <span aria-hidden="true">→</span></span>
       </span>
     </a>
-    {review_note("<p>Please confirm what monthly donors should know: how they change or cancel a monthly gift, whether they get receipts or a year-end summary, and anything else NHS offers monthly donors.</p>")}
   </div>
 </section>
 
-<section class="section section-cream tips-closing">
+<section class="section section-cream tips-closing" id="mg-help">
   <div class="container">
     <div class="tips-closing-card">
       <p class="eyebrow">Questions?</p>
       <h2>We\'re happy to help</h2>
-      <p class="tips-closing-text">Questions about a monthly gift? Call or email us and we\'ll take care of it.</p>
+      <p class="tips-closing-text">To change or cancel your monthly gift, or with any questions or concerns, call Customer Service or write to us by mail.</p>
       <div class="mg-contact">
 {CONTACT_CARD_LIST[1]}
-{CONTACT_CARD_LIST[2]}
+{CONTACT_CARD_LIST[3]}
       </div>
       <div class="hiw-actions">
         <a class="btn btn-secondary" href="donate.html?mode=one-time#donation">Make a one-time gift instead</a>
@@ -3342,14 +3374,19 @@ MONTHLY_BODY = page_hero(
 </section>
 """
 
-# --- VOLUNTEER (proposed) ---------------------------------------------------
+# --- VOLUNTEER ---------------------------------------------------------------
+# In production the interest form is emailed to info@nationalhumanesociety.org
+# (client, call with CJ, 2026-11-17).
 # Kept and filled out (client, call with CJ, 2026-11-10). The three ways to
 # help and the list of tasks come from the Pet Tips article on the current
 # site; which roles NHS offers is in the review note.
 VOLUNTEER_TASKS = [("paw", "Dog walking"), ("yarn", "Cat enrichment"), ("drop", "Laundry &amp; dishes"),
                    ("users", "Adoption-day greeters"), ("camera", "Photo &amp; video"),
                    ("pen", "Pet bios &amp; admin"), ("box", "Supply drives"), ("calendar", "Rescue events")]
-VOLUNTEER_INTERESTS = [("paw", "Dog walking &amp; exercise"), ("yarn", "Cat care &amp; socializing"),
+# "Day trips with shelter dogs": taking a dog out of the shelter for the
+# afternoon (CJ, 2026-11-17).
+VOLUNTEER_INTERESTS = [("paw", "Dog walking &amp; exercise"), ("park", "Day trips with shelter dogs"),
+                       ("yarn", "Cat care &amp; socializing"),
                        ("home", "Fostering"), ("users", "Adoption events"), ("heart", "Fundraising events"),
                        ("box", "Supply drives"), ("car", "Animal transport"), ("drop", "Cleaning &amp; laundry"),
                        ("camera", "Photo &amp; video"), ("pen", "Writing &amp; social media"),
@@ -3420,7 +3457,10 @@ VOLUNTEER_BODY = page_hero(
 {chr(10).join(f'        <li><span class="vl-task-icon">{PAGE_ICONS[i]}</span>{t}</li>' for i, t in VOLUNTEER_TASKS)}
       </ul>
       <p><a class="give-way-link vl-guide" href="pet-tips.html">Read the full guide in Pet Tips <span class="give-way-arrow" aria-hidden="true">→</span></a></p>
-      {review_note("<p>Who should receive this form, and which volunteer roles does NHS offer directly (or does it point volunteers to the shelters it funds)? Any age or location requirements to mention?</p>")}
+      <ul class="mg-points vl-facts">
+        <li><span class="mg-point-icon">{PAGE_ICONS["users"]}</span><div><strong>Open to everyone</strong><p>There are no age or location requirements.</p></div></li>
+        <li><span class="mg-point-icon">{PAGE_ICONS["shelter"]}</span><div><strong>Close to home</strong><p>For some roles, we\'ll connect you with a shelter or rescue near you.</p></div></li>
+      </ul>
     </div>
     <form class="vl-form" onsubmit="event.preventDefault(); alert(\'Preview only — volunteer signup is not submitted.\');">
       <h3>Volunteer interest form</h3>
