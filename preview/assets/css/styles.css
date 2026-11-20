@@ -5066,7 +5066,14 @@ body.popular-sunny .tier-card.is-popular .tier-cta { color: var(--color-coral-da
 body.popular-sunny .ticket-choice.is-popular .ticket-price,
 body.popular-sunny .tier-card.is-popular .tier-price { color: var(--color-navy); }
 body.popular-sunny .ticket-choice.is-popular .choice-badge,
-body.popular-sunny .tier-card.is-popular .tier-badge { background: var(--color-navy); color: var(--color-yellow); }
+body.popular-sunny .tier-card.is-popular .tier-badge { background: var(--color-coral); color: #fff; box-shadow: 0 8px 18px rgba(250,88,83,.3); }
+/* Selected: the same coral ring every other selected bundle gets */
+body.popular-sunny .ticket-choice.is-popular:has(input:checked) {
+  border-color: var(--color-coral);
+  box-shadow: 0 0 0 5px rgba(250,88,83,.4), 0 20px 44px rgba(24,23,51,.16);
+}
+/* Check mark sits below the badge instead of touching it */
+.ticket-choice.is-popular:has(input:checked)::after { top: 26px; }
 
 /* Raffle home: Sweepstakes gets its own coral highlight, so it is as easy to
    spot as the yellow Raffle Plus, and the two are the same height */
