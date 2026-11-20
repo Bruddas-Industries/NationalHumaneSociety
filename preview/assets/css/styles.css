@@ -5098,14 +5098,20 @@ body.popular-sunny .tier-card.is-popular .tier-badge { background: var(--color-n
   .car-sheet-actions .ticket-stub { padding: 0 var(--space-4); font-size: 1.15rem; }
 }
 
-/* How It Works: "No purchase is necessary" in the body font, not bold */
-.hiw-light-title { font-family: var(--font-body); font-weight: 500; letter-spacing: -.01em; }
+/* How It Works: "No purchase is necessary" in the body font, light weight */
+.hiw-light-title { font-family: var(--font-body); font-weight: 300; letter-spacing: -.01em; }
 
 /* Monthly Giving: "Your monthly gift" cards, then the article */
 .give-ways.mg-manage { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 860px; margin: 0 auto; }
 .mg-manage + .mg-article { margin-top: var(--space-8); }
 @media (max-width: 700px) { .give-ways.mg-manage { grid-template-columns: 1fr; } }
 
-/* Volunteer: facts under the task tiles; note under the submit button */
+/* Volunteer: facts under the task tiles */
 .vl-facts { margin-top: var(--space-6); }
-.vl-form-note { margin: var(--space-3) 0 0; text-align: center; }
+
+/* Raffle home, phones: keep each ticket title on one line
+   ("Win two cars or $100,000" was leaving $100,000 on its own line) */
+@media (max-width: 600px) {
+  .rh-tickets .ticket-stacked .ticket-main { padding: var(--space-5) 20px; }
+  .rh-tickets .ticket-stacked .ticket-text strong { font-size: min(1.4rem, 5.4vw); white-space: nowrap; }
+}

@@ -73,7 +73,7 @@ def cs_numbers():
 # Colour of the Most Popular ticket bundle (price cards and entry forms). The
 # client found the navy too dark for a "most popular" pick (call with CJ,
 # 2026-11-17). "teal" (default), "sunny" (pale yellow) or "navy" (as before).
-POPULAR_TIER_STYLE = "teal"
+POPULAR_TIER_STYLE = "sunny"
 
 STATUS_TAG = {"new": "Proposed", "proposed": "Proposed"}
 
@@ -260,7 +260,7 @@ def page(title, slug, body, status="live", description=None):
 <link rel="icon" type="image/png" href="assets/img/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Gayathri:wght@400;700&family=Paytone+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Gayathri:wght@400;700&family=Paytone+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body class="{body_class}">
@@ -3491,7 +3491,6 @@ VOLUNTEER_BODY = page_hero(
       </fieldset>
       <div class="form-row"><label>Anything else we should know?</label><textarea rows="4"></textarea></div>
       <button class="btn btn-primary btn-lg" type="submit">Send my interest <span aria-hidden="true">→</span></button>
-      <p class="form-footnote vl-form-note">Your form goes to our team at <a href="mailto:{C.EMAIL}">{C.EMAIL}</a>.</p>
     </form>
   </div>
 </section>
