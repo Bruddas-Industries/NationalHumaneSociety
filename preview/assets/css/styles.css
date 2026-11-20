@@ -5072,6 +5072,13 @@ body.popular-sunny .ticket-choice.is-popular:has(input:checked) {
   border-color: var(--color-coral);
   box-shadow: 0 0 0 5px rgba(250,88,83,.4), 0 20px 44px rgba(24,23,51,.16);
 }
+/* Hover: coral border like the other bundles (the sunny colours above had
+   been overriding it) */
+body.popular-sunny a.tier-card.is-popular:hover,
+body.popular-sunny .ticket-choice.is-popular:hover {
+  border-color: var(--color-coral);
+  box-shadow: 0 0 0 5px rgba(250,88,83,.25), 0 24px 50px rgba(24,23,51,.2);
+}
 /* Check mark sits below the badge instead of touching it */
 .ticket-choice.is-popular:has(input:checked)::after { top: 26px; }
 
